@@ -1,0 +1,51 @@
+# ========================
+# FRONTEND: TYRSA_Portal (Vue 2)
+# ========================
+TYRSA_Portal/node_modules/
+TYRSA_Portal/dist/
+TYRSA_Portal/.env*
+TYRSA_Portal/npm-debug.log*
+TYRSA_Portal/yarn-debug.log*
+TYRSA_Portal/yarn-error.log*
+TYRSA_Portal/package-lock.json
+TYRSA_Portal/pnpm-lock.yaml
+
+# Editor config
+TYRSA_Portal/.idea/
+TYRSA_Portal/.vscode/
+
+# ========================
+# BACKEND: TYRSA_API (Spring Boot)
+# ========================
+
+# Maven
+TYRSA_API/target/
+TYRSA_API/logs/
+TYRSA_API/*.log
+
+# Gradle (si lo usas en lugar de Maven)
+TYRSA_API/.gradle/
+TYRSA_API/build/
+!TYRSA_API/gradle/wrapper/gradle-wrapper.jar
+
+# Compiled Java classes
+TYRSA_API/**/*.class
+
+# IDE config
+TYRSA_API/.idea/
+TYRSA_API/.vscode/
+*.iml
+*.ipr
+*.iws
+
+# ========================
+# GLOBAL (Sistema, entorno, etc.)
+# ========================
+
+# macOS / Windows / Linux system files
+.DS_Store
+Thumbs.db
+
+# Env vars
+*.env
+.env.*
