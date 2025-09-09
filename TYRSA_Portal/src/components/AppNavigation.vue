@@ -55,9 +55,9 @@ export default {
       drawer: true,
       links: [
         {
-          to: "/administradores",
+          to: "/users",
           icon: "person",
-          text: "Administradores"
+          text: "Users"
         }
       ]
     };

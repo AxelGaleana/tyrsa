@@ -1,5 +1,6 @@
 package com.tyrsa.api_erp.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +11,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-
+import com.tyrsa.api_erp.dto.UpdateUserRequest;
+import com.tyrsa.api_erp.dto.UserResponse;
+import com.tyrsa.api_erp.model.Role;
 import com.tyrsa.api_erp.model.User;
+import com.tyrsa.api_erp.repository.RoleRepository;
 import com.tyrsa.api_erp.repository.UserRepository;
 
 @Service
@@ -19,6 +23,9 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -29,13 +36,18 @@ public class UserService implements UserDetailsService {
     }
 
     // Método para registrar usuario
-    public User registerUser(String username, String password) {
+    public User registerUser(String username, String name, String password, String email, String role) {
         if(userRepository.existsByUsername(username)) {
             throw new RuntimeException("Usuario ya existe");
         }
         User user = new User();
         user.setUsername(username);
-        user.setPassword(passwordEncoder.encode(password));
+        user.setName(name);
+        user.setPassword(passwordEncoder.encode(password == null ? "Temporal$" + LocalDate.now().getYear() : password));
+        user.setEmail(email);
+        user.setRole(role);
+        user.setActive(true);
+
         return userRepository.save(user);
     }
 
@@ -56,6 +68,36 @@ public class UserService implements UserDetailsService {
 
     public User save(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        return userRepository.save(user);
+    }
+
+    public List<UserResponse> getAllUsers() {
+        List<User> users = userRepository.findAll();
+
+        return users.stream().map(user -> {
+            UserResponse dto = new UserResponse();
+            dto.setUsername(user.getUsername());
+            dto.setName(user.getName());
+            dto.setEmail(user.getEmail());
+            dto.setRole(user.getRole());
+            dto.setActive(user.isActive());
+            return dto;
+        }).toList();
+    }
+
+    public List<Role> getAllRoles() {
+        return roleRepository.findAll();
+    }
+
+    public User updateUserByUsername(String username, UpdateUserRequest request) {
+        User user = userRepository.findByUsername(username)
+            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        user.setName(request.getName());
+        user.setEmail(request.getEmail());
+        user.setRole(request.getRole());
+        user.setActive(request.isActive());
+
         return userRepository.save(user);
     }
 }

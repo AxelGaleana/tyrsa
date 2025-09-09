@@ -14,9 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.tyrsa.api_erp.dto.AuthRequest;
-import com.tyrsa.api_erp.dto.AuthResponse;
 import com.tyrsa.api_erp.dto.LoginResponse;
-import com.tyrsa.api_erp.dto.RegisterRequest;
 import com.tyrsa.api_erp.model.User;
 import com.tyrsa.api_erp.security.JwtUtil;
 import com.tyrsa.api_erp.service.UserService;
@@ -33,17 +31,6 @@ public class AuthController {
 
     @Autowired
     private UserService userService;
-
-    // Endpoint para registro
-    @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
-        try {
-            userService.registerUser(request.getUsername(), request.getPassword());
-            return ResponseEntity.ok("Usuario registrado con éxito");
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
-    }
 
     // Login
     @PostMapping("/login")
@@ -62,7 +49,7 @@ public class AuthController {
 
             String token = jwtUtil.generateToken(userDetails);
 
-            LoginResponse response = new LoginResponse(user.getUsername(), user.getRole(), token);
+            LoginResponse response = new LoginResponse(user.getUsername(), user.getName(), user.getRole(), user.getEmail(), token);
 
             // Retorna token al cliente
             System.out.println("Login exitoso, retornando token");

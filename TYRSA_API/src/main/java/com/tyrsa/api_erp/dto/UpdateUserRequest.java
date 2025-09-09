@@ -3,10 +3,9 @@ package com.tyrsa.api_erp.dto;
 import lombok.Data;
 
 @Data
-public class RegisterRequest {
-    private String username;
+public class UpdateUserRequest {
     private String name;
-    private String password;
     private String email;
     private String role;
+    private boolean active;
 }

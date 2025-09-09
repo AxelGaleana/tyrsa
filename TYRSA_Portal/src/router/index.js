@@ -1,7 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import VueMask from 'v-mask'
-import AdminsPage from "../components/Administrators.vue";
+import AdminsPage from "../components/Users.vue";
 import store from "../store/index.js";
 
 
@@ -15,8 +15,8 @@ Vue.use(VueRouter);
 
 const routes = [
   {
-    path: "/administradores",
-    name: "Administradores",
+    path: "/users",
+    name: "Users",
     component: AdminsPage,
     beforeEnter: (to, from, next) => {
       if (!!store.getters.getUser.role && 

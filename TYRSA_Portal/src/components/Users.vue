@@ -12,7 +12,7 @@
         </div>
         <v-layout align-end justify-end>
           <v-btn color="primary" dark class="mb-2" v-on="on">
-            administrador<v-icon right color="white">add</v-icon>
+            user<v-icon right color="white">add</v-icon>
           </v-btn>
         </v-layout>
       </template>
@@ -26,7 +26,7 @@
               <v-row>
                 <v-col cols="6">
                   <v-text-field
-                    v-model="editedItem.id_condumex"
+                    v-model="editedItem.username"
                     :label= labelUserIds
                     :rules="
                       editedIndex === -1
@@ -50,26 +50,6 @@
                   ></v-text-field>
                 </v-col>
                 <v-col cols="12">
-                  <v-text-field
-                    v-model="editedItem.lastname"
-                    label="Apellido Paterno"
-                    :rules="[v => !!v || 'Campo requerido']"
-                    required
-                    autocomplete="off"
-                    maxLength="50"
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="12">
-                  <v-text-field
-                    v-model="editedItem.surname"
-                    label="Apellido Materno"
-                    :rules="[v => !!v || 'Campo requerido']"
-                    required
-                    autocomplete="off"
-                    maxLength = "50"
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="12" v-if="local_auth === 'true'">
                   <v-text-field
                     v-if="editedIndex === -1"
                     v-model="editedItem.email"
@@ -113,12 +93,12 @@
                 <v-col cols="12">
                   <v-select
                     v-if="editedIndex === -1"
-                    v-model="editedItem.roles"
+                    v-model="editedItem.role"
                     :items="filteredRoles"
                     prepend-icon="assignment_ind"
                     item-text="role"
-                    item-value="role_id"
-                    label="Rol de Administrador"
+                    item-value="role"
+                    label="Rol de Usuario"
                     :rules="[(v) => !!v || 'Campo requerido']"
                     required
                     autocomplete="off"
@@ -126,41 +106,12 @@
 
                   <v-select
                     v-else
-                    v-model="preselectedRoles[0]"
+                    v-model="preselectedRole"
                     :items="filteredRoles"
                     prepend-icon="assignment_ind"
                     item-text="role"
                     item-value="role_id"
                     label="Rol de Administrador"
-                    :rules="[(v) => !!v || 'Campo requerido']"
-                    required
-                    autocomplete="off"
-                    return-object
-                  ></v-select>
-                </v-col>
-
-                <v-col cols="12" v-if="validateSoporteRole || validateRHPlusRole">
-                  <v-select
-                    v-if="editedIndex === -1"
-                    v-model="editedItem.site_id"
-                    :items="activeSites"
-                    prepend-icon="home"
-                    item-text="site"
-                    item-value="site_id"
-                    label="Sitio"
-                    :rules="[(v) => !!v || 'Campo requerido']"
-                    required
-                    autocomplete="off"
-                  ></v-select>
-
-                  <v-select
-                    v-else
-                    v-model="preselectedSites[0]"
-                    :items="activeSites"
-                    prepend-icon="home"
-                    item-text="site"
-                    item-value="site_id"
-                    label="Sitio"
                     :rules="[(v) => !!v || 'Campo requerido']"
                     required
                     autocomplete="off"
@@ -184,20 +135,7 @@
     <v-card flat>
       <v-card-title class="title">
         <v-layout>
-          <v-col cols="2">
-            <v-select
-              v-if="validateSoporteRole || validateRHPlusRole"
-              v-model="siteFilter"
-              clearable
-              :items="sortedSites"
-              item-text="site"
-              item-value="site_id"
-              label="Sitio"
-              prepend-icon="home"
-              autocomplete="off"
-            ></v-select>
-          </v-col>
-          <v-col cols="6">
+          <v-col cols="12">
             <v-text-field
               v-model="search"
               append-icon="filter_list"
@@ -212,8 +150,8 @@
       </v-card-title>
       <v-card-text>
         <v-data-table
-          :headers="local_auth === 'true' ? headers_local_auth : headers"
-          :items="filteredAdmins"
+          :headers="headers"
+          :items="users"
           :search="search"
           :options.sync="options"
           :loading="loading"
@@ -221,7 +159,7 @@
           no-data-text="No se encontró información."
         >
           <template v-slot:item.active="{ item }">
-            {{ item.active === 1 ? "Activo" : "Inactivo" }}
+            {{ item.active === true ? "Activo" : "Inactivo" }}
           </template>
           <template v-slot:item.actions="{ item }">
             <v-icon small class="mr-2" @click="editItem(item)">
@@ -238,7 +176,7 @@
 </template>
 
 <script>
-import AdministratorService from "@/services/AdministratorService";
+import UserService from "@/services/UserService";
 
 export default {
   data() {
@@ -256,29 +194,18 @@ export default {
       },
       loading: true,
       headers: [
-        { text: "ID Condumex", value: "id_condumex" },
+        { text: "ID de usuario", value: "username" },
         { text: "Nombre", value: "name" },
-        { text: "Apellido Paterno", value: "lastname" },
-        { text: "Apellido Materno", value: "surname" },
-        { text: "Estatus", value: "active" },
-        { text: "Rol", value: "roles[0].role" },
-        { text: "Acciones", value: "actions" },
-      ],
-      headers_local_auth: [
-        { text: "ID Condumex", value: "id_condumex" },
-        { text: "Nombre", value: "name" },
-        { text: "Apellido Paterno", value: "lastname" },
-        { text: "Apellido Materno", value: "surname" },
-	{ text: "Email", value: "email" },
-        { text: "Estatus", value: "active" },
-        { text: "Rol", value: "roles[0].role" },
+        { text: "Email", value: "email" },
+        { text: "Rol", value: "role" },
+        { text: "Activo", value: "active" },
         { text: "Acciones", value: "actions" },
       ],
       rules: {
         required: (value) => !!value || "Campo Requerido",
         administrator: (value) => {
           return (
-            !this.condumexIds.includes(value) || "El ID Condumex ya existe"
+            !this.userIds.includes(value) || "El ID de usuario ya existe"
           );
         },
         email: value => {
@@ -292,7 +219,7 @@ export default {
           return !this.emails.includes(value) || "El email ya existe";
         }
       },
-      administrators: [],
+      users: [],
       sites: [],
       roles: [],
       siteFilter: null,
@@ -320,10 +247,10 @@ export default {
     };
   },
   methods: {
-    getAdministrators() {
-      return AdministratorService.getAllAdministrators()
+    getUsers() {
+      return UserService.getAllUsers()
         .then((response) => {
-          this.administrators = response.data;
+          this.users = response.data;
           this.loading = false;
         })
         .catch((error) => {
@@ -337,7 +264,7 @@ export default {
         });
     },
     getRoles() {
-      return AdministratorService.getAllRoles()
+      return UserService.getAllRoles()
         .then((response) => {
           this.roles = response.data;         
           this.loading = false;
@@ -353,7 +280,7 @@ export default {
         });
     },
     editItem(item) {
-      this.editedIndex = this.administrators.indexOf(item);
+      this.editedIndex = this.users.indexOf(item);
       this.editedItem = Object.assign({}, item);
 
       if (this.editedIndex > -1 && item.site_id) {
@@ -362,13 +289,8 @@ export default {
         );
       }
 
-      if (this.editedIndex > -1 && item.roles) {
-        this.preselectedRoles = item.roles.map(function (obj) {
-          var rObj = {};
-          rObj["role_id"] = obj.pivot.role_id;
-          rObj["role"] = obj.role;
-          return rObj;
-        });
+      if (this.editedIndex > -1 && item.role) {
+        this.preselectedRole = item.role
       }
       this.dialog = true;
     },
@@ -387,20 +309,14 @@ export default {
       this.validate();
       if (this.valid) {
         if (this.editedIndex > -1) {
-          this.editedItem.site_id = this.preselectedSites.map(
-            (item) => item.site_id
-          );
-          this.editedItem.site_id = this.editedItem.site_id[0];
-          this.editedItem.roles = this.preselectedRoles.map(
-            (item) => item.role_id
-          );
-          AdministratorService.updateAdministrator(this.editedItem)
+          this.editedItem.role = this.preselectedRole;
+          UserService.updateUser(this.editedItem)
             .then(() => {
               this.loading = true;
               this.close();
-              this.text = "El administrador ha sido actualizado exitosamente.";
+              this.text = "El usuario ha sido actualizado exitosamente.";
               this.snackbar = true;
-              this.getAdministrators();
+              this.getUsers();
             })
             .catch((error) => {
               this.loading = false;
@@ -413,13 +329,13 @@ export default {
               this.snackbar_error = true;
             });
         } else {
-          AdministratorService.createAdministrator(this.editedItem)
+          UserService.createUser(this.editedItem)
             .then(() => {
               this.loading = true;
               this.close();
-              this.text = "El administrador ha sido creado exitosamente.";
+              this.text = "El Usuario ha sido creado exitosamente.";
               this.snackbar = true;
-              this.getAdministrators();
+              this.getUsers();
             })
             .catch((error) => {
               this.loading = false;
@@ -438,17 +354,17 @@ export default {
   computed: {
     formTitle() {
       return this.editedIndex === -1
-        ? "Nuevo Administrador"
-        : "Editar Administrador";
+        ? "Nuevo Usuario"
+        : "Editar Usuario";
     },
-    condumexIds() {
-      return this.administrators.map(
-        (administrator) => administrator.id_condumex
+    userIds() {
+      return this.users.map(
+        (user) => user.username
       );
     },
     emails() {
-      return this.administrators.map(
-        administrator => administrator.email);
+      return this.users.map(
+        user => user.email);
     },
     labelUserIds() {
       return this.local_auth === 'true' ? "ID Usuario" : "ID Condumex";
@@ -463,15 +379,6 @@ export default {
       return this.sites
         .filter((element) => element.active === 1)
         .sort((a, b) => (a.site > b.site && 1) || -1);
-    },
-    filteredAdmins() {
-      if (this.siteFilter) {
-        return this.administrators.filter(
-          (element) => element.site_id === this.siteFilter
-        );
-      } else {
-        return this.administrators;
-      }
     },
     validateSoporteRole() {
       return this.$store.getters.getUser.role === "Soporte";
@@ -497,9 +404,8 @@ export default {
     this.axios.defaults.headers.common[
       "Authorization"
     ] = `Bearer ${this.$store.getters.getUser.token}`;
-    this.getAdministrators();
+    this.getUsers();
     this.getRoles();
-    this.getSites();
   },
 };
 </script>
