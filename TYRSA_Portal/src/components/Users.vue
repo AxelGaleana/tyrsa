@@ -106,16 +106,15 @@
 
                   <v-select
                     v-else
-                    v-model="preselectedRole"
+                    v-model="editedItem.role"
                     :items="filteredRoles"
                     prepend-icon="assignment_ind"
                     item-text="role"
-                    item-value="role_id"
+                    item-value="role"
                     label="Rol de Administrador"
                     :rules="[(v) => !!v || 'Campo requerido']"
                     required
                     autocomplete="off"
-                    return-object
                   ></v-select>
                 </v-col>
               </v-row>
@@ -139,7 +138,7 @@
             <v-text-field
               v-model="search"
               append-icon="filter_list"
-              label="Filtrar por ID Condumex, Nombre, Apellidos ..."
+              label="Filtrar por ID de usuario, Nombre, Apellidos ..."
               single-line
               hide-details
               clearable
@@ -282,16 +281,6 @@ export default {
     editItem(item) {
       this.editedIndex = this.users.indexOf(item);
       this.editedItem = Object.assign({}, item);
-
-      if (this.editedIndex > -1 && item.site_id) {
-        this.preselectedSites = this.sites.filter(
-          (site_save) => site_save.site_id == item.site_id
-        );
-      }
-
-      if (this.editedIndex > -1 && item.role) {
-        this.preselectedRole = item.role
-      }
       this.dialog = true;
     },
     close() {
@@ -309,7 +298,6 @@ export default {
       this.validate();
       if (this.valid) {
         if (this.editedIndex > -1) {
-          this.editedItem.role = this.preselectedRole;
           UserService.updateUser(this.editedItem)
             .then(() => {
               this.loading = true;

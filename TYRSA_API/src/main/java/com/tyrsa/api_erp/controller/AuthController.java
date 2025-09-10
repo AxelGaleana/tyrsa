@@ -47,6 +47,10 @@ public class AuthController {
             // Obtener usuario completo desde base de datos
             User user = userService.findByUsername(userDetails.getUsername());
 
+            if (!user.isActive()) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("La cuenta del usuario está inactiva");
+            }
+
             String token = jwtUtil.generateToken(userDetails);
 
             LoginResponse response = new LoginResponse(user.getUsername(), user.getName(), user.getRole(), user.getEmail(), token);

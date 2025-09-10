@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tyrsa.api_erp.dto.RegisterRequest;
+import com.tyrsa.api_erp.dto.UpdatePasswordRequest;
 import com.tyrsa.api_erp.dto.UpdateUserRequest;
 import com.tyrsa.api_erp.dto.UserResponse;
 import com.tyrsa.api_erp.model.Role;
@@ -59,6 +60,21 @@ public class UserController {
         } catch (Exception e) {
             // Aquí atrapas otras excepciones que puedan ser 403 o similares
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/{username}/password")
+    public ResponseEntity<?> updatePassword(
+        @PathVariable String username,
+        @RequestBody UpdatePasswordRequest request) {
+
+        try {
+            userService.updateUserPassword(username, request);
+            return ResponseEntity.ok("Contraseña actualizada con éxito");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al actualizar la contraseña");
         }
     }
 }

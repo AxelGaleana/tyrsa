@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import com.tyrsa.api_erp.dto.UpdatePasswordRequest;
 import com.tyrsa.api_erp.dto.UpdateUserRequest;
 import com.tyrsa.api_erp.dto.UserResponse;
 import com.tyrsa.api_erp.model.Role;
@@ -99,5 +100,26 @@ public class UserService implements UserDetailsService {
         user.setActive(request.isActive());
 
         return userRepository.save(user);
+    }
+
+    public void updateUserPassword(String username, UpdatePasswordRequest request) {
+        User user = userRepository.findByUsername(username)
+            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        // Validar que la nueva contraseña no esté vacía
+        if (request.getNewPassword() == null || request.getNewPassword().isEmpty()) {
+            throw new RuntimeException("La nueva contraseña no puede estar vacía");
+        }
+
+        // Validar contraseña actual (opcional)
+        if (request.getCurrentPassword() != null) {
+            if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+                throw new RuntimeException("La contraseña actual no es correcta");
+            }
+        }
+
+        // Codificar y guardar la nueva contraseña
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
     }
 }

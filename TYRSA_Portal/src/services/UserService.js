@@ -11,5 +11,8 @@ export default {
   },
   getAllRoles() {
     return Vue.axios.get("/user/getAllRoles");
+  },
+  updatePassword(username, passwordRequest) {
+    return Vue.axios.put("/user/" + username + "/password", passwordRequest);
   }
 };
