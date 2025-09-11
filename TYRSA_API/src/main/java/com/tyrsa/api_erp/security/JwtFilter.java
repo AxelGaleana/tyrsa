@@ -43,6 +43,11 @@ public class JwtFilter extends OncePerRequestFilter {
                 username = jwtUtil.extractUsername(jwt);
             } catch (Exception e) {
                 System.out.println("Token inválido: " + e.getMessage());
+                // Responder inmediatamente con 401 y mensaje
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json");
+                response.getWriter().write("{\"error\": \"TOKEN/SESION EXPIRADA O INVALIDA\"}");
+                return; // Detener el filtro aquí
             }
         }
 
@@ -56,6 +61,12 @@ public class JwtFilter extends OncePerRequestFilter {
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+            } else {
+                // Token inválido (firma incorrecta, expirado, etc.)
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json");
+                response.getWriter().write("{\"error\": \"TOKEN/SESION EXPIRADA O INVALIDA\"}");
+                return;
             }
         }
 

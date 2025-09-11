@@ -1,5 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import router from "@/router";
 
 Vue.use(Vuex);
 export default new Vuex.Store({
@@ -57,6 +58,12 @@ export default new Vuex.Store({
       return new Promise(resolve => {
         localStorage.removeItem("user");
         commit("auth_error", error);
+
+        delete Vue.axios.defaults.headers.common["Authorization"];
+
+        // Redirigir a login
+        router.push({ name: "Login" });
+
         resolve();
       });
     },
@@ -70,6 +77,9 @@ export default new Vuex.Store({
       return new Promise(resolve => {
         commit("logout");
         localStorage.removeItem("user");
+
+        delete Vue.axios.defaults.headers.common["Authorization"];
+        
         resolve();
       });
     }

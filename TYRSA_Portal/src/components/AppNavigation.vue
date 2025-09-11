@@ -24,6 +24,7 @@
                 <v-col cols="12">
                   <v-text-field
                     v-model="currentpassword"
+                    type="password"
                     label="Ingresa la contraseña actual"
                     :rules="[v => !!v || 'Campo requerido']"
                     required
@@ -35,6 +36,7 @@
                 <v-col cols="12">
                   <v-text-field
                     v-model="password"
+                    type="password"
                     label="Ingresa la nueva contraseña"
                     :rules="[v => !!v || 'Campo requerido']"
                     required
@@ -46,6 +48,7 @@
                 <v-col cols="12">
                   <v-text-field
                     v-model="password2"
+                    type="password"
                     label="Vuelve a ingresar la nueva contraseña"
                     :rules="[v => !!v || 'Campo requerido', passwordMatchRule]"
                     required

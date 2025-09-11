@@ -184,7 +184,7 @@ export default {
       this.validate_recover_password();
       if (this.valid_recover_password) {
         this.loading_recover_password = true;
-        Vue.axios.post("/admins/recover", {"userid_to_restore" : this.userid_to_restore})
+        Vue.axios.post("/user/" + this.userid_to_restore + "/reset-password")
           .then(() => {
             this.close();
             this.text = "La contraseña se ha restablecido correctamente, le llegará por correo electrónico en unos segundos.";

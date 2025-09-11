@@ -14,7 +14,7 @@ public class JwtUtil {
 
     private final String SECRET_KEY = "clave-supersecreta-muy-larga-para-jwt-12345678901234567890"; // mínimo 256 bits (32 chars)
 
-    private final long EXPIRATION_TIME = 1000 * 60 * 60; // 1 hora
+    private final long EXPIRATION_TIME = 1000 * 60 * 60 * 9; // 1 hora
 
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());

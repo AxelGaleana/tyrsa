@@ -77,4 +77,16 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al actualizar la contraseña");
         }
     }
+
+    @PostMapping("/{username}/reset-password")
+    public ResponseEntity<?> resetPassword(@PathVariable String username) {
+        try {
+            userService.resetPasswordAndSendEmail(username);
+            return ResponseEntity.ok("Contraseña temporal enviada al correo del usuario");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al restablecer la contraseña");
+        }
+    }
 }

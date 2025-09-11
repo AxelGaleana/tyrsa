@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -51,6 +52,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/auth/**").permitAll()       // rutas públicas (login, register)
+                .requestMatchers(HttpMethod.POST, "/user/*/reset-password").permitAll()
                 .requestMatchers("/user/**").authenticated()       // Requiere token JWT
                 .requestMatchers("/api/protegido").authenticated()  // Requiere token JWT
                 .anyRequest().authenticated()                 // todas las demás requieren JWT

@@ -1,6 +1,6 @@
 module.exports = {
   transpileDependencies: ["vuetify"],
-  publicPath: "/autopartes_hub/",
+  publicPath: "/portal_tyrsa/",
   chainWebpack: config => {
     config.module
       .rule('vue')
