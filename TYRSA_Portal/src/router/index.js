@@ -2,6 +2,7 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import VueMask from 'v-mask'
 import AdminsPage from "../components/Users.vue";
+import Parte from "../components/Parte.vue";
 import store from "../store/index.js";
 
 
@@ -27,7 +28,12 @@ const routes = [
         next("/");
       }
     }
-  }
+  },
+  {
+    path: "/parte",
+    name: "Parte",
+    component: Parte
+  },
 ];
 
 const router = new VueRouter({
