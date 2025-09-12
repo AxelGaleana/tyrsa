@@ -7,7 +7,7 @@
         </v-card-title>
         <v-card-text>
         <v-container>
-            <v-card class="mb-4" outlined>
+            <v-card class="mb-4" outlined style="border-width: 3px;">
                 <v-card-title>
                     Información General
                 </v-card-title>
@@ -48,7 +48,7 @@
                     </v-row>
                 </v-card-text>
             </v-card>
-            <v-card class="mb-4" outlined>
+            <v-card class="mb-4" outlined style="border-width: 3px;">
                 <v-card-title>
                     Ciclo de vida del proyecto
                 </v-card-title>
@@ -139,7 +139,7 @@
                     </v-row>
                 </v-card-text>
             </v-card>
-            <v-card class="mb-4" outlined>
+            <v-card class="mb-4" outlined style="border-width: 3px;">
                 <v-card-title>
                     Materia prima
                 </v-card-title>
@@ -218,6 +218,327 @@
                     </v-row>
                     <v-divider class="my-4"></v-divider>
                     <v-subheader>Componentes</v-subheader>
+                    <v-row>
+                        <v-col cols="12">
+                            <v-data-table
+                            :headers="headers_componentes"
+                            :items="componentes"
+                            :options.sync="options"
+                            :loading="loading"
+                            loading-text="Consultando información..."
+                            no-data-text="No se encontró información."
+                            >
+                            <template v-slot:item.actions="{ item }">
+                                <v-icon small class="mr-2" @click="editItem(item)">
+                                mdi-pencil
+                                </v-icon>
+                                <v-icon small @click="deleteItem(item)">
+                                mdi-delete
+                                </v-icon>
+                            </template>
+                            </v-data-table>
+                        </v-col>
+                    </v-row>
+                    <v-divider class="my-4"></v-divider>
+                    <v-subheader>Expecificación de MP</v-subheader>
+                    <v-row>
+                        <v-col cols="2">
+                            <v-text-field
+                            label="Largo de cinta/blank (Avance real) (mm)"
+                            autocomplete="off"
+                            maxLength="255"
+                            outlined
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="2">
+                            <v-text-field
+                            label="Largo del material en máxima tolerancia"
+                            autocomplete="off"
+                            maxLength="255"
+                            outlined
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="2">
+                            <v-text-field
+                            label="Ancho cinta/blank (mm)"
+                            autocomplete="off"
+                            maxLength="255"
+                            outlined
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="2">
+                            <v-text-field
+                            label="Ancho del material en máxima tolerancia"
+                            autocomplete="off"
+                            maxLength="255"
+                            outlined
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="2">
+                            <v-text-field
+                            label="Espesor (mm)"
+                            autocomplete="off"
+                            maxLength="255"
+                            outlined
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="2">
+                            <v-text-field
+                            label="Espesor del material en máxima tolerancia"
+                            autocomplete="off"
+                            maxLength="255"
+                            outlined
+                            ></v-text-field>
+                        </v-col>
+                    </v-row>
+                    <v-divider class="my-4"></v-divider>
+                    <v-row>
+                        <v-col cols="2">
+                            <v-text-field
+                            label="Coeficiente del material"
+                            autocomplete="off"
+                            maxLength="255"
+                            outlined
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="2">
+                            <v-text-field
+                            label="Peso blank (kg)=F.C."
+                            autocomplete="off"
+                            maxLength="255"
+                            outlined
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="2">
+                            <v-text-field
+                            label="Peso blank (kg)=F.C."
+                            autocomplete="off"
+                            maxLength="255"
+                            outlined
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="2">
+                            <v-text-field
+                            label="Peso pieza (troquelado) (KG)"
+                            autocomplete="off"
+                            maxLength="255"
+                            outlined
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="1">
+                            <v-text-field
+                            label="Peso pieza (componente) (Si aplica)"
+                            autocomplete="off"
+                            maxLength="255"
+                            outlined
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="1">
+                            <v-text-field
+                            label="Factor de consumo (logística)"
+                            autocomplete="off"
+                            maxLength="255"
+                            outlined
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="1">
+                            <v-text-field
+                            label="Factor de aprovechamiento"
+                            autocomplete="off"
+                            maxLength="255"
+                            outlined
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="1">
+                            <v-text-field
+                            label="%Merma"
+                            autocomplete="off"
+                            maxLength="255"
+                            outlined
+                            ></v-text-field>
+                        </v-col>
+                    </v-row>
+                </v-card-text>
+            </v-card>
+            <v-card class="mb-4" outlined style="border-width: 3px;">
+                <v-card-title>
+                    Producto Terminado
+                </v-card-title>
+                <v-card-text>
+                    <v-row>
+                        <v-col cols="4">
+                            <v-text-field
+                            label="Código de empaque"
+                            autocomplete="off"
+                            maxLength="255"
+                            outlined
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="4">
+                            <v-text-field
+                            label="Factor de consumo de empaque por pieza"
+                            autocomplete="off"
+                            maxLength="255"
+                            outlined
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="4">
+                            <v-text-field
+                            label="Piezas por pallet"
+                            autocomplete="off"
+                            maxLength="255"
+                            outlined
+                            ></v-text-field>
+                        </v-col>
+                    </v-row>
+                </v-card-text>
+            </v-card>
+            <v-card class="mb-4" outlined style="border-width: 3px;">
+                <v-card-text>
+                    <v-row>
+                        <v-col cols="1">
+                            <v-text-field
+                            label="Número de operaciones"
+                            autocomplete="off"
+                            maxLength="255"
+                            outlined
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="1">
+                            <v-text-field
+                            label="Número de máquinas"
+                            autocomplete="off"
+                            maxLength="255"
+                            outlined
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="1">
+                            <v-text-field
+                            label="Número de operadores"
+                            autocomplete="off"
+                            maxLength="255"
+                            outlined
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="1">
+                            <v-text-field
+                            label="Número de ayudantes"
+                            autocomplete="off"
+                            maxLength="255"
+                            outlined
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="1">
+                            <v-text-field
+                            label="Personal requerido"
+                            autocomplete="off"
+                            maxLength="255"
+                            outlined
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="1">
+                            <v-text-field
+                            label="Tiempo ciclo total (seg)"
+                            autocomplete="off"
+                            maxLength="255"
+                            outlined
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="1">
+                            <v-text-field
+                            label="Tiempo ciclo Máximo"
+                            autocomplete="off"
+                            maxLength="255"
+                            outlined
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="1">
+                            <v-text-field
+                            label="Tiempo de llenado de célula"
+                            autocomplete="off"
+                            maxLength="255"
+                            outlined
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="1">
+                            <v-text-field
+                            label="Piezas por hora"
+                            autocomplete="off"
+                            maxLength="255"
+                            outlined
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="1">
+                            <v-text-field
+                            label="Tiempo total de cambio de modelo (min)"
+                            autocomplete="off"
+                            maxLength="255"
+                            outlined
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="1">
+                            <v-text-field
+                            label="Tiempo de liberación (min)"
+                            autocomplete="off"
+                            maxLength="255"
+                            outlined
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="1">
+                            <v-text-field
+                            label="Tiempo de ajuste por fechador (min)"
+                            autocomplete="off"
+                            maxLength="255"
+                            outlined
+                            ></v-text-field>
+                        </v-col>
+                    </v-row>
+                    <v-row>
+                        <v-col cols="11">
+                            <v-text-field
+                            label="Piezas de ajuste"
+                            autocomplete="off"
+                            maxLength="255"
+                            outlined
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="1">
+                            <v-text-field
+                            label="Cantidad económica de pedido"
+                            autocomplete="off"
+                            maxLength="255"
+                            outlined
+                            ></v-text-field>
+                        </v-col>
+                    </v-row>
+                </v-card-text>
+            </v-card>
+            <v-card class="mb-4" outlined style="border-width: 3px;">
+                <v-card-title>
+                    Ruta de fabricación
+                </v-card-title>
+                <v-card-text>
+                    <v-row>
+                        <v-col cols="12">
+                            <v-data-table
+                            :headers="headers_ruta_fabricacion"
+                            :items="ruta_fabricacion"
+                            :options.sync="options"
+                            :loading="loading"
+                            loading-text="Consultando información..."
+                            no-data-text="No se encontró información."
+                            >
+                            <template v-slot:item.actions="{ item }">
+                                <v-icon small class="mr-2" @click="editItem(item)">
+                                mdi-pencil
+                                </v-icon>
+                                <v-icon small @click="deleteItem(item)">
+                                mdi-delete
+                                </v-icon>
+                            </template>
+                            </v-data-table>
+                        </v-col>
+                    </v-row>
                 </v-card-text>
             </v-card>
         </v-container>
@@ -238,12 +559,33 @@
 export default {
   data() {
     return {
+        loading: false,
         valid: true,
         fechainicioproyecto: null,
         fechafinproyecto: null,
         editedIndex: -1,
         menuinicioproyecto: false,
         menufinproyecto: false,
+        componentes: [{"especificacion_componente":"Componente 1", "tipo_proveedor":"tipo_proveedor", "nombre_proveedor":"nombre_proveedor", "codigo_identificacion_componente":"codigo_identificacion_componente", "cantidad_componentes_x_pieza":"cantidad_componentes_x_pieza"}, {"especificacion_componente":"Componente 2", "tipo_proveedor":"tipo_proveedor", "nombre_proveedor":"nombre_proveedor", "codigo_identificacion_componente":"codigo_identificacion_componente", "cantidad_componentes_x_pieza":"cantidad_componentes_x_pieza"}],
+        headers_componentes: [
+            { text: "Especificacion de componente", value: "especificacion_componente" },
+            { text: "Tipo de proveedor", value: "tipo_proveedor" },
+            { text: "Nombre de proveedor", value: "nombre_proveedor" },
+            { text: "Código de identificación de componentes", value: "codigo_identificacion_componente" },
+            { text: "Cantidad de componentes por pieza", value: "cantidad_componentes_x_pieza" },
+        ],
+        ruta_fabricacion: [{"operacion":"1", "n_maquinas":"5", "tonelaje":"1", "descripcion":"Ejemplo descripcion", "fpc":"2", "tiempo_ciclo":"50"}, {"operacion":"2", "n_maquinas":"8", "tonelaje":"1", "descripcion":"Ejemplo descripcion 2", "fpc":"3", "tiempo_ciclo":"80"}],
+        headers_ruta_fabricacion: [
+            { text: "Operacion", value: "operacion" },
+            { text: "No. de máquina", value: "n_maquinas" },
+            { text: "Tonelaje (Tn)", value: "tonelaje" },
+            { text: "Descripción", value: "descripcion" },
+            { text: "FPC", value: "fpc" },
+            { text: "Tiempo de ciclo", value: "tiempo_ciclo" },
+        ],
+        options: {
+            itemsPerPage: 10,
+        },
     };
   },
   methods: {
