@@ -145,7 +145,7 @@
                 </v-card-title>
                 <v-card-text>
                     <v-divider class="my-4"></v-divider>
-                    <v-subheader>Aceros</v-subheader>
+                    <v-subheader class="text-h6">Aceros</v-subheader>
                     <v-row>
                         <v-col cols="2">
                             <v-text-field
@@ -197,7 +197,7 @@
                         </v-col>
                     </v-row>
                     <v-divider class="my-4"></v-divider>
-                    <v-subheader>Especificación de Rollo</v-subheader>
+                    <v-subheader class="text-h6">Especificación de Rollo</v-subheader>
                     <v-row>
                         <v-col cols="6">
                             <v-text-field
@@ -217,7 +217,7 @@
                         </v-col>
                     </v-row>
                     <v-divider class="my-4"></v-divider>
-                    <v-subheader>Componentes</v-subheader>
+                    <v-subheader class="text-h6">Componentes</v-subheader>
                     <v-row>
                         <v-col cols="12">
                             <v-data-table
@@ -227,6 +227,7 @@
                             :loading="loading"
                             loading-text="Consultando información..."
                             no-data-text="No se encontró información."
+                            :style="{ border: '1px solid #ccc', borderRadius: '4px' }"
                             >
                             <template v-slot:item.actions="{ item }">
                                 <v-icon small class="mr-2" @click="editItem(item)">
@@ -240,7 +241,7 @@
                         </v-col>
                     </v-row>
                     <v-divider class="my-4"></v-divider>
-                    <v-subheader>Expecificación de MP</v-subheader>
+                    <v-subheader class="text-h6">Expecificación de MP</v-subheader>
                     <v-row>
                         <v-col cols="2">
                             <v-text-field
@@ -527,6 +528,7 @@
                             :loading="loading"
                             loading-text="Consultando información..."
                             no-data-text="No se encontró información."
+                            :style="{ border: '1px solid #ccc', borderRadius: '4px' }"
                             >
                             <template v-slot:item.actions="{ item }">
                                 <v-icon small class="mr-2" @click="editItem(item)">
@@ -545,7 +547,7 @@
         </v-card-text>
         <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="blue darken-1" text > Cancelar </v-btn>
+        <v-btn color="blue darken-1" text :to="'/industrializacion'"> Cancelar </v-btn>
         <v-btn color="blue darken-1" :disabled="!valid" text >
             Guardar
         </v-btn>
@@ -573,6 +575,7 @@ export default {
             { text: "Nombre de proveedor", value: "nombre_proveedor" },
             { text: "Código de identificación de componentes", value: "codigo_identificacion_componente" },
             { text: "Cantidad de componentes por pieza", value: "cantidad_componentes_x_pieza" },
+            { text: "Acciones", value: "actions" },
         ],
         ruta_fabricacion: [{"operacion":"1", "n_maquinas":"5", "tonelaje":"1", "descripcion":"Ejemplo descripcion", "fpc":"2", "tiempo_ciclo":"50"}, {"operacion":"2", "n_maquinas":"8", "tonelaje":"1", "descripcion":"Ejemplo descripcion 2", "fpc":"3", "tiempo_ciclo":"80"}],
         headers_ruta_fabricacion: [
@@ -582,6 +585,7 @@ export default {
             { text: "Descripción", value: "descripcion" },
             { text: "FPC", value: "fpc" },
             { text: "Tiempo de ciclo", value: "tiempo_ciclo" },
+            { text: "Acciones", value: "actions" },
         ],
         options: {
             itemsPerPage: 10,

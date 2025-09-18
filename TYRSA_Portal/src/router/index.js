@@ -3,6 +3,7 @@ import VueRouter from "vue-router";
 import VueMask from 'v-mask'
 import AdminsPage from "../components/Users.vue";
 import Parte from "../components/Parte.vue";
+import Industrializacion from "../components/Industrializacion.vue";
 import store from "../store/index.js";
 
 
@@ -33,6 +34,11 @@ const routes = [
     path: "/parte",
     name: "Parte",
     component: Parte
+  },
+  {
+    path: "/industrializacion",
+    name: "Industrializacion",
+    component: Industrializacion
   },
 ];
 

@@ -76,7 +76,7 @@
       dark
       floating
       permanent
-      src="@/assets/somoscidec.png"
+      src="@/assets/menu_lateral.png"
     >
       <v-list nav>
         <v-list-item>
@@ -138,6 +138,11 @@ export default {
           to: "/users",
           icon: "person",
           text: "Users"
+        },
+        {
+          to: "/industrializacion",
+          icon: "person",
+          text: "Industrialización"
         }
       ]
     };
