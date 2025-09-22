@@ -19,6 +19,13 @@
                             autocomplete="off"
                             maxLength="255"
                             outlined
+                            :rules="
+                            editedIndex === -1
+                                ? [rules.required, rules.numeroParte]
+                                : [rules.required]
+                            "
+                            required
+                            v-model="editedItem.numeroParte"
                             ></v-text-field>
                         </v-col>
                         <v-col cols="3">
@@ -27,6 +34,9 @@
                             autocomplete="off"
                             maxLength="255"
                             outlined
+                            :rules="[v => !!v || 'Campo requerido']"
+                            required
+                            v-model="editedItem.proyecto"
                             ></v-text-field>
                         </v-col>
                         <v-col cols="3">
@@ -35,6 +45,9 @@
                             autocomplete="off"
                             maxLength="255"
                             outlined
+                            :rules="[v => !!v || 'Campo requerido']"
+                            required
+                            v-model="editedItem.descripcion"
                             ></v-text-field>
                         </v-col>
                         <v-col cols="3">
@@ -548,7 +561,7 @@
         <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="blue darken-1" text :to="'/industrializacion'"> Cancelar </v-btn>
-        <v-btn color="blue darken-1" :disabled="!valid" text >
+        <v-btn color="blue darken-1" :disabled="!valid" text @click="save">
             Guardar
         </v-btn>
         </v-card-actions>
@@ -558,14 +571,16 @@
 </template>
 
 <script>
+import PartService from "@/services/PartService";
+
 export default {
   data() {
     return {
+        parts: [],
         loading: false,
         valid: true,
         fechainicioproyecto: null,
         fechafinproyecto: null,
-        editedIndex: -1,
         menuinicioproyecto: false,
         menufinproyecto: false,
         componentes: [{"especificacion_componente":"Componente 1", "tipo_proveedor":"tipo_proveedor", "nombre_proveedor":"nombre_proveedor", "codigo_identificacion_componente":"codigo_identificacion_componente", "cantidad_componentes_x_pieza":"cantidad_componentes_x_pieza"}, {"especificacion_componente":"Componente 2", "tipo_proveedor":"tipo_proveedor", "nombre_proveedor":"nombre_proveedor", "codigo_identificacion_componente":"codigo_identificacion_componente", "cantidad_componentes_x_pieza":"cantidad_componentes_x_pieza"}],
@@ -587,18 +602,105 @@ export default {
             { text: "Tiempo de ciclo", value: "tiempo_ciclo" },
             { text: "Acciones", value: "actions" },
         ],
+        editedIndex: -1,
+        editedItem: {
+            numeroParte: null,
+            proyecto: null,
+            descripcion: null,
+        },
+        defaultItem: {
+            numeroParte: null,
+            proyecto: null,
+            descripcion: null,
+        },
         options: {
             itemsPerPage: 10,
+        },
+        rules: {
+            required: (value) => !!value || "Campo Requerido",
+            numeroParte: (value) => {
+                return (
+                    !this.numerosParte.includes(value) || "El numero de parte ya existe"
+                );
+            }
         },
     };
   },
   methods: {
+    getAllParts(){
+      return PartService.getAllParts()
+        .then((response) => {
+          this.parts = response.data;
+          this.loading = false;
+        })
+        .catch((error) => {
+          this.loading = false;
+          if (
+            error.response.data.error &&
+            error.response.data.error.toUpperCase().includes("TOKEN")
+          ) {
+            this.$store.dispatch("tokenerror", error.response.data.error);
+          }
+        });
+    },
+    validate() {
+      this.valid = this.$refs.form.validate();
+    },
+    save() {
+      this.validate();
+      if (this.valid) {
+        if (this.editedIndex > -1) {
+          PartService.updateUser(this.editedItem)
+            .then(() => {
+              this.loading = true;
+              this.close();
+              this.text = "El usuario ha sido actualizado exitosamente.";
+              this.snackbar = true;
+              this.getUsers();
+            })
+            .catch((error) => {
+              this.loading = false;
+              if (
+                error.response.data.error &&
+                error.response.data.error.toUpperCase().includes("TOKEN")
+              ) {
+                this.$store.dispatch("tokenerror", error.response.data.error);
+              }
+              this.snackbar_error = true;
+            });
+        } else {
+          PartService.createPart(this.editedItem)
+            .then(() => {
+              this.loading = true;
+              this.close();
+              this.text = "La nueva Parte ha sido creada exitosamente.";
+              this.snackbar = true;
+              this.getUsers();
+            })
+            .catch((error) => {
+              this.loading = false;
+              if (
+                error.response.data.error &&
+                error.response.data.error.toUpperCase().includes("TOKEN")
+              ) {
+                this.$store.dispatch("tokenerror", error.response.data.error);
+              }
+              this.snackbar_error = true;
+            });
+        }
+      }
+    }
   },
   computed: {
     formTitle() {
       return this.editedIndex === -1
         ? "Nueva Parte"
         : "Editar Parte";
+    },
+    numerosParte() {
+      return this.parts.map(
+        (part) => part.numeroParte
+      );
     },
   },
   watch: {
@@ -610,6 +712,7 @@ export default {
     this.axios.defaults.headers.common[
       "Authorization"
     ] = `Bearer ${this.$store.getters.getUser.token}`;
+    this.getAllParts();
   },
 };
 </script>

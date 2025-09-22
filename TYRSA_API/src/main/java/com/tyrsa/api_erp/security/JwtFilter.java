@@ -34,6 +34,12 @@ public class JwtFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
 
         final String authHeader = request.getHeader("Authorization");
+
+        //Aquí: advertencia si no se envió correctamente el header Authorization
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            System.out.println("Header 'Authorization' ausente o mal formado: " + authHeader);
+        }
+
         String username = null;
         String jwt = null;
 
