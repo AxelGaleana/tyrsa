@@ -20,11 +20,8 @@ public class PartController {
     @PostMapping
     public ResponseEntity<?> createPart(@RequestBody Part partRequest) {
         try {
-            Part createdPart = partService.createPart(
-                partRequest.getNumeroParte(),
-                partRequest.getProyecto(),
-                partRequest.getDescripcion()
-            );
+            Part createdPart = partService.createPart(partRequest);
+            
             return new ResponseEntity<>(createdPart, HttpStatus.CREATED);
         } catch (IllegalStateException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
@@ -40,11 +37,7 @@ public class PartController {
             @PathVariable String numeroParte,
             @RequestBody Part partRequest) {
         try {
-            Part updatedPart = partService.updatePartByNumeroParte(
-                numeroParte,
-                partRequest.getProyecto(),
-                partRequest.getDescripcion()
-            );
+            Part updatedPart = partService.updatePartByNumeroParte(numeroParte, partRequest);
             return new ResponseEntity<>(updatedPart, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);

@@ -31,7 +31,7 @@ const routes = [
     }
   },
   {
-    path: "/parte",
+    path: "/parte/:numeroParte",
     name: "Parte",
     component: Parte
   },

@@ -6,10 +6,10 @@ export default {
   createPart(part) {
     return Vue.axios.post("/parts", part);
   },
-  updateUser(part) {
-    return Vue.axios.put("/user/" + part.numeroParte, part);
+  updatePart(part) {
+    return Vue.axios.put("/parts/" + part.numeroParte, part);
   },
   getPart(numeroParte) {
-    return Vue.axios.get("/user/" + numeroParte);
+    return Vue.axios.get("/parts/" + numeroParte);
   },
 };

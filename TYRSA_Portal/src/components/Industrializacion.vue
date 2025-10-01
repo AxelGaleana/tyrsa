@@ -1,12 +1,606 @@
 <template>
   <v-container fluid>
-    <v-dialog v-model="dialog" max-width="400px">
+    <v-dialog v-model="dialog" max-width="90%">
+      <v-card flat>
+          <v-card-title>
+          <span class="heading">Visor</span>
+          </v-card-title>
+          <v-card-text>
+            <div ref="scrollContainer" style="max-height: 70vh; overflow-y: auto;">
+              <v-container>
+                  <v-card class="mb-4" outlined style="border-width: 3px; background-color: #f9fafb;">
+                      <v-card-title>
+                          Información General
+                      </v-card-title>
+                      <v-card-text>
+                          <v-row>
+                          <!-- Columna izquierda: campos -->
+                          <v-col cols="8">
+                              <v-row>
+                              <v-col cols="6">
+                                  <v-text-field
+                                  label="Numero de parte"
+                                  autocomplete="off"
+                                  maxLength="255"
+                                  outlined
+                                  v-model="editedItem.numeroParte"
+                                  ></v-text-field>
+                              </v-col>
+                              <v-col cols="6">
+                                  <v-text-field
+                                  label="Proyecto"
+                                  autocomplete="off"
+                                  maxLength="255"
+                                  outlined
+                                  v-model="editedItem.proyecto"
+                                  ></v-text-field>
+                              </v-col>
+                              <v-col cols="6">
+                                  <v-text-field
+                                  label="Descripción"
+                                  autocomplete="off"
+                                  maxLength="255"
+                                  outlined
+                                  v-model="editedItem.descripcion"
+                                  ></v-text-field>
+                              </v-col>
+                              <v-col cols="6">
+                                  <v-text-field
+                                  label="Nivel de ingeniería"
+                                  autocomplete="off"
+                                  maxLength="255"
+                                  outlined
+                                  v-model="editedItem.nivelIngenieria"
+                                  ></v-text-field>
+                              </v-col>
+                              </v-row>
+                          </v-col>
 
+                          <!-- Columna derecha: imagen -->
+                          <v-col cols="4" class="d-flex align-center justify-center">
+                              <v-img
+                              :src="require('@/assets/parte_ejemplo.png')"
+                              max-width="180"
+                              aspect-ratio="1"
+                              contain
+                              class="mx-auto"
+                              ></v-img>
+                          </v-col>
+                          </v-row>
+                      </v-card-text>
+                  </v-card>
+
+                  <v-card class="mb-4" outlined style="border-width: 3px; background-color: #f0f4f8;">
+                      <v-card-title>
+                          Ciclo de vida del proyecto
+                      </v-card-title>
+                      <v-card-text>
+                          <v-row>
+                              <v-col cols="2">
+
+                                <v-text-field
+                                prepend-icon="event"
+                                outlined
+                                label="Fecha de inicio"
+                                v-model="editedItem.fechaInicioProyecto"
+                                ></v-text-field>
+
+                              </v-col>
+                              <v-col cols="2">
+                                <v-text-field
+                                prepend-icon="event"
+                                outlined
+                                label="Fecha de inicio"
+                                v-model="editedItem.fechaFinProyecto"
+                                ></v-text-field>
+                              </v-col>
+                              <v-col cols="2">
+                                  <v-text-field
+                                  label="Días disponibles"
+                                  autocomplete="off"
+                                  maxLength="255"
+                                  outlined
+                                  v-model="editedItem.dias_disponibles"
+                                  ></v-text-field>
+                              </v-col>
+                              <v-col cols="2">
+                                  <v-text-field
+                                  label="Estatus del proyecto"
+                                  autocomplete="off"
+                                  maxLength="255"
+                                  outlined
+                                  v-model="editedItem.estatus"
+                                  ></v-text-field>
+                              </v-col>
+                              <v-col cols="4">
+                                  <v-text-field
+                                  label="Volumen vendido del proyecto anual"
+                                  autocomplete="off"
+                                  maxLength="255"
+                                  outlined
+                                  v-model="editedItem.volumenVendidoProyectoAnual"
+                                  ></v-text-field>
+                              </v-col>
+                          </v-row>
+                      </v-card-text>
+                  </v-card>
+                  <v-card class="mb-4" outlined style="border-width: 3px; background-color: #e6f2ea;">
+                      <v-card-title>
+                          Materia prima
+                      </v-card-title>
+                      <v-card-text>
+                          <v-divider class="my-4"></v-divider>
+                          <v-subheader class="text-h6">Aceros</v-subheader>
+                          <v-row>
+                              <v-col cols="2">
+                                  <v-text-field
+                                  label="Especificación de Material"
+                                  autocomplete="off"
+                                  maxLength="255"
+                                  outlined
+                                  v-model="editedItem.especificacionMaterial"
+                                  ></v-text-field>
+                              </v-col>
+                              <v-col cols="2">
+                                  <v-text-field
+                                  label="Tipo de proveedor"
+                                  autocomplete="off"
+                                  maxLength="255"
+                                  outlined
+                                  v-model="editedItem.tipoProveedor"
+                                  ></v-text-field>
+                              </v-col>
+                              <v-col cols="2">
+                                  <v-text-field
+                                  label="Nombre de proveedor"
+                                  autocomplete="off"
+                                  maxLength="255"
+                                  outlined
+                                  v-model="editedItem.nombreProveedor"
+                                  ></v-text-field>
+                              </v-col>
+                              <v-col cols="2">
+                                  <v-text-field
+                                  label="Codigo de identificación de materia"
+                                  autocomplete="off"
+                                  maxLength="255"
+                                  outlined
+                                  v-model="editedItem.codigoIdentificacionMaterial"
+                                  ></v-text-field>
+                              </v-col>
+                              <v-col cols="2">
+                                  <v-text-field
+                                  label="Presentacion de materia prima"
+                                  autocomplete="off"
+                                  maxLength="255"
+                                  outlined
+                                  v-model="editedItem.presentacionMateriaPrima"
+                                  ></v-text-field>
+                              </v-col>
+                              <v-col cols="2">
+                                  <v-text-field
+                                  label="Peso de estándar pack MP"
+                                  autocomplete="off"
+                                  maxLength="255"
+                                  outlined
+                                  v-model="editedItem.pesoEstandarPackMP"
+                                  ></v-text-field>
+                              </v-col>
+                          </v-row>
+                          <v-divider class="my-4"></v-divider>
+                          <v-subheader class="text-h6">Especificación de Rollo</v-subheader>
+                          <v-row>
+                              <v-col cols="6">
+                                  <v-text-field
+                                  label="Diámetro interno (min / max)"
+                                  autocomplete="off"
+                                  maxLength="255"
+                                  outlined
+                                  v-model="editedItem.diametroInterno"
+                                  ></v-text-field>
+                              </v-col>
+                              <v-col cols="6">
+                                  <v-text-field
+                                  label="Diámetro externo (min / max)"
+                                  autocomplete="off"
+                                  maxLength="255"
+                                  outlined
+                                  v-model="editedItem.diametroExterno"
+                                  ></v-text-field>
+                              </v-col>
+                          </v-row>
+                          <v-divider class="my-4"></v-divider>
+                          <v-subheader class="text-h6">Componentes</v-subheader>
+                          <v-row>
+                              <v-col cols="12">
+                                  <v-data-table
+                                  :headers="headers_componentes"
+                                  :options.sync="options"
+                                  loading-text="Consultando información..."
+                                  no-data-text="No se encontró información."
+                                  :style="{ border: '1px solid #ccc', borderRadius: '4px',  backgroundColor: '#cce4d5' }"
+                                  >
+                                  <template v-slot:item.actions="{ item }">
+                                      <v-icon small class="mr-2" @click="editItem(item)">
+                                      mdi-pencil
+                                      </v-icon>
+                                      <v-icon small @click="deleteItem(item)">
+                                      mdi-delete
+                                      </v-icon>
+                                  </template>
+                                  </v-data-table>
+                              </v-col>
+                          </v-row>
+                          <v-divider class="my-4"></v-divider>
+                          <v-subheader class="text-h6">Especificación de Materia prima</v-subheader>
+                          <v-row>
+                              <v-col cols="4">
+                                  <v-text-field
+                                  label="Largo de cinta/blank (Avance real) (mm)"
+                                  autocomplete="off"
+                                  maxLength="255"
+                                  outlined
+                                    title="Largo de cinta/blank (Avance real) (mm)"
+                                    v-model="editedItem.largoCintaBlank"
+                                  ></v-text-field>
+                              </v-col>
+                              <v-col cols="4">
+                                  <v-text-field
+                                  label="Largo del material en máxima tolerancia"
+                                  autocomplete="off"
+                                  maxLength="255"
+                                  outlined
+                                    title="Largo del material en máxima tolerancia"
+                                    v-model="editedItem.largoMaterialMaximaTolerancia"
+                                  ></v-text-field>
+                              </v-col>
+                              <v-col cols="4">
+                                  <v-text-field
+                                  label="Ancho cinta/blank (mm)"
+                                  autocomplete="off"
+                                  maxLength="255"
+                                  outlined
+                                    title="Ancho cinta/blank (mm)"
+                                    v-model="editedItem.anchoCintaBlank"
+                                  ></v-text-field>
+                              </v-col>
+                        </v-row>
+                        <v-row>
+                              <v-col cols="4">
+                                  <v-text-field
+                                  label="Ancho del material en máxima tolerancia"
+                                  autocomplete="off"
+                                  maxLength="255"
+                                  outlined
+                                    title="Ancho del material en máxima tolerancia"
+                                    v-model="editedItem.anchoMaterialMaximaTolerancia"
+                                  ></v-text-field>
+                              </v-col>
+                              <v-col cols="4">
+                                  <v-text-field
+                                  label="Espesor (mm)"
+                                  autocomplete="off"
+                                  maxLength="255"
+                                  outlined
+                                  v-model="editedItem.espesor"
+                                  ></v-text-field>
+                              </v-col>
+                              <v-col cols="4">
+                                  <v-text-field
+                                  label="Espesor del material en máxima tolerancia"
+                                  autocomplete="off"
+                                  maxLength="255"
+                                  outlined
+                                    title="Espesor del material en máxima tolerancia"
+                                    v-model="editedItem.espesorMaterialMaximaTolerancia"
+                                  ></v-text-field>
+                              </v-col>
+                          </v-row>
+                          <v-divider class="my-4"></v-divider>
+                        <v-row>
+                            <v-col cols="3">
+                                <v-text-field
+                                label="Coeficiente del material"
+                                autocomplete="off"
+                                maxLength="255"
+                                outlined
+                                v-model="editedItem.coeficienteMaterial"
+                                ></v-text-field>
+                            </v-col>
+                            <v-col cols="3">
+                                <v-text-field
+                                label="Peso blank (kg)=F.C."
+                                autocomplete="off"
+                                maxLength="255"
+                                outlined
+                                v-model="editedItem.pesoBlank"
+                                ></v-text-field>
+                            </v-col>
+                            <v-col cols="3">
+                                <v-text-field
+                                label="Peso blank (kg)=F.C. Max"
+                                autocomplete="off"
+                                maxLength="255"
+                                outlined
+                                v-model="editedItem.pesoBlankMax"
+                                ></v-text-field>
+                            </v-col>
+                            <v-col cols="3">
+                                <v-text-field
+                                label="Peso pieza (troquelado) (KG)"
+                                autocomplete="off"
+                                maxLength="255"
+                                outlined
+                                title="Peso pieza (troquelado) (KG)"
+                                v-model="editedItem.pesoPiezaTroquelado"
+                                ></v-text-field>
+                            </v-col>
+                        </v-row>
+                        <v-row>
+                            <v-col cols="3">
+                                <v-text-field
+                                label="Peso pieza"
+                                autocomplete="off"
+                                maxLength="255"
+                                outlined
+                                title="Peso pieza (componente) (Si aplica)"
+                                v-model="editedItem.pesoPiezaComponente"
+                                ></v-text-field>
+                            </v-col>
+                            <v-col cols="3">
+                                <v-text-field
+                                label="Factor de consumo"
+                                autocomplete="off"
+                                maxLength="255"
+                                outlined
+                                title="Factor de consumo (logística)"
+                                v-model="editedItem.factorConsumo"
+                                ></v-text-field>
+                            </v-col>
+                            <v-col cols="3">
+                                <v-text-field
+                                label="Factor de aprovechamiento"
+                                autocomplete="off"
+                                maxLength="255"
+                                outlined
+                                title="Factor de aprovechamiento"
+                                v-model="editedItem.factorAprovechamiento"
+                                ></v-text-field>
+                            </v-col>
+                            <v-col cols="3">
+                                <v-text-field
+                                label="% Merma"
+                                autocomplete="off"
+                                maxLength="255"
+                                outlined
+                                v-model="editedItem.merma"
+                                ></v-text-field>
+                            </v-col>
+                        </v-row>
+                      </v-card-text>
+                  </v-card>
+                  <v-card class="mb-4" outlined style="border-width: 3px; background-color: #fffbee;">
+                      <v-card-title>
+                          Producto Terminado
+                      </v-card-title>
+                      <v-card-text>
+                          <v-row>
+                            <v-col cols="4">
+                                <v-text-field
+                                label="Código de empaque"
+                                autocomplete="off"
+                                maxLength="255"
+                                outlined
+                                v-model="editedItem.codigoEmpaque"
+                                ></v-text-field>
+                            </v-col>
+                            <v-col cols="4">
+                                <v-text-field
+                                label="Factor de consumo de empaque por pieza"
+                                autocomplete="off"
+                                maxLength="255"
+                                outlined
+                                title="Factor de consumo de empaque por pieza"
+                                v-model="editedItem.factorConsumoEmpaquePieza"
+                                ></v-text-field>
+                            </v-col>
+                            <v-col cols="4">
+                                <v-text-field
+                                label="Piezas por pallet"
+                                autocomplete="off"
+                                maxLength="255"
+                                outlined
+                                v-model="editedItem.piezasPallet"
+                                ></v-text-field>
+                            </v-col>
+                          </v-row>
+                      </v-card-text>
+                  </v-card>
+                  <v-card class="mb-4" outlined style="border-width: 3px; background-color: #f7f5fb;">
+                      <v-card-text>
+                        <v-row>
+                            <v-col cols="3">
+                                <v-text-field
+                                label="Número de operaciones"
+                                autocomplete="off"
+                                maxLength="255"
+                                outlined
+                                v-model="editedItem.numeroOperaciones"
+                                ></v-text-field>
+                            </v-col>
+                            <v-col cols="3">
+                                <v-text-field
+                                label="Número de máquinas"
+                                autocomplete="off"
+                                maxLength="255"
+                                outlined
+                                v-model="editedItem.numeroMaquinas"
+                                ></v-text-field>
+                            </v-col>
+                            <v-col cols="3">
+                                <v-text-field
+                                label="Número de operadores"
+                                autocomplete="off"
+                                maxLength="255"
+                                outlined
+                                v-model="editedItem.numeroOperadores"
+                                ></v-text-field>
+                            </v-col>
+                            <v-col cols="3">
+                                <v-text-field
+                                label="Número de ayudantes"
+                                autocomplete="off"
+                                maxLength="255"
+                                outlined
+                                v-model="editedItem.numeroAyudantes"
+                                ></v-text-field>
+                            </v-col>
+                        </v-row>
+                        <v-row>
+                            <v-col cols="3">
+                                <v-text-field
+                                label="Personal requerido"
+                                autocomplete="off"
+                                maxLength="255"
+                                outlined
+                                v-model="editedItem.personalRequerido"
+                                ></v-text-field>
+                            </v-col>
+                            <v-col cols="3">
+                                <v-text-field
+                                label="Tiempo ciclo total (seg)"
+                                autocomplete="off"
+                                maxLength="255"
+                                outlined
+                                v-model="editedItem.tiempoCicloTotal"
+                                ></v-text-field>
+                            </v-col>
+                            <v-col cols="3">
+                                <v-text-field
+                                label="Tiempo ciclo Máximo"
+                                autocomplete="off"
+                                maxLength="255"
+                                outlined
+                                v-model="editedItem.tiempoCicloMaximo"
+                                ></v-text-field>
+                            </v-col>
+                            <v-col cols="3">
+                                <v-text-field
+                                label="Tiempo de llenado de célula"
+                                autocomplete="off"
+                                maxLength="255"
+                                outlined
+                                title="Tiempo de llenado de célula"
+                                v-model="editedItem.tiempoLlenadoCelula"
+                                ></v-text-field>
+                            </v-col>
+                        </v-row>
+                        <v-row>
+                            <v-col cols="3">
+                                <v-text-field
+                                label="Piezas por hora"
+                                autocomplete="off"
+                                maxLength="255"
+                                outlined
+                                v-model="editedItem.piezasPorHora"
+                                ></v-text-field>
+                            </v-col>
+                            <v-col cols="3">
+                                <v-text-field
+                                label="Tiempo total de cambio de modelo (min)"
+                                autocomplete="off"
+                                maxLength="255"
+                                outlined
+                                title="Tiempo total de cambio de modelo (min)"
+                                v-model="editedItem.tiempoTotalCambioModelo"
+                                ></v-text-field>
+                            </v-col>
+                            <v-col cols="3">
+                                <v-text-field
+                                label="Tiempo de liberación (min)"
+                                autocomplete="off"
+                                maxLength="255"
+                                outlined
+                                title="Tiempo de liberación (min)"
+                                v-model="editedItem.tiempoLiberacion"
+                                ></v-text-field>
+                            </v-col>
+                            <v-col cols="3">
+                                <v-text-field
+                                label="Tiempo de ajuste por fechador (min)"
+                                autocomplete="off"
+                                maxLength="255"
+                                outlined
+                                title="Tiempo de ajuste por fechador (min)"
+                                v-model="editedItem.tiempoAjustePorFechador"
+                                ></v-text-field>
+                            </v-col>
+                        </v-row>
+                        <v-row>
+                            <v-col cols="9">
+                                <v-text-field
+                                label="Piezas de ajuste"
+                                autocomplete="off"
+                                maxLength="255"
+                                outlined
+                                v-model="editedItem.piezasDeAjuste"
+                                ></v-text-field>
+                            </v-col>
+                            <v-col cols="3">
+                                <v-text-field
+                                label="Cantidad económica de pedido"
+                                autocomplete="off"
+                                maxLength="255"
+                                outlined
+                                title="Cantidad económica de pedido"
+                                v-model="editedItem.cantidadEconomicaPedido"
+                                ></v-text-field>
+                            </v-col>
+                        </v-row>
+                      </v-card-text>
+                  </v-card>
+                  <v-card class="mb-4" outlined style="border-width: 3px; background-color: #fff5f7;">
+                      <v-card-title>
+                          Ruta de fabricación
+                      </v-card-title>
+                      <v-card-text>
+                          <v-row>
+                              <v-col cols="12">
+                                  <v-data-table
+                                  :headers="headers_ruta_fabricacion"
+                                  :options.sync="options"
+                                  loading-text="Consultando información..."
+                                  no-data-text="No se encontró información."
+                                  :style="{ border: '1px solid #ccc', borderRadius: '4px',  backgroundColor: '#fff5f7' }"
+                                  >
+                                  <template v-slot:item.actions="{ item }">
+                                      <v-icon small class="mr-2" @click="editItem(item)">
+                                      mdi-pencil
+                                      </v-icon>
+                                      <v-icon small @click="deleteItem(item)">
+                                      mdi-delete
+                                      </v-icon>
+                                  </template>
+                                  </v-data-table>
+                              </v-col>
+                          </v-row>
+                      </v-card-text>
+                  </v-card>
+              </v-container>
+            </div>
+          </v-card-text>
+          <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" text @click="dialog=false">
+              Cerrar
+          </v-btn>
+          </v-card-actions>
+      </v-card>
     </v-dialog>
 
     <v-card flat>
         <v-layout align-end justify-end>
-            <v-btn color="primary" dark class="mb-2" :to="'/parte'">
+            <v-btn color="primary" dark class="mb-2" :to="{ name: 'Parte', params: { numeroParte: 'nueva' } }">
             Nueva parte
             <v-icon right color="white">add</v-icon>
             </v-btn>
@@ -17,7 +611,7 @@
             <v-text-field
               v-model="search"
               append-icon="filter_list"
-              label="Filtrar por ID de usuario, Nombre, Apellidos ..."
+              label="Filtrar por número de parte, descripción, proyecto ..."
               single-line
               hide-details
               clearable
@@ -29,7 +623,7 @@
       <v-card-text>
         <v-data-table
           :headers="headers"
-          :items="lista_industrializacion"
+          :items="processedParts"
           :search="search"
           :options.sync="options"
           :loading="loading"
@@ -44,13 +638,14 @@
                 max-width="60"
                 ></v-img>
             </template>
-
+            
             <template v-slot:item.estatus="{ item }">
                 <span
                     :class="{
-                    'estatus-activo': item.estatus === 'Activo',
+                    'estatus-activo': item.estatus === 'ACTIVO',
                     'estatus-vencido': item.estatus === 'VENCIDO',
                     'estatus-proximo': item.estatus === 'PROXIMO A VENCER',
+                    'estatus-NA': item.estatus === 'N/A',
                     }"
                     class="estatus-cell"
                 >
@@ -61,7 +656,7 @@
                 <v-icon small class="mr-2" @click="editItem(item)" title="Editar Parte">
                 mdi-pencil
                 </v-icon>
-                <v-icon small @click="deleteItem(item)" title="Visualizar toda la información de esta Parte">
+                <v-icon small @click="openVisor(item)" title="Visualizar toda la información de esta Parte">
                 mdi-magnify
                 </v-icon>
             </template>
@@ -72,25 +667,20 @@
 </template>
 
 <script>
-import UserService from "@/services/UserService";
+import PartService from "@/services/PartService";
 
 export default {
   data() {
     return {
-      snackbar: false,
-      snackbar_error: false,
-      text: "My timeout is set to 3000.",
-      timeout: 3000,
-      valid: true,
+      parts:[],
       dialog: false,
       search: "",
-      local_auth: process.env.VUE_APP_LOCAL_AUTHENTICATION,
       options: {
         itemsPerPage: 10,
       },
       loading: true,
       headers: [
-        { text: "Num. Parte", value: "numero_parte" },
+        { text: "Num. Parte", value: "numeroParte" },
         {
           text: "Foto",
           sortable: false,
@@ -100,61 +690,32 @@ export default {
         },
         { text: "Proyecto", value: "proyecto" },
         { text: "Descripción", value: "descripcion" },
-        { text: "Nivel Ingeniería", value: "nivel_ingenieria" },
-        { text: "Fecha Inicio", value: "fecha_inicio" },
-        { text: "Fecha Fin", value: "fecha_fin" },
+        { text: "Nivel Ingeniería", value: "nivelIngenieria" },
+        { text: "Fecha Inicio", value: "fechaInicioProyecto", width: '110px' },
+        { text: "Fecha Fin", value: "fechaFinProyecto", width: '110px' },
         { text: "Dias Disponibles", value: "dias_disponibles" },
         { text: "Estatus", value: "estatus" },
         /*{ text: "Volumen vendido", value: "volumen_vendido" },*/
         { text: "Acciones", value: "actions" },
       ],
-      lista_industrializacion: [
-        {"numero_parte": "10189018", "foto": "", "proyecto": "N/A", "descripcion":"EXCLUDER SEAL ", "nivel_ingenieria":"04488 (B)", "fecha_inicio":"21/09/2011", "fecha_fin":"Sin fecha de Cierre", "dias_disponibles": "No disponible", "estatus": "Activo", "volumen_vendido": "8"},
-        {"numero_parte": "10266638", "foto": "", "proyecto": "FORD CD4", "descripcion":"DUST SHELD", "nivel_ingenieria":"(A) 10557", "fecha_inicio":"21/09/2011", "fecha_fin":"Sin registro", "dias_disponibles": "No disponible", "estatus": "Activo", "volumen_vendido": "9"},
-        {"numero_parte": "10266638", "foto": "", "proyecto": "N/A", "descripcion":"DUSTSHIELD DEFLECTOR", "nivel_ingenieria":"11889(C2)", "fecha_inicio":"21/09/2011", "fecha_fin":"Sin registro", "dias_disponibles": "No disponible", "estatus": "VENCIDO", "volumen_vendido": "10"},
-        {"numero_parte": "326470", "foto": "", "proyecto": "NISSAN L32H&X11C", "descripcion":"DUTSHELD FOR TULIP.", "nivel_ingenieria":"20060721(C2)", "fecha_inicio":"21/09/2011", "fecha_fin":"Sin registro", "dias_disponibles": "No disponible", "estatus": "VENCIDO", "volumen_vendido": "11"},
-        {"numero_parte": "8383210617", "foto": "", "proyecto": "NISSAN L32H&X11C", "descripcion":"DEFLECTOR PARA TULIPAN", "nivel_ingenieria":"20060720(C2)", "fecha_inicio":"21/09/2011", "fecha_fin":"Sin registro", "dias_disponibles": "No disponible", "estatus": "VENCIDO", "volumen_vendido": "41"},
-        {"numero_parte": "8384210617", "foto": "", "proyecto": "NISSAN 'L32H' & 'XIIC0'", "descripcion":"DUTSHIELD FOR BEARING", "nivel_ingenieria":"11889(D2)", "fecha_inicio":"21/09/2011", "fecha_fin":"Sin registro", "dias_disponibles": "No disponible", "estatus": "VENCIDO", "volumen_vendido": "65"},
-        {"numero_parte": "8386210617", "foto": "", "proyecto": "NISSAN 'L32H' & 'XIIC0'", "descripcion":"DUTSHIELD FOR BEARING", "nivel_ingenieria":"11889 (D2)", "fecha_inicio":"21/09/2011", "fecha_fin":"Sin registro", "dias_disponibles": "No disponible", "estatus": "VENCIDO", "volumen_vendido": "98"},
-        {"numero_parte": "8387210617", "foto": "", "proyecto": "NISSAN 'L32H' & 'XIIC0'", "descripcion":"DUTSHIELD FOR TULIP LH MT", "nivel_ingenieria":"11889(D2)", "fecha_inicio":"21/09/2011", "fecha_fin":"31/10/2025", "dias_disponibles": "44", "estatus": "PROXIMO A VENCER", "volumen_vendido": "45"},
-        {"numero_parte": "8447210617", "foto": "", "proyecto": "FORD B410 4X4 REAR", "descripcion":"DUTSHIELD DEFLECTOR", "nivel_ingenieria":"2006-07-12 (D)", "fecha_inicio":"21/09/2011", "fecha_fin":"Sin registro", "dias_disponibles": "No disponible", "estatus": "VENCIDO", "volumen_vendido": "65"},
-        {"numero_parte": "8869210616", "foto": "", "proyecto": "VW TAYRON", "descripcion":"PXS CLOSURE CAP", "nivel_ingenieria":"(A ) 87504", "fecha_inicio":"21/09/2011", "fecha_fin":"01/12/2032", "dias_disponibles": "2632", "estatus": "Activo", "volumen_vendido": "43"}
-      ],
-      rules: {
-        required: (value) => !!value || "Campo Requerido",
-        administrator: (value) => {
-          return (
-            !this.userIds.includes(value) || "El ID de usuario ya existe"
-          );
-        },
-        email: value => {
-          return (
-            /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
-              value
-            ) || "El email debe ser válido"
-          );
-        },
-        emails: value => {
-          return !this.emails.includes(value) || "El email ya existe";
-        }
-      },
-      users: [],
-      sites: [],
-      roles: [],
-      siteFilter: null,
-      preselectedRoles: null,
-      editedIndex: -1,
-      preselectedSites: null,
+        headers_componentes: [
+            { text: "Especificacion de componente", value: "especificacion_componente" },
+            { text: "Tipo de proveedor", value: "tipo_proveedor" },
+            { text: "Nombre de proveedor", value: "nombre_proveedor" },
+            { text: "Código de identificación de componentes", value: "codigo_identificacion_componente" },
+            { text: "Cantidad de componentes por pieza", value: "cantidad_componentes_x_pieza" },
+            { text: "Acciones", value: "actions" },
+        ],
+        headers_ruta_fabricacion: [
+            { text: "Operacion", value: "operacion" },
+            { text: "No. de máquina", value: "n_maquinas" },
+            { text: "Tonelaje (Tn)", value: "tonelaje" },
+            { text: "Descripción", value: "descripcion" },
+            { text: "FPC", value: "fpc" },
+            { text: "Tiempo de ciclo", value: "tiempo_ciclo" },
+            { text: "Acciones", value: "actions" },
+        ],
       editedItem: {
-        name: null,
-        lastname: null,
-        surname: null,
-        email: null,
-        id_condumex: null,
-        active: null,
-        roles: null,
-      },
-      defaultItem: {
         name: null,
         lastname: null,
         surname: null,
@@ -166,154 +727,95 @@ export default {
     };
   },
   methods: {
-    getUsers() {
-      return UserService.getAllUsers()
-        .then((response) => {
-          this.users = response.data;
-          this.loading = false;
-        })
-        .catch((error) => {
-          this.loading = false;
-          if (
-            error.response.data.error &&
-            error.response.data.error.toUpperCase().includes("TOKEN")
-          ) {
-            this.$store.dispatch("tokenerror", error.response.data.error);
-          }
-        });
-    },
-    getRoles() {
-      return UserService.getAllRoles()
-        .then((response) => {
-          this.roles = response.data;         
-          this.loading = false;
-        })
-        .catch((error) => {
-          this.loading = false;
-          if (
-            error.response.data.error &&
-            error.response.data.error.toUpperCase().includes("TOKEN")
-          ) {
-            this.$store.dispatch("tokenerror", error.response.data.error);
-          }
-        });
-    },
     editItem(item) {
-      this.editedIndex = this.users.indexOf(item);
-      this.editedItem = Object.assign({}, item);
-      this.dialog = true;
+      this.$router.push({ name: 'Parte', params: { numeroParte: item.numeroParte } });
     },
-    close() {
-      this.dialog = false;
-      this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
-      });
-      this.$refs.form.reset();
+    openVisor(item) {
+        const dias_disponibles = this.calcularDiasDisponibles(item.fechaFinProyecto);
+
+        const itemModificado = { 
+            ...item,                  
+            dias_disponibles: dias_disponibles,
+            estatus: dias_disponibles >= 10 ? 'ACTIVO' : dias_disponibles > 0 && dias_disponibles < 10 ? 'PROXIMO A VENCER' : dias_disponibles === 0 ? 'VENCIDO' : 'N/A'
+        };
+
+        this.editedItem = itemModificado;
+        this.dialog = true;
     },
-    validate() {
-      this.valid = this.$refs.form.validate();
+    getParts() {
+      return PartService.getAllParts()
+        .then((response) => {
+          this.parts = response.data;
+          this.loading = false;
+        })
+        .catch((error) => {
+          this.loading = false;
+          if (
+            error.response.data.error &&
+            error.response.data.error.toUpperCase().includes("TOKEN")
+          ) {
+            this.$store.dispatch("tokenerror", error.response.data.error);
+          }
+        });
     },
-    save() {
-      this.validate();
-      if (this.valid) {
-        if (this.editedIndex > -1) {
-          UserService.updateUser(this.editedItem)
-            .then(() => {
-              this.loading = true;
-              this.close();
-              this.text = "El usuario ha sido actualizado exitosamente.";
-              this.snackbar = true;
-              this.getUsers();
-            })
-            .catch((error) => {
-              this.loading = false;
-              if (
-                error.response.data.error &&
-                error.response.data.error.toUpperCase().includes("TOKEN")
-              ) {
-                this.$store.dispatch("tokenerror", error.response.data.error);
-              }
-              this.snackbar_error = true;
-            });
-        } else {
-          UserService.createUser(this.editedItem)
-            .then(() => {
-              this.loading = true;
-              this.close();
-              this.text = "El Usuario ha sido creado exitosamente.";
-              this.snackbar = true;
-              this.getUsers();
-            })
-            .catch((error) => {
-              this.loading = false;
-              if (
-                error.response.data.error &&
-                error.response.data.error.toUpperCase().includes("TOKEN")
-              ) {
-                this.$store.dispatch("tokenerror", error.response.data.error);
-              }
-              this.snackbar_error = true;
-            });
-        }
-      }
-    }
+    calcularDiasDisponibles(fechaFin) {
+        if (!fechaFin) return '';
+        const hoy = new Date();
+        const fin = new Date(fechaFin);
+
+        hoy.setHours(0, 0, 0, 0);
+        fin.setHours(0, 0, 0, 0);
+
+        const diff = Math.ceil((fin - hoy) / (1000 * 60 * 60 * 24));
+        return diff >= 0 ? diff : 0;
+    },
   },
   computed: {
-    formTitle() {
-      return this.editedIndex === -1
-        ? "Nuevo Usuario"
-        : "Editar Usuario";
-    },
-    userIds() {
-      return this.users.map(
-        (user) => user.username
-      );
-    },
-    emails() {
-      return this.users.map(
-        user => user.email);
-    },
-    labelUserIds() {
-      return this.local_auth === 'true' ? "ID Usuario" : "ID Condumex";
-    },
-    sortedSites() {
-      this.sites.map((b) => {
-        b.site = b.active === 0 ? b.site + " (Inactivo)" : b.site;
-      });
-      return this.sites.slice().sort((a, b) => b.active - a.active);
-    },
-    activeSites() {
-      return this.sites
-        .filter((element) => element.active === 1)
-        .sort((a, b) => (a.site > b.site && 1) || -1);
-    },
-    validateSoporteRole() {
-      return this.$store.getters.getUser.role === "Soporte";
-    },
-    validateRHPlusRole() {
-      return this.$store.getters.getUser.role === "RH+";
-    },
-    filteredRoles() {
-      if(this.validateSoporteRole){
-      return this.roles;
-      }else{
-        return this.roles.filter((role) => role.role != "Soporte" && role.role != "RH+" );
-      }
-    },
-  },
+    processedParts(){
+        const hoy = new Date();
+        hoy.setHours(0, 0, 0, 0);
 
+        return this.parts.map(part => {
+            if (!part.fechaFinProyecto) {
+                return {
+                ...part,
+                dias_disponibles: 'N/A',
+                estatus: 'N/A'
+                };
+            }
+
+            const fechaFinProyecto = new Date(part.fechaFinProyecto);
+            fechaFinProyecto.setHours(0, 0, 0, 0);
+
+            const diffTime = fechaFinProyecto - hoy;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            return {
+                ...part,
+                dias_disponibles: diffDays >= 0 ? diffDays : 0,
+                estatus: diffDays >= 10 ? 'ACTIVO' : diffDays >= 0 && diffDays < 10 ? 'PROXIMO A VENCER' : 'VENCIDO'
+            };
+        });
+    }
+  },
   watch: {
     dialog(val) {
-      val || this.close();
+      if (val) {
+        this.$nextTick(() => {
+          const scrollDiv = this.$refs.scrollContainer;
+          if (scrollDiv) {
+            scrollDiv.scrollTop = 0;
+          }
+        });
+      }
+      //val || this.close();
     },
   },
   created() {
     this.axios.defaults.headers.common[
       "Authorization"
     ] = `Bearer ${this.$store.getters.getUser.token}`;
-    this.getUsers();
-    this.getRoles();
+    this.getParts();
   },
 };
 </script>
@@ -338,5 +840,9 @@ export default {
 
 .estatus-proximo {
   background-color: #FFA500; /* Rojo */
+}
+
+.estatus-NA {
+  background-color: #a9a9a9; /* Rojo */
 }
 </style>

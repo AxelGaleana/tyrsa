@@ -164,7 +164,17 @@ export default {
         this.loading = true;
         //Call LDAP Auth REST Service
         const user = { username: this.userid, password: this.passwd };
-        this.$store.dispatch("login", user);
+        this.$store.dispatch("login", user)
+          .then(() => {
+            // Login exitoso, redirigir a la vista principal
+            this.$router.push({ name: "Industrializacion" });
+          })
+          .catch(() => {
+            // Opcional: manejar errores si decides usar reject en el store
+          })
+          .finally(() => {
+            this.loading = false; // Para desactivar loading en cualquier caso
+        });
       }
     },
     ckeckLoadingStatus() {
