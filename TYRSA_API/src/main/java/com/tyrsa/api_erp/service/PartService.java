@@ -80,6 +80,9 @@ public class PartService {
         existente.setPiezasDeAjuste(updatedPart.getPiezasDeAjuste());
         existente.setCantidadEconomicaPedido(updatedPart.getCantidadEconomicaPedido());
 
+        existente.setComponentes(updatedPart.getComponentes());
+        existente.setRutas(updatedPart.getRutas());
+
         return partRepository.save(existente);
     }
 

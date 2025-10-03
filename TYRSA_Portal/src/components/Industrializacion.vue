@@ -216,18 +216,11 @@
                                   <v-data-table
                                   :headers="headers_componentes"
                                   :options.sync="options"
+                                  :items="editedItem.componentes"
                                   loading-text="Consultando información..."
                                   no-data-text="No se encontró información."
                                   :style="{ border: '1px solid #ccc', borderRadius: '4px',  backgroundColor: '#cce4d5' }"
                                   >
-                                  <template v-slot:item.actions="{ item }">
-                                      <v-icon small class="mr-2" @click="editItem(item)">
-                                      mdi-pencil
-                                      </v-icon>
-                                      <v-icon small @click="deleteItem(item)">
-                                      mdi-delete
-                                      </v-icon>
-                                  </template>
                                   </v-data-table>
                               </v-col>
                           </v-row>
@@ -568,19 +561,12 @@
                               <v-col cols="12">
                                   <v-data-table
                                   :headers="headers_ruta_fabricacion"
+                                  :items="editedItem.rutas"
                                   :options.sync="options"
                                   loading-text="Consultando información..."
                                   no-data-text="No se encontró información."
                                   :style="{ border: '1px solid #ccc', borderRadius: '4px',  backgroundColor: '#fff5f7' }"
                                   >
-                                  <template v-slot:item.actions="{ item }">
-                                      <v-icon small class="mr-2" @click="editItem(item)">
-                                      mdi-pencil
-                                      </v-icon>
-                                      <v-icon small @click="deleteItem(item)">
-                                      mdi-delete
-                                      </v-icon>
-                                  </template>
                                   </v-data-table>
                               </v-col>
                           </v-row>
@@ -699,21 +685,19 @@ export default {
         { text: "Acciones", value: "actions" },
       ],
         headers_componentes: [
-            { text: "Especificacion de componente", value: "especificacion_componente" },
-            { text: "Tipo de proveedor", value: "tipo_proveedor" },
-            { text: "Nombre de proveedor", value: "nombre_proveedor" },
-            { text: "Código de identificación de componentes", value: "codigo_identificacion_componente" },
-            { text: "Cantidad de componentes por pieza", value: "cantidad_componentes_x_pieza" },
-            { text: "Acciones", value: "actions" },
+            { text: "Especificacion de componente", value: "especificacionComponente" },
+            { text: "Tipo de proveedor", value: "tipoProveedor" },
+            { text: "Nombre de proveedor", value: "nombreProveedor" },
+            { text: "Código de identificación de componentes", value: "codigoIdentificacionComponente" },
+            { text: "Cantidad de componentes por pieza", value: "cantidadComponentesPorPieza" },
         ],
         headers_ruta_fabricacion: [
             { text: "Operacion", value: "operacion" },
-            { text: "No. de máquina", value: "n_maquinas" },
+            { text: "No. de máquina", value: "numeroMaquina" },
             { text: "Tonelaje (Tn)", value: "tonelaje" },
             { text: "Descripción", value: "descripcion" },
             { text: "FPC", value: "fpc" },
-            { text: "Tiempo de ciclo", value: "tiempo_ciclo" },
-            { text: "Acciones", value: "actions" },
+            { text: "Tiempo de ciclo", value: "tiempoCiclo" },
         ],
       editedItem: {
         name: null,
@@ -731,16 +715,24 @@ export default {
       this.$router.push({ name: 'Parte', params: { numeroParte: item.numeroParte } });
     },
     openVisor(item) {
-        const dias_disponibles = this.calcularDiasDisponibles(item.fechaFinProyecto);
+      const dias_disponibles = this.calcularDiasDisponibles(item.fechaFinProyecto);
 
-        const itemModificado = { 
-            ...item,                  
-            dias_disponibles: dias_disponibles,
-            estatus: dias_disponibles >= 10 ? 'ACTIVO' : dias_disponibles > 0 && dias_disponibles < 10 ? 'PROXIMO A VENCER' : dias_disponibles === 0 ? 'VENCIDO' : 'N/A'
-        };
+      const itemModificado = {
+        ...item,
+        componentes: item.componentes ? [...item.componentes] : [],
+        dias_disponibles: dias_disponibles,
+        estatus:
+          dias_disponibles >= 10
+            ? 'ACTIVO'
+            : dias_disponibles > 0
+            ? 'PROXIMO A VENCER'
+            : dias_disponibles === 0
+            ? 'VENCIDO'
+            : 'N/A',
+      };
 
-        this.editedItem = itemModificado;
-        this.dialog = true;
+      this.editedItem = itemModificado;
+      this.dialog = true;
     },
     getParts() {
       return PartService.getAllParts()

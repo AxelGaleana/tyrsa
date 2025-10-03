@@ -57,4 +57,6 @@ public class Part {
     private String tiempoAjustePorFechador;
     private String piezasDeAjuste;
     private String cantidadEconomicaPedido;
+    private Componente componentes[];
+    private RutaFabricacion rutas[];
 }

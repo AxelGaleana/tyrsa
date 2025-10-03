@@ -269,21 +269,100 @@
                     </v-row>
                     <v-divider class="my-4"></v-divider>
                     <v-subheader class="text-h6">Componentes</v-subheader>
+                        <v-dialog v-model="dialogComponente" max-width="400px">
+                        <template v-slot:activator="{ on }">
+                            <v-layout align-end justify-end>
+                            <v-btn color="primary" dark class="mb-2" v-on="on">
+                                Componente<v-icon right color="white">add</v-icon>
+                            </v-btn>
+                            </v-layout>
+                        </template>
+                        <v-form ref="formComponente" lazy-validation v-model="valid">
+                            <v-card>
+                            <v-card-title>
+                                <span class="heading">{{ componenteTitle + " componente" }}</span>
+                            </v-card-title>
+                            <v-card-text>
+                                <v-container>
+                                <v-row>
+                                    <v-col cols="12">
+                                    <v-text-field
+                                        v-model="editedComponent.especificacionComponente"
+                                        label= "Especificacion de componente"
+                                        :rules="[rules.required]"
+                                        required
+                                        autocomplete="off"
+                                        maxLength="255"
+                                    ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12">
+                                    <v-text-field
+                                        v-model="editedComponent.tipoProveedor"
+                                        label="Tipo proveedor"
+                                        :rules="[v => !!v || 'Campo requerido']"
+                                        required
+                                        autocomplete="off"
+                                        maxLength="50"
+                                    ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12">
+                                        <v-text-field
+                                            v-model="editedComponent.nombreProveedor"
+                                            label="Nombre de proveedor"
+                                            :rules="[rules.required]"
+                                            required
+                                            autocomplete="off"
+                                            maxLength = "50"
+                                        ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12">
+                                        <v-text-field
+                                            v-model="editedComponent.codigoIdentificacionComponente"
+                                            label="Código de identificación de componentes"
+                                            :rules="[rules.required]"
+                                            required
+                                            autocomplete="off"
+                                            maxLength = "50"
+                                        ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12">
+                                        <v-text-field
+                                            v-model="editedComponent.cantidadComponentesPorPieza"
+                                            label="Cantidad de componentes por pieza"
+                                            :rules="[rules.required]"
+                                            required
+                                            autocomplete="off"
+                                            maxLength = "50"
+                                        ></v-text-field>
+                                    </v-col>
+                                </v-row>
+                                </v-container>
+                            </v-card-text>
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn color="blue darken-1" text @click="closeComponente"> Cancelar </v-btn>
+                                <v-btn color="blue darken-1" :disabled="!valid" text @click="saveComponente">
+                                Guardar
+                                </v-btn>
+                            </v-card-actions>
+                            </v-card>
+                        </v-form>
+                        </v-dialog>
                     <v-row>
                         <v-col cols="12">
                             <v-data-table
                             :headers="headers_componentes"
-                            :items="componentes"
                             :options.sync="options"
+                            :items="editedItem.componentes"
                             loading-text="Consultando información..."
                             no-data-text="No se encontró información."
                             :style="{ border: '1px solid #ccc', borderRadius: '4px',  backgroundColor: '#cce4d5' }"
                             >
                             <template v-slot:item.actions="{ item }">
-                                <v-icon small class="mr-2" @click="editItem(item)">
+                                <v-icon small class="mr-2" @click="editComponente(item)">
                                 mdi-pencil
                                 </v-icon>
-                                <v-icon small @click="deleteItem(item)">
+                                <v-icon small @click="deleteComponent(item)">
                                 mdi-delete
                                 </v-icon>
                             </template>
@@ -623,21 +702,110 @@
                     Ruta de fabricación
                 </v-card-title>
                 <v-card-text>
+                        <v-dialog v-model="dialogRuta" max-width="400px">
+                        <template v-slot:activator="{ on }">
+                            <v-layout align-end justify-end>
+                            <v-btn color="primary" dark class="mb-2" v-on="on">
+                                Ruta<v-icon right color="white">add</v-icon>
+                            </v-btn>
+                            </v-layout>
+                        </template>
+                        <v-form ref="formRuta" lazy-validation v-model="valid">
+                            <v-card>
+                            <v-card-title>
+                                <span class="heading">{{ rutaTitle + " ruta de fabricación" }}</span>
+                            </v-card-title>
+                            <v-card-text>
+                                <v-container>
+                                <v-row>
+                                    <v-col cols="12">
+                                    <v-text-field
+                                        v-model="editedRuta.operacion"
+                                        label= "Operacion"
+                                        :rules="[rules.required]"
+                                        required
+                                        autocomplete="off"
+                                        maxLength="255"
+                                    ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12">
+                                    <v-text-field
+                                        v-model="editedRuta.numeroMaquina"
+                                        label="No. de máquina"
+                                        :rules="[v => !!v || 'Campo requerido']"
+                                        required
+                                        autocomplete="off"
+                                        maxLength="50"
+                                    ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12">
+                                        <v-text-field
+                                            v-model="editedRuta.tonelaje"
+                                            label="Tonelaje (Tn)"
+                                            :rules="[rules.required]"
+                                            required
+                                            autocomplete="off"
+                                            maxLength = "50"
+                                        ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12">
+                                        <v-text-field
+                                            v-model="editedRuta.descripcion"
+                                            label="Descripción"
+                                            :rules="[rules.required]"
+                                            required
+                                            autocomplete="off"
+                                            maxLength = "50"
+                                        ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12">
+                                        <v-text-field
+                                            v-model="editedRuta.fpc"
+                                            label="FPC"
+                                            :rules="[rules.required]"
+                                            required
+                                            autocomplete="off"
+                                            maxLength = "50"
+                                        ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12">
+                                        <v-text-field
+                                            v-model="editedRuta.tiempoCiclo"
+                                            label="Tiempo de ciclo"
+                                            :rules="[rules.required]"
+                                            required
+                                            autocomplete="off"
+                                            maxLength = "50"
+                                        ></v-text-field>
+                                    </v-col>
+                                </v-row>
+                                </v-container>
+                            </v-card-text>
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn color="blue darken-1" text @click="closeRuta"> Cancelar </v-btn>
+                                <v-btn color="blue darken-1" :disabled="!valid" text @click="saveRuta">
+                                Guardar
+                                </v-btn>
+                            </v-card-actions>
+                            </v-card>
+                        </v-form>
+                        </v-dialog>
                     <v-row>
                         <v-col cols="12">
                             <v-data-table
                             :headers="headers_ruta_fabricacion"
-                            :items="ruta_fabricacion"
+                            :items="editedItem.rutas"
                             :options.sync="options"
                             loading-text="Consultando información..."
                             no-data-text="No se encontró información."
                             :style="{ border: '1px solid #ccc', borderRadius: '4px',  backgroundColor: '#fff5f7' }"
                             >
                             <template v-slot:item.actions="{ item }">
-                                <v-icon small class="mr-2" @click="editItem(item)">
+                                <v-icon small class="mr-2" @click="editRuta(item)">
                                 mdi-pencil
                                 </v-icon>
-                                <v-icon small @click="deleteItem(item)">
+                                <v-icon small @click="deleteRuta(item)">
                                 mdi-delete
                                 </v-icon>
                             </template>
@@ -666,6 +834,8 @@ import PartService from "@/services/PartService";
 export default {
   data() {
     return {
+        dialogComponente: false,
+        dialogRuta: false,
         parts: [],
         loading: false,
         valid: true,
@@ -675,23 +845,22 @@ export default {
         timeout: 3000,
         menuinicioproyecto: false,
         menufinproyecto: false,
-        componentes: [{"especificacion_componente":"Componente 1", "tipo_proveedor":"tipo_proveedor", "nombre_proveedor":"nombre_proveedor", "codigo_identificacion_componente":"codigo_identificacion_componente", "cantidad_componentes_x_pieza":"cantidad_componentes_x_pieza"}, {"especificacion_componente":"Componente 2", "tipo_proveedor":"tipo_proveedor", "nombre_proveedor":"nombre_proveedor", "codigo_identificacion_componente":"codigo_identificacion_componente", "cantidad_componentes_x_pieza":"cantidad_componentes_x_pieza"}],
         headers_componentes: [
-            { text: "Especificacion de componente", value: "especificacion_componente" },
-            { text: "Tipo de proveedor", value: "tipo_proveedor" },
-            { text: "Nombre de proveedor", value: "nombre_proveedor" },
-            { text: "Código de identificación de componentes", value: "codigo_identificacion_componente" },
-            { text: "Cantidad de componentes por pieza", value: "cantidad_componentes_x_pieza" },
+            { text: "Especificacion de componente", value: "especificacionComponente" },
+            { text: "Tipo de proveedor", value: "tipoProveedor" },
+            { text: "Nombre de proveedor", value: "nombreProveedor" },
+            { text: "Código de identificación de componentes", value: "codigoIdentificacionComponente" },
+            { text: "Cantidad de componentes por pieza", value: "cantidadComponentesPorPieza" },
             { text: "Acciones", value: "actions" },
         ],
         ruta_fabricacion: [{"operacion":"1", "n_maquinas":"5", "tonelaje":"1", "descripcion":"Ejemplo descripcion", "fpc":"2", "tiempo_ciclo":"50"}, {"operacion":"2", "n_maquinas":"8", "tonelaje":"1", "descripcion":"Ejemplo descripcion 2", "fpc":"3", "tiempo_ciclo":"80"}],
         headers_ruta_fabricacion: [
             { text: "Operacion", value: "operacion" },
-            { text: "No. de máquina", value: "n_maquinas" },
+            { text: "No. de máquina", value: "numeroMaquina" },
             { text: "Tonelaje (Tn)", value: "tonelaje" },
             { text: "Descripción", value: "descripcion" },
             { text: "FPC", value: "fpc" },
-            { text: "Tiempo de ciclo", value: "tiempo_ciclo" },
+            { text: "Tiempo de ciclo", value: "tiempoCiclo" },
             { text: "Acciones", value: "actions" },
         ],
         editedIndex: 'nueva',
@@ -701,8 +870,13 @@ export default {
             descripcion: null,
             fechaInicioProyecto: null,
             fechaFinProyecto: null,
+            componentes: [],
+            rutas: []
         },
+        editedComponent: {},
+        editedRuta: {},
         defaultItem: {
+            id: null,
             numeroParte: null,
             proyecto: null,
             descripcion: null,
@@ -723,6 +897,80 @@ export default {
     };
   },
   methods: {
+    editComponente(item) {
+        this.editedComponent = { ...item }
+        this.dialogComponente = true;
+        //this.editedComponentIndex = index;
+    },
+    editRuta(item) {
+        this.editedRuta = { ...item }
+        this.dialogRuta = true;
+        //this.editedComponentIndex = index;
+    },
+    closeComponente() {
+      this.dialogComponente = false;
+      this.$nextTick(() => {
+        this.editedComponent = { ...this.defaultItem }
+        //this.editedComponentIndex = -1;
+      });
+      this.$refs.formComponente.resetValidation();
+    },
+    closeRuta() {
+      this.dialogRuta = false;
+      this.$nextTick(() => {
+        this.editedRuta = { ...this.defaultItem }
+        //this.editedComponentIndex = -1;
+      });
+      this.$refs.formRuta.resetValidation();
+    },
+    saveComponente() {
+        if (!this.editedItem.componentes) {
+            this.editedItem.componentes = [];
+        }
+
+        // Si es nuevo
+        if (!this.editedComponent.id) {
+            this.editedComponent.id = crypto.randomUUID();
+            this.editedItem.componentes.push(this.editedComponent);
+        } else {
+            // Si es edición
+            const index = this.editedItem.componentes.findIndex(c => c.id === this.editedComponent.id);
+            if (index !== -1) {
+                this.editedItem.componentes.splice(index, 1, this.editedComponent);
+            }
+        }
+        this.closeComponente();
+    },
+    saveRuta() {
+        if (!this.editedItem.rutas) {
+            this.editedItem.rutas = [];
+        }
+
+        // Si es nuevo
+        if (!this.editedRuta.id) {
+            this.editedRuta.id = crypto.randomUUID();
+            this.editedItem.rutas.push(this.editedRuta);
+        } else {
+            // Si es edición
+            const index = this.editedItem.rutas.findIndex(c => c.id === this.editedRuta.id);
+            if (index !== -1) {
+                this.editedItem.rutas.splice(index, 1, this.editedRuta);
+            }
+        }
+        this.closeRuta();
+    },
+    deleteComponent(item) {
+        const index = this.editedItem.componentes.findIndex(c => c.id === item.id);
+        if (index !== -1) {
+            this.editedItem.componentes.splice(index, 1);
+        }
+    },
+    deleteRuta(item) {
+        const index = this.editedItem.rutas.findIndex(c => c.id === item.id);
+        if (index !== -1) {
+            this.editedItem.rutas.splice(index, 1);
+        }
+    },
     getAllParts(){
       return PartService.getAllParts()
         .then((response) => {
@@ -747,6 +995,8 @@ export default {
             PartService.getPart(numeroParte)
             .then((response) => {
                 console.log("response.data: ", response.data);
+                if (!response.data.componentes) response.data.componentes = [];
+                if (!response.data.rutas) response.data.rutas = [];
                 this.editedItem = response.data;
             })
             .catch((error) => {
@@ -819,6 +1069,16 @@ export default {
         ? "Nueva Parte"
         : "Editar Parte";
     },
+    componenteTitle() {
+      return !this.editedComponent.id
+        ? "Nuevo"
+        : "Editar";
+    },
+    rutaTitle() {
+      return !this.editedRuta.id
+        ? "Nueva"
+        : "Editar";
+    },
     numerosParte() {
       return this.parts.map(
         (part) => part.numeroParte
@@ -843,11 +1103,6 @@ export default {
     estatus() {
         return this.diasDisponibles >= 10 ? 'ACTIVO' : this.diasDisponibles > 0 && this.diasDisponibles < 10 ? 'PROXIMO A VENCER' : this.diasDisponibles === 0 ? 'VENCIDO' : 'N/A'
     }
-  },
-  watch: {
-    dialog(val) {
-      val || this.close();
-    },
   },
   created() {
     this.axios.defaults.headers.common[
