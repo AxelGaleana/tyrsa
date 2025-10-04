@@ -58,13 +58,14 @@
 
                           <!-- Columna derecha: imagen -->
                           <v-col cols="4" class="d-flex align-center justify-center">
-                              <v-img
-                              :src="require('@/assets/parte_ejemplo.png')"
-                              max-width="180"
-                              aspect-ratio="1"
-                              contain
-                              class="mx-auto"
-                              ></v-img>
+                            <v-img
+                            :src="editedItem.fileName ? require('@/assets/parte_ejemplo.png') : require('@/assets/placeholder-image.png')"
+                            max-width="180"
+                            aspect-ratio="1"
+                            cover
+                            class="mb-3"
+                            :style="editedItem.fileName ? 'border: 2px solid #E0E0E0; border-radius: 12px;' : 'border-radius: 12px;'"
+                            ></v-img>
                           </v-col>
                           </v-row>
                       </v-card-text>
@@ -616,12 +617,14 @@
           loading-text="Consultando información..."
           no-data-text="No se encontró información."
         >
-            <template v-slot:item.foto="{ /*item*/ }">
+            <template v-slot:item.foto="{ item }">
                 <v-img
-                :src="require('@/assets/parte_ejemplo.png')"
-                contain
+                :src="item.fileName ? require('@/assets/parte_ejemplo.png') : require('@/assets/placeholder-image.png')"
+                cover
                 max-height="40"
-                max-width="60"
+                max-width="40"
+                class="mb-3"
+                style="border-radius: 12px;"
                 ></v-img>
             </template>
             

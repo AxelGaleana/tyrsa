@@ -58,7 +58,7 @@
                             v-model="editedItem.descripcion"
                             ></v-text-field>
                         </v-col>
-                        <v-col cols="6">
+                        <v-col cols="3">
                             <v-text-field
                             label="Nivel de ingeniería"
                             autocomplete="off"
@@ -67,17 +67,29 @@
                             v-model="editedItem.nivelIngenieria"
                             ></v-text-field>
                         </v-col>
+                        <v-col cols="3">
+                        <v-file-input
+                            accept="image/jpeg, image/png"
+                            :label="this.editedIndex === 'nueva' ? 'Seleccionar imagen' : 'Actualizar imagen'"
+                            prepend-icon="mdi-image"
+                            @change="handleImageUpload"
+                            outlined
+                            :hint="this.editedIndex === 'nueva' ? 'Seleccionar imagen' : 'Actualizar imagen'"
+                            persistent-hint
+                            ></v-file-input>
+                        </v-col>
                         </v-row>
                     </v-col>
 
                     <!-- Columna derecha: imagen -->
                     <v-col cols="4" class="d-flex align-center justify-center">
                         <v-img
-                        :src="require('@/assets/parte_ejemplo.png')"
+                        :src="editedItem.fileName ? require('@/assets/parte_ejemplo.png') : require('@/assets/placeholder-image.png')"
                         max-width="180"
                         aspect-ratio="1"
-                        contain
-                        class="mx-auto"
+                        cover
+                        class="mb-3"
+                        :style="editedItem.fileName ? 'border: 2px solid #E0E0E0; border-radius: 12px;' : 'border-radius: 12px;'"
                         ></v-img>
                     </v-col>
                     </v-row>
@@ -277,7 +289,7 @@
                             </v-btn>
                             </v-layout>
                         </template>
-                        <v-form ref="formComponente" lazy-validation v-model="valid">
+                        <v-form ref="formComponente" lazy-validation v-model="validComponente">
                             <v-card>
                             <v-card-title>
                                 <span class="heading">{{ componenteTitle + " componente" }}</span>
@@ -341,7 +353,7 @@
                             <v-card-actions>
                                 <v-spacer></v-spacer>
                                 <v-btn color="blue darken-1" text @click="closeComponente"> Cancelar </v-btn>
-                                <v-btn color="blue darken-1" :disabled="!valid" text @click="saveComponente">
+                                <v-btn color="blue darken-1" :disabled="!validComponente" text @click="saveComponente">
                                 Guardar
                                 </v-btn>
                             </v-card-actions>
@@ -710,7 +722,7 @@
                             </v-btn>
                             </v-layout>
                         </template>
-                        <v-form ref="formRuta" lazy-validation v-model="valid">
+                        <v-form ref="formRuta" lazy-validation v-model="validRuta">
                             <v-card>
                             <v-card-title>
                                 <span class="heading">{{ rutaTitle + " ruta de fabricación" }}</span>
@@ -784,7 +796,7 @@
                             <v-card-actions>
                                 <v-spacer></v-spacer>
                                 <v-btn color="blue darken-1" text @click="closeRuta"> Cancelar </v-btn>
-                                <v-btn color="blue darken-1" :disabled="!valid" text @click="saveRuta">
+                                <v-btn color="blue darken-1" :disabled="!validRuta" text @click="saveRuta">
                                 Guardar
                                 </v-btn>
                             </v-card-actions>
@@ -834,11 +846,14 @@ import PartService from "@/services/PartService";
 export default {
   data() {
     return {
+        imageFile: null,
         dialogComponente: false,
         dialogRuta: false,
         parts: [],
         loading: false,
         valid: true,
+        validComponente: true,
+        validRuta: true,
         snackbar: false,
         snackbar_error: false,
         text: "My timeout is set to 3000.",
@@ -897,6 +912,19 @@ export default {
     };
   },
   methods: {
+    validateComponente() {
+      this.validComponente = this.$refs.formComponente.validate();
+    },
+    validateRuta() {
+      this.validRuta = this.$refs.formRuta.validate();
+    },
+    handleImageUpload(file) {
+        if (file) {
+            this.imageFile = file;
+        } else {
+            this.imageFile = null;
+        }
+    },
     editComponente(item) {
         this.editedComponent = { ...item }
         this.dialogComponente = true;
@@ -924,40 +952,46 @@ export default {
       this.$refs.formRuta.resetValidation();
     },
     saveComponente() {
-        if (!this.editedItem.componentes) {
-            this.editedItem.componentes = [];
-        }
-
-        // Si es nuevo
-        if (!this.editedComponent.id) {
-            this.editedComponent.id = crypto.randomUUID();
-            this.editedItem.componentes.push(this.editedComponent);
-        } else {
-            // Si es edición
-            const index = this.editedItem.componentes.findIndex(c => c.id === this.editedComponent.id);
-            if (index !== -1) {
-                this.editedItem.componentes.splice(index, 1, this.editedComponent);
+        this.validateComponente()
+        if (this.validComponente){
+            if (!this.editedItem.componentes) {
+                this.editedItem.componentes = [];
             }
+
+            // Si es nuevo
+            if (!this.editedComponent.id) {
+                this.editedComponent.id = crypto.randomUUID();
+                this.editedItem.componentes.push(this.editedComponent);
+            } else {
+                // Si es edición
+                const index = this.editedItem.componentes.findIndex(c => c.id === this.editedComponent.id);
+                if (index !== -1) {
+                    this.editedItem.componentes.splice(index, 1, this.editedComponent);
+                }
+            }
+            this.closeComponente();
         }
-        this.closeComponente();
     },
     saveRuta() {
-        if (!this.editedItem.rutas) {
-            this.editedItem.rutas = [];
-        }
-
-        // Si es nuevo
-        if (!this.editedRuta.id) {
-            this.editedRuta.id = crypto.randomUUID();
-            this.editedItem.rutas.push(this.editedRuta);
-        } else {
-            // Si es edición
-            const index = this.editedItem.rutas.findIndex(c => c.id === this.editedRuta.id);
-            if (index !== -1) {
-                this.editedItem.rutas.splice(index, 1, this.editedRuta);
+        this.validateRuta()
+        if (this.validRuta){
+            if (!this.editedItem.rutas) {
+                this.editedItem.rutas = [];
             }
+
+            // Si es nuevo
+            if (!this.editedRuta.id) {
+                this.editedRuta.id = crypto.randomUUID();
+                this.editedItem.rutas.push(this.editedRuta);
+            } else {
+                // Si es edición
+                const index = this.editedItem.rutas.findIndex(c => c.id === this.editedRuta.id);
+                if (index !== -1) {
+                    this.editedItem.rutas.splice(index, 1, this.editedRuta);
+                }
+            }
+            this.closeRuta();
         }
-        this.closeRuta();
     },
     deleteComponent(item) {
         const index = this.editedItem.componentes.findIndex(c => c.id === item.id);
@@ -1016,7 +1050,8 @@ export default {
       if (this.valid) {
         this.loading = true;
         if (this.editedIndex !== 'nueva') {
-          PartService.updatePart(this.editedItem)
+            console.log('Imagen a enviar:', this.imageFile);
+          PartService.updatePart(this.editedItem, this.imageFile)
             .then(() => {
               this.loading = false;
               this.text = "La Parte ha sido editada exitosamente.";
@@ -1038,26 +1073,25 @@ export default {
               this.snackbar_error = true;
             });
         } else {
-          PartService.createPart(this.editedItem)
+            PartService.createPart(this.editedItem, this.imageFile)
             .then(() => {
-              this.loading = false;
-              this.text = "La nueva Parte ha sido creada exitosamente.";
-              this.snackbar = true;
+                this.loading = false;
+                this.text = "La nueva Parte ha sido creada exitosamente.";
+                this.snackbar = true;
 
-                // Esperar 2 segundos y luego redirigir a /industrializacion
                 setTimeout(() => {
                 this.$router.push("/industrializacion");
                 }, 2000);
             })
             .catch((error) => {
-              this.loading = false;
-              if (
+                this.loading = false;
+                if (
                 error.response.data.error &&
                 error.response.data.error.toUpperCase().includes("TOKEN")
-              ) {
+                ) {
                 this.$store.dispatch("tokenerror", error.response.data.error);
-              }
-              this.snackbar_error = true;
+                }
+                this.snackbar_error = true;
             });
         }
       }

@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.MediaType;
 
 @RestController
 @RequestMapping("/parts")
@@ -17,11 +19,13 @@ public class PartController {
     @Autowired
     private PartService partService;
 
-    @PostMapping
-    public ResponseEntity<?> createPart(@RequestBody Part partRequest) {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> createPart(
+            @RequestPart("part") Part partRequest,
+            @RequestPart(value = "image", required = false) MultipartFile imageFile) {
+
         try {
-            Part createdPart = partService.createPart(partRequest);
-            
+            Part createdPart = partService.createPart(partRequest, imageFile);
             return new ResponseEntity<>(createdPart, HttpStatus.CREATED);
         } catch (IllegalStateException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
@@ -32,12 +36,13 @@ public class PartController {
         }
     }
 
-    @PutMapping("/{numeroParte}")
+    @PutMapping(value = "/{numeroParte}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updatePartByNumeroParte(
             @PathVariable String numeroParte,
-            @RequestBody Part partRequest) {
+            @RequestPart("part") Part partRequest,
+            @RequestPart(value = "image", required = false) MultipartFile imageFile) {
         try {
-            Part updatedPart = partService.updatePartByNumeroParte(numeroParte, partRequest);
+            Part updatedPart = partService.updatePartByNumeroParte(numeroParte, partRequest, imageFile);
             return new ResponseEntity<>(updatedPart, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);

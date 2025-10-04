@@ -59,4 +59,5 @@ public class Part {
     private String cantidadEconomicaPedido;
     private Componente componentes[];
     private RutaFabricacion rutas[];
+    private String fileName;
 }
