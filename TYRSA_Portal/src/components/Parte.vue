@@ -84,7 +84,8 @@
                     <!-- Columna derecha: imagen -->
                     <v-col cols="4" class="d-flex align-center justify-center">
                         <v-img
-                        :src="editedItem.fileName ? require('@/assets/parte_ejemplo.png') : require('@/assets/placeholder-image.png')"
+                        :src="getImageUrl(editedItem.fileName)"
+                        @error="onImgError($event)"
                         max-width="180"
                         aspect-ratio="1"
                         cover
@@ -354,7 +355,7 @@
                                 <v-spacer></v-spacer>
                                 <v-btn color="blue darken-1" text @click="closeComponente"> Cancelar </v-btn>
                                 <v-btn color="blue darken-1" :disabled="!validComponente" text @click="saveComponente">
-                                Guardar
+                                Agregar
                                 </v-btn>
                             </v-card-actions>
                             </v-card>
@@ -797,7 +798,7 @@
                                 <v-spacer></v-spacer>
                                 <v-btn color="blue darken-1" text @click="closeRuta"> Cancelar </v-btn>
                                 <v-btn color="blue darken-1" :disabled="!validRuta" text @click="saveRuta">
-                                Guardar
+                                Agregar
                                 </v-btn>
                             </v-card-actions>
                             </v-card>
@@ -846,6 +847,7 @@ import PartService from "@/services/PartService";
 export default {
   data() {
     return {
+        defaultImage: require('@/assets/placeholder-image.png'),
         imageFile: null,
         dialogComponente: false,
         dialogRuta: false,
@@ -912,6 +914,17 @@ export default {
     };
   },
   methods: {
+    getImageUrl(fileName) {
+      if (fileName) {
+        const timestamp = new Date().getTime();
+        return `${process.env.VUE_APP_HUB_PHOTOS_BASEURL}/tyrsa_foto_folder/${fileName}?v=${timestamp}`;
+      } else {
+        return this.defaultImage;
+      }
+    },
+    onImgError(event) {
+      event.target.src = this.defaultImage;
+    },
     validateComponente() {
       this.validComponente = this.$refs.formComponente.validate();
     },
@@ -962,11 +975,15 @@ export default {
             if (!this.editedComponent.id) {
                 this.editedComponent.id = crypto.randomUUID();
                 this.editedItem.componentes.push(this.editedComponent);
+                this.text = "El nuevo componente ha sido agregado a la lista.";
+                this.snackbar = true;
             } else {
                 // Si es edición
                 const index = this.editedItem.componentes.findIndex(c => c.id === this.editedComponent.id);
                 if (index !== -1) {
                     this.editedItem.componentes.splice(index, 1, this.editedComponent);
+                    this.text = "El componente ha sido actualizado.";
+                    this.snackbar = true;
                 }
             }
             this.closeComponente();
@@ -983,11 +1000,15 @@ export default {
             if (!this.editedRuta.id) {
                 this.editedRuta.id = crypto.randomUUID();
                 this.editedItem.rutas.push(this.editedRuta);
+                this.text = "La ruta de fabricación ha sido agregado a la lista.";
+                this.snackbar = true;
             } else {
                 // Si es edición
                 const index = this.editedItem.rutas.findIndex(c => c.id === this.editedRuta.id);
                 if (index !== -1) {
                     this.editedItem.rutas.splice(index, 1, this.editedRuta);
+                    this.text = "La ruta de fabricación ha sido actualizada.";
+                    this.snackbar = true;
                 }
             }
             this.closeRuta();

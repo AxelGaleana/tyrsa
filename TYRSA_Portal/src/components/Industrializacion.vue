@@ -59,7 +59,8 @@
                           <!-- Columna derecha: imagen -->
                           <v-col cols="4" class="d-flex align-center justify-center">
                             <v-img
-                            :src="editedItem.fileName ? require('@/assets/parte_ejemplo.png') : require('@/assets/placeholder-image.png')"
+                            :src="getImageUrl(editedItem.fileName)"
+                            @error="onImgError($event)"
                             max-width="180"
                             aspect-ratio="1"
                             cover
@@ -617,9 +618,10 @@
           loading-text="Consultando información..."
           no-data-text="No se encontró información."
         >
-            <template v-slot:item.foto="{ item }">
+            <template v-slot:item.fileName="{ item }">
                 <v-img
-                :src="item.fileName ? require('@/assets/parte_ejemplo.png') : require('@/assets/placeholder-image.png')"
+                :src="getThumbUrl(item.fileName)"
+                @error="onImgError($event)"
                 cover
                 max-height="40"
                 max-width="40"
@@ -661,6 +663,7 @@ import PartService from "@/services/PartService";
 export default {
   data() {
     return {
+      defaultImage: require('@/assets/placeholder-image.png'),
       parts:[],
       dialog: false,
       search: "",
@@ -673,7 +676,7 @@ export default {
         {
           text: "Foto",
           sortable: false,
-          value: "foto",
+          value: "fileName",
           align: "center",
           width: "10px"
         },
@@ -714,6 +717,25 @@ export default {
     };
   },
   methods: {
+    getThumbUrl(fileName) {
+      if (fileName) {
+        const timestamp = new Date().getTime();
+        return `${process.env.VUE_APP_HUB_PHOTOS_BASEURL}/tyrsa_foto_folder/thumbs/${fileName}?v=${timestamp}`;
+      } else {
+        return this.defaultImage;
+      }
+    },
+    getImageUrl(fileName) {
+      if (fileName) {
+        const timestamp = new Date().getTime();
+        return `${process.env.VUE_APP_HUB_PHOTOS_BASEURL}/tyrsa_foto_folder/${fileName}?v=${timestamp}`;
+      } else {
+        return this.defaultImage;
+      }
+    },
+    onImgError(event) {
+      event.target.src = this.defaultImage;
+    },
     editItem(item) {
       this.$router.push({ name: 'Parte', params: { numeroParte: item.numeroParte } });
     },
@@ -725,7 +747,7 @@ export default {
         componentes: item.componentes ? [...item.componentes] : [],
         dias_disponibles: dias_disponibles,
         estatus:
-          dias_disponibles >= 10
+          dias_disponibles >= 183
             ? 'ACTIVO'
             : dias_disponibles > 0
             ? 'PROXIMO A VENCER'

@@ -3,7 +3,7 @@
 # ========================
 TYRSA_Portal/node_modules/
 TYRSA_Portal/dist/
-TYRSA_Portal/.env*
+#TYRSA_Portal/.env
 TYRSA_Portal/npm-debug.log*
 TYRSA_Portal/yarn-debug.log*
 TYRSA_Portal/yarn-error.log*
@@ -47,5 +47,5 @@ TYRSA_API/.vscode/
 Thumbs.db
 
 # Env vars
-*.env
-.env.*
+#*.env
+#.env.*
