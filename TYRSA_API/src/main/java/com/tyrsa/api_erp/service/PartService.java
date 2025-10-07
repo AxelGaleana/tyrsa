@@ -124,13 +124,13 @@ public class PartService {
         existente.setEspesorMaterialMaximaTolerancia(updatedPart.getEspesorMaterialMaximaTolerancia());
 
         existente.setCoeficienteMaterial(updatedPart.getCoeficienteMaterial());
-        existente.setPesoBlank(updatedPart.getPesoBlank());
+        //existente.setPesoBlank(updatedPart.getPesoBlank());
         existente.setPesoBlankMax(updatedPart.getPesoBlankMax());
         existente.setPesoPiezaTroquelado(updatedPart.getPesoPiezaTroquelado());
         existente.setPesoPiezaComponente(updatedPart.getPesoPiezaComponente());
         existente.setFactorConsumo(updatedPart.getFactorConsumo());
-        existente.setFactorAprovechamiento(updatedPart.getFactorAprovechamiento());
-        existente.setMerma(updatedPart.getMerma());
+        //existente.setFactorAprovechamiento(updatedPart.getFactorAprovechamiento());
+        //existente.setMerma(updatedPart.getMerma());
 
         existente.setCodigoEmpaque(updatedPart.getCodigoEmpaque());
         existente.setFactorConsumoEmpaquePieza(updatedPart.getFactorConsumoEmpaquePieza());

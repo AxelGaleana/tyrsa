@@ -33,13 +33,13 @@ public class Part {
     private String espesor;
     private String espesorMaterialMaximaTolerancia;
     private String coeficienteMaterial;
-    private String pesoBlank;
+    //private String pesoBlank;
     private String pesoBlankMax;
     private String pesoPiezaTroquelado;
     private String pesoPiezaComponente;
     private String factorConsumo;
-    private String factorAprovechamiento;
-    private String merma;
+    //private String factorAprovechamiento;
+    //private String merma;
     private String codigoEmpaque;
     private String factorConsumoEmpaquePieza;
     private String piezasPallet;

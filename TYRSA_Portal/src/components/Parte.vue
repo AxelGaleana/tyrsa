@@ -464,7 +464,8 @@
                             autocomplete="off"
                             maxLength="255"
                             outlined
-                            v-model="editedItem.pesoBlank"
+                            v-model="pesoBlank"
+                            disabled
                             ></v-text-field>
                         </v-col>
                         <v-col cols="3">
@@ -515,7 +516,8 @@
                             maxLength="255"
                             outlined
                             title="Factor de aprovechamiento"
-                            v-model="editedItem.factorAprovechamiento"
+                            v-model="factorAprovechamiento"
+                            disabled
                             ></v-text-field>
                         </v-col>
                         <v-col cols="3">
@@ -524,7 +526,8 @@
                             autocomplete="off"
                             maxLength="255"
                             outlined
-                            v-model="editedItem.merma"
+                            v-model="merma"
+                            disabled
                             ></v-text-field>
                         </v-col>
                     </v-row>
@@ -614,7 +617,8 @@
                             autocomplete="off"
                             maxLength="255"
                             outlined
-                            v-model="editedItem.personalRequerido"
+                            v-model="personalRequerido"
+                            disabled
                             ></v-text-field>
                         </v-col>
                         <v-col cols="3">
@@ -1157,6 +1161,21 @@ export default {
     },
     estatus() {
         return this.diasDisponibles >= 10 ? 'ACTIVO' : this.diasDisponibles > 0 && this.diasDisponibles < 10 ? 'PROXIMO A VENCER' : this.diasDisponibles === 0 ? 'VENCIDO' : 'N/A'
+    },
+    pesoBlank() {
+        return this.editedItem.largoCintaBlank ? this.editedItem.largoCintaBlank*this.editedItem.anchoCintaBlank*this.editedItem.espesor*this.editedItem.coeficienteMaterial : ""
+    },
+    merma() {
+        return this.pesoBlank !== 0 && this.pesoBlank != null && this.editedItem.pesoPiezaTroquelado != null ? (((this.pesoBlank - this.editedItem.pesoPiezaTroquelado) / this.pesoBlank) * 100) : "";
+    },
+    factorAprovechamiento() {
+        return !isNaN(this.merma) && this.merma != null ? (100 - this.merma)  : "";
+    },
+    personalRequerido() {
+        return this.editedItem.numeroOperadores ? parseInt(this.editedItem.numeroOperadores) + parseInt(this.editedItem.numeroAyudantes) : "";
+    },
+    tiempoCicloTotal() {
+        return this.editedItem.tiempoCiclo
     }
   },
   created() {
