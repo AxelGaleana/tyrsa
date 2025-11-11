@@ -627,7 +627,7 @@
                             autocomplete="off"
                             maxLength="255"
                             outlined
-                            v-model="editedItem.tiempoCicloTotal"
+                            v-model="tiempoCicloTotal"
                             ></v-text-field>
                         </v-col>
                         <v-col cols="3">
@@ -636,7 +636,7 @@
                             autocomplete="off"
                             maxLength="255"
                             outlined
-                            v-model="editedItem.tiempoCicloMaximo"
+                            v-model="tiempoCicloMaximo"
                             ></v-text-field>
                         </v-col>
                         <v-col cols="3">
@@ -1175,7 +1175,22 @@ export default {
         return this.editedItem.numeroOperadores ? parseInt(this.editedItem.numeroOperadores) + parseInt(this.editedItem.numeroAyudantes) : "";
     },
     tiempoCicloTotal() {
-        return this.editedItem.tiempoCiclo
+        if (!this.editedItem || !Array.isArray(this.editedItem.rutas)) return 0;
+
+        return this.editedItem.rutas.reduce((acumulado, ruta) => {
+            const tiempo = parseFloat(ruta.tiempoCiclo);
+            return acumulado + (isNaN(tiempo) ? 0 : tiempo);
+        }, 0);
+    },
+    tiempoCicloMaximo() {
+        if (!this.editedItem || !Array.isArray(this.editedItem.rutas)) return 0;
+
+        return Math.max(
+        ...this.editedItem.rutas.map(ruta => {
+            const tiempo = parseFloat(ruta.tiempoCiclo);
+            return isNaN(tiempo) ? 0 : tiempo;
+        })
+        );
     }
   },
   created() {

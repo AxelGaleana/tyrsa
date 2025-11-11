@@ -467,7 +467,7 @@
                                 autocomplete="off"
                                 maxLength="255"
                                 outlined
-                                v-model="editedItem.tiempoCicloTotal"
+                                v-model="tiempoCicloTotal"
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="3">
@@ -476,7 +476,7 @@
                                 autocomplete="off"
                                 maxLength="255"
                                 outlined
-                                v-model="editedItem.tiempoCicloMaximo"
+                                v-model="tiempoCicloMaximo"
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="3">
@@ -586,6 +586,56 @@
       </v-card>
     </v-dialog>
 
+    <v-dialog v-model="dialogLog" max-width="90%">
+      <v-card flat>
+          <v-card-title>
+          <span class="heading">Log del número de parte {{editedItem.numeroParte}}</span>
+          </v-card-title>
+          <v-card-text>
+            <div ref="scrollContainer" style="max-height: 70vh; overflow-y: auto;">
+              <v-container>
+                <v-data-table
+                  :headers="headersLog"
+                  :items="logItems"
+                  item-key="fecha"
+                  show-expand
+                  :single-expand="true"
+                >
+                  <template v-slot:expanded-item="{ item }">
+                    <td :colspan="headers.length" class="text-center pa-4">
+                      <v-simple-table dense class="mx-auto" style="max-width: 800px;">
+                        <thead>
+                          <tr>
+                            <th class="text-center">Campo</th>
+                            <th class="text-center">De</th>
+                            <th class="text-center">A</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr v-for="(cambio, index) in item.cambios" :key="index">
+                            <td class="text-center">{{ cambio.campo }}</td>
+                            <td class="text-center">{{ cambio.de }}</td>
+                            <td class="text-center">{{ cambio.a }}</td>
+                          </tr>
+                        </tbody>
+                      </v-simple-table>
+                    </td>
+                  </template>
+                </v-data-table>
+
+              </v-container>
+            </div>
+          </v-card-text>
+          <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" text @click="dialogLog=false">
+              Cerrar
+          </v-btn>
+          </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+
     <v-card flat>
         <v-layout align-end justify-end>
             <v-btn color="primary" dark class="mb-2" :to="{ name: 'Parte', params: { numeroParte: 'nueva' } }">
@@ -644,11 +694,14 @@
                 </span>
             </template>
             <template v-slot:item.actions="{ item }">
-                <v-icon small class="mr-2" @click="editItem(item)" title="Editar Parte">
+                <v-icon small class="mr-1" @click="editItem(item)" title="Editar Parte">
                 mdi-pencil
                 </v-icon>
-                <v-icon small @click="openVisor(item)" title="Visualizar toda la información de esta Parte">
+                <v-icon small class="mr-1" @click="openVisor(item)" title="Visualizar toda la información de esta Parte">
                 mdi-magnify
+                </v-icon>
+                <v-icon small class="mr-1" @click="openLog(item)" title="Abrir log de cambios de esta Parte">
+                mdi-history
                 </v-icon>
             </template>
         </v-data-table>
@@ -666,11 +719,45 @@ export default {
       defaultImage: require('@/assets/placeholder-image.png'),
       parts:[],
       dialog: false,
+      dialogLog: false,
       search: "",
       options: {
         itemsPerPage: 10,
       },
       loading: true,
+      logItems: [
+        {
+          "fecha": "08-10-2025",
+          "estatus": "Pendiente",
+          "solicitante": "Axel Galeana",
+          "aprobador": "Monserrat Urquiza",
+          "fechaAprobacion": "09-10-2025",
+          "cambios": [
+            {"campo": "Descripcion", "de":"EXCLUDER SEAL ", "a": "EXCLUDER SEAL actualizado"},
+            {"campo": "Nivel ingenieria", "de":"b+", "a": "a+"},
+            {"campo": "Fecha fin", "de":"11-12-2025", "a": "11-01-2026"}
+          ]
+        },
+        {
+          "fecha": "06-08-2025",
+          "estatus": "Aprobado",
+          "solicitante": "Axel Galeana",
+          "aprobador": "Monserrat Urquiza",
+          "fechaAprobacion": "07-08-2025",
+          "cambios": [
+            {"campo": "Tiempo de ajuste por fechador", "de":"0", "a": "1"},
+            {"campo": "Especificacion de material", "de":"SAE 1010", "a": "SAE 2010"},
+            {"campo": "Fecha fin", "de":"11-12-2025", "a": "11-01-2026"}
+          ]
+        }
+      ],
+      headersLog: [
+        { text: "Fecha de cambio", value: "fecha" },
+        { text: "Solicitante", value: "solicitante" },
+        { text: "Aprobador", value: "aprobador" },
+        { text: "Estatus", value: "estatus" },
+        { text: "Fecha aprobacion", value: "fechaAprobacion" },
+      ],
       headers: [
         { text: "Num. Parte", value: "numeroParte" },
         {
@@ -688,7 +775,7 @@ export default {
         { text: "Dias Disponibles", value: "dias_disponibles" },
         { text: "Estatus", value: "estatus" },
         /*{ text: "Volumen vendido", value: "volumen_vendido" },*/
-        { text: "Acciones", value: "actions" },
+        { text: "Acciones", value: "actions", width: '92px' },
       ],
         headers_componentes: [
             { text: "Especificacion de componente", value: "especificacionComponente" },
@@ -759,6 +846,11 @@ export default {
       this.editedItem = itemModificado;
       this.dialog = true;
     },
+    openLog(item) {
+
+      this.editedItem = item;
+      this.dialogLog = true;
+    },
     getParts() {
       return PartService.getAllParts()
         .then((response) => {
@@ -826,6 +918,24 @@ export default {
     personalRequerido() {
         return this.editedItem.numeroOperadores ? parseInt(this.editedItem.numeroOperadores) + parseInt(this.editedItem.numeroAyudantes) : "";
     },
+    tiempoCicloTotal() {
+        if (!this.editedItem || !Array.isArray(this.editedItem.rutas)) return 0;
+
+        return this.editedItem.rutas.reduce((acumulado, ruta) => {
+            const tiempo = parseFloat(ruta.tiempoCiclo);
+            return acumulado + (isNaN(tiempo) ? 0 : tiempo);
+        }, 0);
+    },
+    tiempoCicloMaximo() {
+        if (!this.editedItem || !Array.isArray(this.editedItem.rutas)) return 0;
+
+        return Math.max(
+        ...this.editedItem.rutas.map(ruta => {
+            const tiempo = parseFloat(ruta.tiempoCiclo);
+            return isNaN(tiempo) ? 0 : tiempo;
+        })
+        );
+    }
   },
   watch: {
     dialog(val) {

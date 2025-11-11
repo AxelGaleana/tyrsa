@@ -141,7 +141,7 @@ export default {
         },
         {
           to: "/industrializacion",
-          icon: "person",
+          icon: "mdi-nut",
           text: "Industrialización"
         }
       ]
