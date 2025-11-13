@@ -597,7 +597,7 @@
                 <v-data-table
                   :headers="headersLog"
                   :items="log"
-                  item-key="fecha"
+                  item-key="id"
                   show-expand
                   :single-expand="true"
                 >
@@ -620,6 +620,14 @@
                         </tbody>
                       </v-simple-table>
                     </td>
+                  </template>
+                  <template v-slot:item.actions="{ item }">
+                      <v-icon color="green" @click="approvePartUpdate(item)" title="Aprobar Cambio">
+                      mdi-check
+                      </v-icon>
+                      <v-icon color="red" @click="denyPartUpdate(item)" title="Rechazar Cambio">
+                      mdi-close
+                      </v-icon>
                   </template>
                 </v-data-table>
 
@@ -694,11 +702,11 @@
                 </span>
             </template>
             <template v-slot:item.actions="{ item }">
-                <v-icon small class="mr-1" @click="editItem(item)" title="Editar Parte">
-                mdi-pencil
-                </v-icon>
                 <v-icon small class="mr-1" @click="openVisor(item)" title="Visualizar toda la información de esta Parte">
                 mdi-magnify
+                </v-icon>
+                <v-icon small class="mr-1" @click="editItem(item)" title="Editar Parte">
+                mdi-pencil
                 </v-icon>
                 <v-icon small class="mr-1" @click="openLog(item)" title="Abrir log de cambios de esta Parte">
                 mdi-history
@@ -758,6 +766,7 @@ export default {
         { text: "Aprobador", value: "aprobador" },
         { text: "Estatus", value: "estatus" },
         { text: "Fecha aprobacion", value: "fechaAprobacion" },
+        { text: "Acciones", value: "actions", width: '92px' },
       ],
       headers: [
         { text: "Num. Parte", value: "numeroParte" },
@@ -854,6 +863,25 @@ export default {
           this.log = response.data;
           this.loading = false;
           this.dialogLog = true;
+        })
+        .catch((error) => {
+          this.log = [];
+          this.loading = false;
+          this.dialogLog = true;
+          if (
+            error.response.data.error &&
+            error.response.data.error.toUpperCase().includes("TOKEN")
+          ) {
+            this.$store.dispatch("tokenerror", error.response.data.error);
+          }
+        });
+    },
+    approvePartUpdate(item){
+      return PartService.approvePartUpdate(item.id)
+        .then(() => {
+          console.log("item: ", item);
+          this.getParts();
+          this.openLog(item);
         })
         .catch((error) => {
           this.log = [];

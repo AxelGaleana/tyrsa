@@ -20,4 +20,14 @@ public class EmailService {
 
         mailSender.send(message);
     }
+
+    public void sendPartChageAprobalRequest(String[] toEmails, String partNumber) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(toEmails);
+        message.setSubject("Actualizacion de parte requiere su aprobacion");
+        message.setText("El numero de parte: " + partNumber + " ha sido actualizada y requiere de su aprobación" +
+                        "\nPor favor, ingrese al sistema para ver los cambios.");
+
+        mailSender.send(message);
+    }
 }

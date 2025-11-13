@@ -47,5 +47,8 @@ export default {
   },
   getPartLog(numeroParte){
     return Vue.axios.get("/parts/log/" + numeroParte);
+  },
+  approvePartUpdate(logId){
+    return Vue.axios.put("/parts/log/" + logId);
   }
 };

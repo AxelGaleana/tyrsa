@@ -90,6 +90,19 @@ public class UserService implements UserDetailsService {
         }).toList();
     }
 
+    public List<UserResponse> getUsersByRole(String role) {
+        List<User> users = userRepository.findByRole(role);
+        return users.stream().map(user -> {
+            UserResponse dto = new UserResponse();
+            dto.setUsername(user.getUsername());
+            dto.setName(user.getName());
+            dto.setEmail(user.getEmail());
+            dto.setRole(user.getRole());
+            dto.setActive(user.isActive());
+            return dto;
+        }).toList();
+    }
+
     public List<Role> getAllRoles() {
         return roleRepository.findAll();
     }
