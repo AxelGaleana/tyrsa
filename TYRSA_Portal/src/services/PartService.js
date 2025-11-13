@@ -45,4 +45,7 @@ export default {
   getPart(numeroParte) {
     return Vue.axios.get("/parts/" + numeroParte);
   },
+  getPartLog(numeroParte){
+    return Vue.axios.get("/parts/log/" + numeroParte);
+  }
 };

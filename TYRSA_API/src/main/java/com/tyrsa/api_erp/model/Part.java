@@ -1,6 +1,7 @@
 package com.tyrsa.api_erp.model;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -60,4 +61,6 @@ public class Part {
     private Componente componentes[];
     private RutaFabricacion rutas[];
     private String fileName;
+    private String version;
+    private LocalDateTime fechaActualizacion;
 }

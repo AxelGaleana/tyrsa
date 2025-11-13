@@ -596,7 +596,7 @@
               <v-container>
                 <v-data-table
                   :headers="headersLog"
-                  :items="logItems"
+                  :items="log"
                   item-key="fecha"
                   show-expand
                   :single-expand="true"
@@ -725,6 +725,7 @@ export default {
         itemsPerPage: 10,
       },
       loading: true,
+      log:[],
       logItems: [
         {
           "fecha": "08-10-2025",
@@ -753,7 +754,7 @@ export default {
       ],
       headersLog: [
         { text: "Fecha de cambio", value: "fecha" },
-        { text: "Solicitante", value: "solicitante" },
+        { text: "Solicitante", value: "userName" },
         { text: "Aprobador", value: "aprobador" },
         { text: "Estatus", value: "estatus" },
         { text: "Fecha aprobacion", value: "fechaAprobacion" },
@@ -847,9 +848,24 @@ export default {
       this.dialog = true;
     },
     openLog(item) {
-
-      this.editedItem = item;
-      this.dialogLog = true;
+      
+      return PartService.getPartLog(item.numeroParte)
+        .then((response) => {
+          this.log = response.data;
+          this.loading = false;
+          this.dialogLog = true;
+        })
+        .catch((error) => {
+          this.log = [];
+          this.loading = false;
+          this.dialogLog = true;
+          if (
+            error.response.data.error &&
+            error.response.data.error.toUpperCase().includes("TOKEN")
+          ) {
+            this.$store.dispatch("tokenerror", error.response.data.error);
+          }
+        });
     },
     getParts() {
       return PartService.getAllParts()

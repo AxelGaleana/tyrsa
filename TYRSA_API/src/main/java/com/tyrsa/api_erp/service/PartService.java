@@ -4,6 +4,10 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -12,19 +16,27 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Path;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.tyrsa.api_erp.model.CampoActualizado;
 import com.tyrsa.api_erp.model.Part;
+import com.tyrsa.api_erp.model.PartLog;
 import com.tyrsa.api_erp.repository.PartRepository;
+import com.tyrsa.api_erp.repository.LogRepository;
+
 
 @Service
 public class PartService {
 
     @Autowired
     private PartRepository partRepository;
+    @Autowired
+    private LogRepository logRepository;
 
     @Value("${upload.path}")
     private String uploadDir;
@@ -88,6 +100,8 @@ public class PartService {
                 }
 
                 newPart.setFileName(fileName);
+                newPart.setVersion("actual");
+                newPart.setFechaActualizacion(LocalDateTime.now());
 
             } catch (IOException e) {
                 throw new RuntimeException("Error al guardar la imagen", e);
@@ -98,61 +112,198 @@ public class PartService {
     }
 
 
-    public Part updatePartByNumeroParte(String numeroParte, Part updatedPart, MultipartFile imageFile) {
+    public Part updatePartByNumeroParte(String numeroParte, Part updatedPart, MultipartFile imageFile, UserDetails userDetails) {
         Part existente = partRepository.findByNumeroParte(numeroParte)
             .orElseThrow(() -> new IllegalArgumentException("La parte con número " + numeroParte + " no existe."));
 
-        existente.setProyecto(updatedPart.getProyecto());
-        existente.setDescripcion(updatedPart.getDescripcion());
-        existente.setNivelIngenieria(updatedPart.getNivelIngenieria());
-        existente.setFechaInicioProyecto(updatedPart.getFechaInicioProyecto());
-        existente.setFechaFinProyecto(updatedPart.getFechaFinProyecto());
-        existente.setVolumenVendidoProyectoAnual(updatedPart.getVolumenVendidoProyectoAnual());
-        existente.setEspecificacionMaterial(updatedPart.getEspecificacionMaterial());
-        existente.setTipoProveedor(updatedPart.getTipoProveedor());
-        existente.setNombreProveedor(updatedPart.getNombreProveedor());
-        existente.setCodigoIdentificacionMaterial(updatedPart.getCodigoIdentificacionMaterial());
-        existente.setPresentacionMateriaPrima(updatedPart.getPresentacionMateriaPrima());
-        existente.setPesoEstandarPackMP(updatedPart.getPesoEstandarPackMP());
-        existente.setDiametroInterno(updatedPart.getDiametroInterno());
-        
-        existente.setLargoCintaBlank(updatedPart.getLargoCintaBlank());
-        existente.setLargoMaterialMaximaTolerancia(updatedPart.getLargoMaterialMaximaTolerancia());
-        existente.setAnchoCintaBlank(updatedPart.getAnchoCintaBlank());
-        existente.setAnchoMaterialMaximaTolerancia(updatedPart.getAnchoMaterialMaximaTolerancia());
-        existente.setEspesor(updatedPart.getEspesor());
-        existente.setEspesorMaterialMaximaTolerancia(updatedPart.getEspesorMaterialMaximaTolerancia());
+        // Crear una nueva instancia (copia)
+        Part nuevaVersion = new Part();
+        // Copiar todos los campos del nuevaVersion
+        BeanUtils.copyProperties(existente, nuevaVersion, "id", "version", "fechaCreacion");
 
-        existente.setCoeficienteMaterial(updatedPart.getCoeficienteMaterial());
-        //existente.setPesoBlank(updatedPart.getPesoBlank());
-        existente.setPesoBlankMax(updatedPart.getPesoBlankMax());
-        existente.setPesoPiezaTroquelado(updatedPart.getPesoPiezaTroquelado());
-        existente.setPesoPiezaComponente(updatedPart.getPesoPiezaComponente());
-        existente.setFactorConsumo(updatedPart.getFactorConsumo());
-        //existente.setFactorAprovechamiento(updatedPart.getFactorAprovechamiento());
-        //existente.setMerma(updatedPart.getMerma());
+        PartLog log = new PartLog();
+        log.setFecha(LocalDate.now());
+        log.setEstatus("pendiente");
+        log.setUserName(userDetails.getUsername());
+        log.setNumeroParte(updatedPart.getNumeroParte());
 
-        existente.setCodigoEmpaque(updatedPart.getCodigoEmpaque());
-        existente.setFactorConsumoEmpaquePieza(updatedPart.getFactorConsumoEmpaquePieza());
-        existente.setPiezasPallet(updatedPart.getPiezasPallet());
+        List<CampoActualizado> cambios = new ArrayList<>();
+        if (!updatedPart.getProyecto().equals(existente.getProyecto())) {
+            nuevaVersion.setProyecto(updatedPart.getProyecto());
+            cambios.add(new CampoActualizado("Proyecto", existente.getProyecto(), updatedPart.getProyecto()));
+        }
+        if (!updatedPart.getDescripcion().equals(existente.getDescripcion())) {
+            nuevaVersion.setDescripcion(updatedPart.getDescripcion());
+            cambios.add(new CampoActualizado("Descripcion", existente.getDescripcion(), updatedPart.getDescripcion()));
+        }
+        if (!updatedPart.getNivelIngenieria().equals(existente.getNivelIngenieria())) {
+            nuevaVersion.setNivelIngenieria(updatedPart.getNivelIngenieria());
+            cambios.add(new CampoActualizado("Nivel Ingenieria", existente.getNivelIngenieria(), updatedPart.getNivelIngenieria()));
+        }
+        if (!updatedPart.getFechaInicioProyecto().equals(existente.getFechaInicioProyecto())) {
+            nuevaVersion.setFechaInicioProyecto(updatedPart.getFechaInicioProyecto());
+            cambios.add(new CampoActualizado("Fecha Inicio Proyecto", existente.getFechaInicioProyecto().toString(), updatedPart.getFechaInicioProyecto().toString()));
+        }
+        if (!updatedPart.getFechaFinProyecto().equals(existente.getFechaFinProyecto())) {
+            nuevaVersion.setFechaFinProyecto(updatedPart.getFechaFinProyecto());
+            cambios.add(new CampoActualizado("Fecha Fin Proyecto", existente.getFechaFinProyecto().toString(), updatedPart.getFechaFinProyecto().toString()));
+        }
+        if (!updatedPart.getVolumenVendidoProyectoAnual().equals(existente.getVolumenVendidoProyectoAnual())) {
+            nuevaVersion.setVolumenVendidoProyectoAnual(updatedPart.getVolumenVendidoProyectoAnual());
+            cambios.add(new CampoActualizado("Volumen Vendido Proyecto Anual", existente.getVolumenVendidoProyectoAnual(), updatedPart.getVolumenVendidoProyectoAnual()));
+        }
+        if (!updatedPart.getEspecificacionMaterial().equals(existente.getEspecificacionMaterial())) {
+            nuevaVersion.setEspecificacionMaterial(updatedPart.getEspecificacionMaterial());
+            cambios.add(new CampoActualizado("Especificacion Material", existente.getEspecificacionMaterial(), updatedPart.getEspecificacionMaterial()));
+        }
+        if (!updatedPart.getTipoProveedor().equals(existente.getTipoProveedor())) {
+            nuevaVersion.setTipoProveedor(updatedPart.getTipoProveedor());
+            cambios.add(new CampoActualizado("Tipo Proveedor", existente.getTipoProveedor(), updatedPart.getTipoProveedor()));
+        }
+        if (!updatedPart.getNombreProveedor().equals(existente.getNombreProveedor())) {
+            nuevaVersion.setNombreProveedor(updatedPart.getNombreProveedor());
+            cambios.add(new CampoActualizado("Nombre Proveedor", existente.getNombreProveedor(), updatedPart.getNombreProveedor()));
+        }
+        if (!updatedPart.getCodigoIdentificacionMaterial().equals(existente.getCodigoIdentificacionMaterial())) {
+            nuevaVersion.setCodigoIdentificacionMaterial(updatedPart.getCodigoIdentificacionMaterial());
+            cambios.add(new CampoActualizado("Codigo Identificacion Material", existente.getCodigoIdentificacionMaterial(), updatedPart.getCodigoIdentificacionMaterial()));
+        }
+        if (!updatedPart.getPresentacionMateriaPrima().equals(existente.getPresentacionMateriaPrima())) {
+            nuevaVersion.setPresentacionMateriaPrima(updatedPart.getPresentacionMateriaPrima());
+            cambios.add(new CampoActualizado("Presentacion Materia Prima", existente.getPresentacionMateriaPrima(), updatedPart.getPresentacionMateriaPrima()));
+        }
+        if (!updatedPart.getPesoEstandarPackMP().equals(existente.getPesoEstandarPackMP())) {
+            nuevaVersion.setPesoEstandarPackMP(updatedPart.getPesoEstandarPackMP());
+            cambios.add(new CampoActualizado("Peso Estandar Pack MP", existente.getPesoEstandarPackMP(), updatedPart.getPesoEstandarPackMP()));
+        }
+        if (!updatedPart.getDiametroInterno().equals(existente.getDiametroInterno())) {
+            nuevaVersion.setDiametroInterno(updatedPart.getDiametroInterno());
+            cambios.add(new CampoActualizado("Diametro Interno", existente.getDiametroInterno(), updatedPart.getDiametroInterno()));
+        }
 
-        existente.setNumeroOperaciones(updatedPart.getNumeroOperaciones());
-        existente.setNumeroMaquinas(updatedPart.getNumeroMaquinas());
-        existente.setNumeroOperadores(updatedPart.getNumeroOperadores());
-        existente.setNumeroAyudantes(updatedPart.getNumeroAyudantes());
-        existente.setPersonalRequerido(updatedPart.getPersonalRequerido());
-        existente.setTiempoCicloTotal(updatedPart.getTiempoCicloTotal());
-        existente.setTiempoCicloMaximo(updatedPart.getTiempoCicloMaximo());
-        existente.setTiempoLlenadoCelula(updatedPart.getTiempoLlenadoCelula());
-        existente.setPiezasPorHora(updatedPart.getPiezasPorHora());
-        existente.setTiempoTotalCambioModelo(updatedPart.getTiempoTotalCambioModelo());
-        existente.setTiempoLiberacion(updatedPart.getTiempoLiberacion());
-        existente.setTiempoAjustePorFechador(updatedPart.getTiempoAjustePorFechador());
-        existente.setPiezasDeAjuste(updatedPart.getPiezasDeAjuste());
-        existente.setCantidadEconomicaPedido(updatedPart.getCantidadEconomicaPedido());
+        if (!updatedPart.getLargoCintaBlank().equals(existente.getLargoCintaBlank())) {
+            nuevaVersion.setLargoCintaBlank(updatedPart.getLargoCintaBlank());
+            cambios.add(new CampoActualizado("Largo Cinta Blank", existente.getLargoCintaBlank(), updatedPart.getLargoCintaBlank()));
+        }
+        if (!updatedPart.getLargoMaterialMaximaTolerancia().equals(existente.getLargoMaterialMaximaTolerancia())) {
+            nuevaVersion.setLargoMaterialMaximaTolerancia(updatedPart.getLargoMaterialMaximaTolerancia());
+            cambios.add(new CampoActualizado("Largo Material Maxima Tolerancia", existente.getLargoMaterialMaximaTolerancia(), updatedPart.getLargoMaterialMaximaTolerancia()));
+        }
+        if (!updatedPart.getAnchoCintaBlank().equals(existente.getAnchoCintaBlank())) {
+            nuevaVersion.setAnchoCintaBlank(updatedPart.getAnchoCintaBlank());
+            cambios.add(new CampoActualizado("Ancho Cinta Blank", existente.getAnchoCintaBlank(), updatedPart.getAnchoCintaBlank()));
+        }
+        if (!updatedPart.getAnchoMaterialMaximaTolerancia().equals(existente.getAnchoMaterialMaximaTolerancia())) {
+            nuevaVersion.setAnchoMaterialMaximaTolerancia(updatedPart.getAnchoMaterialMaximaTolerancia());
+            cambios.add(new CampoActualizado("Ancho Material Maxima Tolerancia", existente.getAnchoMaterialMaximaTolerancia(), updatedPart.getAnchoMaterialMaximaTolerancia()));
+        }
+        if (!updatedPart.getEspesor().equals(existente.getEspesor())) {
+            nuevaVersion.setEspesor(updatedPart.getEspesor());
+            cambios.add(new CampoActualizado("Espesor", existente.getEspesor(), updatedPart.getEspesor()));
+        }
+        if (!updatedPart.getEspesorMaterialMaximaTolerancia().equals(existente.getEspesorMaterialMaximaTolerancia())) {
+            nuevaVersion.setEspesorMaterialMaximaTolerancia(updatedPart.getEspesorMaterialMaximaTolerancia());
+            cambios.add(new CampoActualizado("Espesor Material Maxima Tolerancia", existente.getEspesorMaterialMaximaTolerancia(), updatedPart.getEspesorMaterialMaximaTolerancia()));
+        }
 
-        existente.setComponentes(updatedPart.getComponentes());
-        existente.setRutas(updatedPart.getRutas());
+        if (!updatedPart.getCoeficienteMaterial().equals(existente.getCoeficienteMaterial())) {
+            nuevaVersion.setCoeficienteMaterial(updatedPart.getCoeficienteMaterial());
+            cambios.add(new CampoActualizado("Coeficiente Material", existente.getCoeficienteMaterial(), updatedPart.getCoeficienteMaterial()));
+        }
+        if (!updatedPart.getPesoBlankMax().equals(existente.getPesoBlankMax())) {
+            nuevaVersion.setPesoBlankMax(updatedPart.getPesoBlankMax());
+            cambios.add(new CampoActualizado("Peso Blank Max", existente.getPesoBlankMax(), updatedPart.getPesoBlankMax()));
+        }
+        if (!updatedPart.getPesoPiezaTroquelado().equals(existente.getPesoPiezaTroquelado())) {
+            nuevaVersion.setPesoPiezaTroquelado(existente.getPesoPiezaTroquelado());
+            cambios.add(new CampoActualizado("Peso Pieza Troquelado", existente.getPesoPiezaTroquelado(), updatedPart.getPesoPiezaTroquelado()));
+        }
+        if (!updatedPart.getPesoPiezaComponente().equals(existente.getPesoPiezaComponente())) {
+            nuevaVersion.setPesoPiezaComponente(updatedPart.getPesoPiezaComponente());
+            cambios.add(new CampoActualizado("Peso Pieza Componente", existente.getPesoPiezaComponente(), updatedPart.getPesoPiezaComponente()));
+        }
+        if (!updatedPart.getFactorConsumo().equals(existente.getFactorConsumo())) {
+            nuevaVersion.setFactorConsumo(updatedPart.getFactorConsumo());
+            cambios.add(new CampoActualizado("Factor Consumo", existente.getFactorConsumo(), updatedPart.getFactorConsumo()));
+        }
+
+        if (!updatedPart.getCodigoEmpaque().equals(existente.getCodigoEmpaque())) {
+            nuevaVersion.setCodigoEmpaque(updatedPart.getCodigoEmpaque());
+            cambios.add(new CampoActualizado("Codigo Empaque", existente.getCodigoEmpaque(), updatedPart.getCodigoEmpaque()));
+        }
+        if (!updatedPart.getFactorConsumoEmpaquePieza().equals(existente.getFactorConsumoEmpaquePieza())) {
+            nuevaVersion.setFactorConsumoEmpaquePieza(updatedPart.getFactorConsumoEmpaquePieza());
+            cambios.add(new CampoActualizado("Factor Consumo Empaque Pieza", existente.getFactorConsumoEmpaquePieza(), updatedPart.getFactorConsumoEmpaquePieza()));
+        }
+        if (!updatedPart.getPiezasPallet().equals(existente.getPiezasPallet())) {
+            nuevaVersion.setPiezasPallet(updatedPart.getPiezasPallet());
+            cambios.add(new CampoActualizado("Piezas Pallet", existente.getPiezasPallet(), updatedPart.getPiezasPallet()));
+        }
+
+        if (!updatedPart.getNumeroOperaciones().equals(existente.getNumeroOperaciones())) {
+            nuevaVersion.setNumeroOperaciones(updatedPart.getNumeroOperaciones());
+            cambios.add(new CampoActualizado("Numero Operaciones", existente.getNumeroOperaciones(), updatedPart.getNumeroOperaciones()));
+        }
+        if (!updatedPart.getNumeroMaquinas().equals(existente.getNumeroMaquinas())) {
+            nuevaVersion.setNumeroMaquinas(updatedPart.getNumeroMaquinas());
+            cambios.add(new CampoActualizado("Numero Maquinas", existente.getNumeroMaquinas(), updatedPart.getNumeroMaquinas()));
+        }
+        if (!updatedPart.getNumeroOperadores().equals(existente.getNumeroOperadores())) {
+            nuevaVersion.setNumeroOperadores(updatedPart.getNumeroOperadores());
+            cambios.add(new CampoActualizado("Numero Operadores", existente.getNumeroOperadores(), updatedPart.getNumeroOperadores()));
+        }
+        if (!updatedPart.getNumeroAyudantes().equals(existente.getNumeroAyudantes())) {
+            nuevaVersion.setNumeroAyudantes(updatedPart.getNumeroAyudantes());
+            cambios.add(new CampoActualizado("Numero Ayudantes", existente.getNumeroAyudantes(), updatedPart.getNumeroAyudantes()));
+        }
+        if (!updatedPart.getPersonalRequerido().equals(existente.getPersonalRequerido())) {
+            nuevaVersion.setPersonalRequerido(updatedPart.getPersonalRequerido());
+            cambios.add(new CampoActualizado("Personal Requerido", existente.getPersonalRequerido(), updatedPart.getPersonalRequerido()));
+        }
+        if (!updatedPart.getTiempoCicloTotal().equals(existente.getTiempoCicloTotal())) {
+            nuevaVersion.setTiempoCicloTotal(updatedPart.getTiempoCicloTotal());
+            cambios.add(new CampoActualizado("Tiempo Ciclo Total", existente.getTiempoCicloTotal(), updatedPart.getTiempoCicloTotal()));
+        }
+        if (!updatedPart.getTiempoCicloMaximo().equals(existente.getTiempoCicloMaximo())) {
+            nuevaVersion.setTiempoCicloMaximo(updatedPart.getTiempoCicloMaximo());
+            cambios.add(new CampoActualizado("Tiempo Ciclo Maximo", existente.getTiempoCicloMaximo(), updatedPart.getTiempoCicloMaximo()));
+        }
+        if (!updatedPart.getTiempoLlenadoCelula().equals(existente.getTiempoLlenadoCelula())) {
+            nuevaVersion.setTiempoLlenadoCelula(updatedPart.getTiempoLlenadoCelula());
+            cambios.add(new CampoActualizado("Tiempo Llenado Celula", existente.getTiempoLlenadoCelula(), updatedPart.getTiempoLlenadoCelula()));
+        }
+        if (!updatedPart.getPiezasPorHora().equals(existente.getPiezasPorHora())) {
+            nuevaVersion.setPiezasPorHora(updatedPart.getPiezasPorHora());
+            cambios.add(new CampoActualizado("Piezas Por Hora", existente.getPiezasPorHora(), updatedPart.getPiezasPorHora()));
+        }
+        if (!updatedPart.getTiempoTotalCambioModelo().equals(existente.getTiempoTotalCambioModelo())) {
+            nuevaVersion.setTiempoTotalCambioModelo(updatedPart.getTiempoTotalCambioModelo());
+            cambios.add(new CampoActualizado("Tiempo Total Cambio Modelo", existente.getTiempoTotalCambioModelo(), updatedPart.getTiempoTotalCambioModelo()));
+        }
+        if (!updatedPart.getTiempoLiberacion().equals(existente.getTiempoLiberacion())) {
+            nuevaVersion.setTiempoLiberacion(updatedPart.getTiempoLiberacion());
+            cambios.add(new CampoActualizado("Tiempo Liberacion", existente.getTiempoLiberacion(), updatedPart.getTiempoLiberacion()));
+        }
+        if (!updatedPart.getTiempoAjustePorFechador().equals(existente.getTiempoAjustePorFechador())) {
+            nuevaVersion.setTiempoAjustePorFechador(updatedPart.getTiempoAjustePorFechador());
+            cambios.add(new CampoActualizado("Tiempo Ajuste Por Fechador", existente.getTiempoAjustePorFechador(), updatedPart.getTiempoAjustePorFechador()));
+        }
+        if (!updatedPart.getPiezasDeAjuste().equals(existente.getPiezasDeAjuste())) {
+            nuevaVersion.setPiezasDeAjuste(updatedPart.getPiezasDeAjuste());
+            cambios.add(new CampoActualizado("Piezas De Ajuste", existente.getPiezasDeAjuste(), updatedPart.getPiezasDeAjuste()));
+        }
+        if (!updatedPart.getCantidadEconomicaPedido().equals(existente.getCantidadEconomicaPedido())) {
+            nuevaVersion.setCantidadEconomicaPedido(updatedPart.getCantidadEconomicaPedido());
+            cambios.add(new CampoActualizado("Cantidad Economica Pedido", existente.getCantidadEconomicaPedido(), updatedPart.getCantidadEconomicaPedido()));
+        }        
+
+        nuevaVersion.setComponentes(updatedPart.getComponentes());
+        nuevaVersion.setRutas(updatedPart.getRutas());
+
+        // Asignar versión nueva con fecha y hora
+        String fechaVersion = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+        nuevaVersion.setVersion(fechaVersion);
+        nuevaVersion.setFechaActualizacion(LocalDateTime.now());
 
         // Procesar imagen si viene una nueva
         if (imageFile != null && !imageFile.isEmpty()) {
@@ -169,7 +320,7 @@ public class PartService {
                     extension = originalFilename.substring(dotIndex + 1);
                 }
 
-                String safeNumeroParte = existente.getNumeroParte().trim().replaceAll("[^a-zA-Z0-9_-]", "_");
+                String safeNumeroParte = nuevaVersion.getNumeroParte().trim().replaceAll("[^a-zA-Z0-9_-]", "_");
                 String fileName = safeNumeroParte + "." + extension;
 
                 // Ruta para guardar
@@ -202,23 +353,39 @@ public class PartService {
                 }
 
                 // Actualizar nombre del archivo en la entidad
-                existente.setFileName(fileName);
+                nuevaVersion.setFileName(fileName);
 
             } catch (IOException e) {
                 throw new RuntimeException("Error al actualizar la imagen", e);
             }
         }
 
-        return partRepository.save(existente);
+        log.setCambios(cambios);
+
+        logRepository.save(log);
+
+        return partRepository.save(nuevaVersion);
     }
 
     public Part getPartByNumeroParte(String numeroParte) {
-        return partRepository.findByNumeroParte(numeroParte)
-                .orElseThrow(() -> new IllegalArgumentException("La parte con número " + numeroParte + " no existe."));
+        return partRepository.findByNumeroParteAndVersion(numeroParte, "actual")
+            .orElseThrow(() -> new IllegalArgumentException("La parte con número " + numeroParte + " no existe o no es la versión actual."));
+    }
+
+    public List<PartLog> getLogByNumeroParte(String numeroParte) {
+        List<PartLog> logs = logRepository.findByNumeroParte(numeroParte);
+
+        if (logs.isEmpty()) {
+            throw new IllegalArgumentException(
+                "La parte con número " + numeroParte + " no tiene registros en log."
+            );
+        }
+
+        return logs;
     }
 
     public List<Part> getAllParts() {
-        return partRepository.findAll();
+        return partRepository.findAllByVersionOrderByFechaActualizacionDesc("actual");
     }
 
     
