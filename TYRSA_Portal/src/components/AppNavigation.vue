@@ -161,8 +161,14 @@ export default {
       let role = this.$store.getters.getUser.role
       let l = [];
       this.links.forEach(function (element) {
-        if (role === 'ROLE_ADMIN' /*&& element.text.toString() !== 'Administradores' && element.text.toString() !== 'Dispositivos' && element.text.toString() !== 'Contratistas'*/){
-          l.push(element);        
+        const name = element.text.toString();
+        if (name === "Industrialización") {
+          l.push(element);
+          return;
+        }
+        if (name === "Users" && role === "ROLE_ADMIN") {
+          l.push(element);
+          return;
         }
       });
       return l;

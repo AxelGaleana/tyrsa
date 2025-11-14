@@ -63,4 +63,5 @@ public class Part {
     private String fileName;
     private String version;
     private LocalDateTime fechaActualizacion;
+    private boolean actualizacionPendiente;
 }

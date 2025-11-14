@@ -3,6 +3,7 @@ package com.tyrsa.api_erp.model;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
@@ -14,7 +15,7 @@ public class PartLog {
     @Id
     private String id;
     private String numeroParte;
-    private LocalDate fecha;
+    private LocalDateTime fecha;
     private String estatus;
     private String userName;
     private String aprobador;

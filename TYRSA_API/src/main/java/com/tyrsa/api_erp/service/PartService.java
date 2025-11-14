@@ -128,9 +128,10 @@ public class PartService {
         Part nuevaVersion = new Part();
         // Copiar todos los campos del nuevaVersion
         BeanUtils.copyProperties(existente, nuevaVersion, "id", "version", "fechaCreacion");
+        LocalDateTime  fechaActual = LocalDateTime.now();
         PartLog log = new PartLog();
-        log.setFecha(LocalDate.now());
-        log.setEstatus("pendiente");
+        log.setFecha(fechaActual);
+        log.setEstatus("Pendiente");
         log.setUserName(userDetails.getUsername());
         log.setNumeroParte(updatedPart.getNumeroParte());
 
@@ -349,9 +350,9 @@ public class PartService {
         nuevaVersion.setRutas(updatedPart.getRutas());
 
         // Asignar versión nueva con fecha y hora
-        String fechaVersion = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+        String fechaVersion = fechaActual.format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
         nuevaVersion.setVersion(fechaVersion);
-        nuevaVersion.setFechaActualizacion(LocalDateTime.now());
+        nuevaVersion.setFechaActualizacion(fechaActual);
 
         // Procesar imagen si viene una nueva
         if (imageFile != null && !imageFile.isEmpty()) {
@@ -420,6 +421,8 @@ public class PartService {
                 emailService.sendPartChageAprobalRequest(emails.toArray(new String[0]), existente.getNumeroParte());
             }
         }
+        existente.setActualizacionPendiente(true);
+        partRepository.save(existente);
 
         return partRepository.save(nuevaVersion);
     }
@@ -438,7 +441,27 @@ public class PartService {
             );
         }
 
-        return logs;
+        // Ordenar descendente por fecha (más reciente primero)
+        logs.sort((l1, l2) -> l2.getFecha().compareTo(l1.getFecha()));
+
+        List<PartLog> result = new ArrayList<>();
+
+        // Agregar los últimos dos logs (más recientes)
+        for (int i = 0; i < 2 && i < logs.size(); i++) {
+            result.add(logs.get(i));
+        }
+
+        // Agregar el log más viejo
+        if (logs.size() > 2) {
+            result.add(logs.get(logs.size() - 1));
+        } else if (logs.size() == 2) {
+            // Si solo hay 2 registros, el más viejo ya está incluido, no duplicar
+            // (ya está result[1])
+        } else if (logs.size() == 1) {
+            // Solo hay uno, ya está incluido
+        }
+
+        return result;
     }
 
     public List<Part> getAllParts() {
@@ -471,6 +494,30 @@ public class PartService {
         partRepository.save(newPart);
     }
 
+    public void denyPartUpdate(String logId, String approver) {
+        // Actualizar log
+        PartLog log = logRepository.findById(logId)
+                .orElseThrow(() -> new IllegalArgumentException("No se encontró el log con id: " + logId));
 
+        log.setAprobador(approver);
+        log.setFechaAprobacion(LocalDate.now());
+        log.setEstatus("Rechazada");
+        logRepository.save(log);
+
+        String numeroParte = log.getNumeroParte();
+
+        // Eliminar version actualizada
+        Part newPart = partRepository.findByNumeroParteAndVersion(numeroParte, log.getFecha().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")))
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "La nueva parte con número " + numeroParte + " no existe."));
+        partRepository.delete(newPart);
+
+        //Actualizar parte actual para que no tenga actualizacion pendiente
+        Part currentPart = partRepository.findByNumeroParteAndVersion(numeroParte, "actual")
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "La nueva parte con número " + numeroParte + " no existe."));
+        currentPart.setActualizacionPendiente(false);
+        partRepository.save(currentPart);
+    }
     
 }

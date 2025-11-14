@@ -82,11 +82,24 @@ public class PartController {
         }
     }
 
-    @PutMapping("/log/{logId}")
+    @PutMapping("/log/approve/{logId}")
     public ResponseEntity<?> approvePartUpdate(@PathVariable String logId, Authentication authentication) {
         try {
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             partService.approvePartUpdate(logId, userDetails.getUsername());
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error interno del servidor", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PutMapping("/log/deny/{logId}")
+    public ResponseEntity<?> denyPartUpdate(@PathVariable String logId, Authentication authentication) {
+        try {
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            partService.denyPartUpdate(logId, userDetails.getUsername());
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);

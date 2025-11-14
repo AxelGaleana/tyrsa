@@ -601,6 +601,22 @@
                   show-expand
                   :single-expand="true"
                 >
+                  <template v-slot:item.estatus="{ item }">
+                    <span
+                      :style="{
+                        color:
+                          item.estatus === 'Aprobada'
+                            ? 'green'
+                            : item.estatus === 'Rechazada'
+                            ? 'red'
+                            : item.estatus === 'Pendiente'
+                            ? 'orange'
+                            : 'inherit'
+                      }"
+                    >
+                      {{ item.estatus }}
+                    </span>
+                  </template>
                   <template v-slot:expanded-item="{ item }">
                     <td :colspan="headers.length" class="text-center pa-4">
                       <v-simple-table dense class="mx-auto" style="max-width: 800px;">
@@ -622,12 +638,14 @@
                     </td>
                   </template>
                   <template v-slot:item.actions="{ item }">
+                    <span v-if="item && item.estatus === 'Pendiente' && ($store.getters.getUser.role === 'ROLE_GERENTE_INGENIERIA' || $store.getters.getUser.role === 'ROLE_ADMIN')">
                       <v-icon color="green" @click="approvePartUpdate(item)" title="Aprobar Cambio">
                       mdi-check
                       </v-icon>
                       <v-icon color="red" @click="denyPartUpdate(item)" title="Rechazar Cambio">
                       mdi-close
                       </v-icon>
+                    </span>
                   </template>
                 </v-data-table>
 
@@ -705,10 +723,10 @@
                 <v-icon small class="mr-1" @click="openVisor(item)" title="Visualizar toda la información de esta Parte">
                 mdi-magnify
                 </v-icon>
-                <v-icon small class="mr-1" @click="editItem(item)" title="Editar Parte">
+                <v-icon small class="mr-1" @click="editItem(item)" title="Editar Parte" :disabled="item.actualizacionPendiente === true" v-if="$store.getters.getUser.role === 'ROLE_GERENTE_INGENIERIA' || $store.getters.getUser.role === 'ROLE_ADMIN' || $store.getters.getUser.role === 'ROLE_AREA_INGENIERIA'">
                 mdi-pencil
                 </v-icon>
-                <v-icon small class="mr-1" @click="openLog(item)" title="Abrir log de cambios de esta Parte">
+                <v-icon small class="mr-1" @click="openLog(item)" title="Abrir log de cambios de esta Parte" :color="item.actualizacionPendiente ? '#FFA500' : ''">
                 mdi-history
                 </v-icon>
             </template>
@@ -885,8 +903,26 @@ export default {
         })
         .catch((error) => {
           this.log = [];
-          this.loading = false;
-          this.dialogLog = true;
+          this.getParts();
+          this.openLog(item);
+          if (
+            error.response.data.error &&
+            error.response.data.error.toUpperCase().includes("TOKEN")
+          ) {
+            this.$store.dispatch("tokenerror", error.response.data.error);
+          }
+        });
+    },
+    denyPartUpdate(item){
+      return PartService.denyPartUpdate(item.id)
+        .then(() => {
+          console.log("item: ", item);
+          this.getParts();
+          this.openLog(item);
+        })
+        .catch((error) => {
+          this.getParts();
+          this.openLog(item);
           if (
             error.response.data.error &&
             error.response.data.error.toUpperCase().includes("TOKEN")
