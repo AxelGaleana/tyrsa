@@ -29,8 +29,8 @@ public class PartController {
             @RequestPart(value = "image", required = false) MultipartFile imageFile) {
 
         try {
-            Part createdPart = partService.createPart(partRequest, imageFile);
-            return new ResponseEntity<>(createdPart, HttpStatus.CREATED);
+            partService.createPart(partRequest, imageFile);
+            return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (IllegalStateException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         } catch (IllegalArgumentException e) {
@@ -40,17 +40,17 @@ public class PartController {
         }
     }
 
-    @PutMapping(value = "/{numeroParte}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> updatePartByNumeroParte(
-            @PathVariable String numeroParte,
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> updatePartById(
+            @PathVariable String id,
             @RequestPart("part") Part partRequest,
             @RequestPart(value = "image", required = false) MultipartFile imageFile,
             Authentication authentication) {
         try {
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-            Part updatedPart = partService.updatePartByNumeroParte(numeroParte, partRequest, imageFile, userDetails);
-            return new ResponseEntity<>(updatedPart, HttpStatus.OK);
+            partService.updatePartById(id, partRequest, imageFile, userDetails);
+            return new ResponseEntity<>(HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (Exception e) {
@@ -58,10 +58,10 @@ public class PartController {
         }
     }
 
-    @GetMapping("/{numeroParte}")
-    public ResponseEntity<?> getPartByNumeroParte(@PathVariable String numeroParte) {
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getPartById(@PathVariable String id) {
         try {
-            Part parte = partService.getPartByNumeroParte(numeroParte);
+            Part parte = partService.getPartById(id);
             return new ResponseEntity<>(parte, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
@@ -70,10 +70,10 @@ public class PartController {
         }
     }
 
-    @GetMapping("/log/{numeroParte}")
-    public ResponseEntity<?> getLogByNumeroParte(@PathVariable String numeroParte) {
+    @GetMapping("/log/{partId}")
+    public ResponseEntity<?> getLogByPartId(@PathVariable String partId) {
         try {
-            List<PartLog> log = partService.getLogByNumeroParte(numeroParte);
+            List<PartLog> log = partService.getLogByPartId(partId);
             return new ResponseEntity<>(log, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);

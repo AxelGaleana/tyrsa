@@ -664,7 +664,7 @@
 
     <v-card flat>
         <v-layout align-end justify-end>
-            <v-btn color="primary" dark class="mb-2" :to="{ name: 'Parte', params: { numeroParte: 'nueva' } }">
+            <v-btn color="primary" dark class="mb-2" :to="{ name: 'Parte', params: { id: 'nueva' } }">
             Nueva parte
             <v-icon right color="white">add</v-icon>
             </v-btn>
@@ -852,7 +852,7 @@ export default {
       event.target.src = this.defaultImage;
     },
     editItem(item) {
-      this.$router.push({ name: 'Parte', params: { numeroParte: item.numeroParte } });
+      this.$router.push({ name: 'Parte', params: { id: item.id } });
     },
     openVisor(item) {
       const dias_disponibles = this.calcularDiasDisponibles(item.fechaFinProyecto);
@@ -876,7 +876,7 @@ export default {
     },
     openLog(item) {
       
-      return PartService.getPartLog(item.numeroParte)
+      return PartService.getPartLog(item.id)
         .then((response) => {
           this.log = response.data;
           this.loading = false;

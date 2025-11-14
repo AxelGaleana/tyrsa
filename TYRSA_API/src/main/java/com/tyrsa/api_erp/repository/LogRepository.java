@@ -9,7 +9,5 @@ import com.tyrsa.api_erp.model.PartLog;
 
 @Repository
 public interface LogRepository extends MongoRepository<PartLog, String> {
-
-    // Buscar todos los logs asociados a un número de parte
-    List<PartLog> findByNumeroParte(String numeroParte);
+    List<PartLog> findByOldPartId(String oldPartId);
 }

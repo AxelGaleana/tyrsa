@@ -36,17 +36,17 @@ export default {
       formData.append('image', imageFile);
     }
 
-    return Vue.axios.put(`/parts/${part.numeroParte}`, formData, {
+    return Vue.axios.put(`/parts/${part.id}`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
     });
   },
-  getPart(numeroParte) {
-    return Vue.axios.get("/parts/" + numeroParte);
+  getPart(id) {
+    return Vue.axios.get("/parts/" + id);
   },
-  getPartLog(numeroParte){
-    return Vue.axios.get("/parts/log/" + numeroParte);
+  getPartLog(partId){
+    return Vue.axios.get("/parts/log/" + partId);
   },
   approvePartUpdate(logId){
     return Vue.axios.put("/parts/log/approve/" + logId);

@@ -6,10 +6,9 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
 import javax.imageio.ImageIO;
 import java.awt.Graphics2D;
@@ -30,8 +29,6 @@ import com.tyrsa.api_erp.model.Part;
 import com.tyrsa.api_erp.model.PartLog;
 import com.tyrsa.api_erp.repository.PartRepository;
 import com.tyrsa.api_erp.repository.LogRepository;
-import java.util.Optional;
-
 
 
 @Service
@@ -50,7 +47,7 @@ public class PartService {
     private String uploadDir;
 
     // Método para registrar usuario
-    public Part createPart(Part newPart, MultipartFile imageFile) {
+    public void createPart(Part newPart, MultipartFile imageFile) {
         if (newPart.getNumeroParte() == null || newPart.getNumeroParte().trim().isEmpty()) {
             throw new IllegalArgumentException("El número de parte es obligatorio.");
         }
@@ -108,251 +105,205 @@ public class PartService {
                 }
 
                 newPart.setFileName(fileName);
-                newPart.setVersion("actual");
-                newPart.setFechaActualizacion(LocalDateTime.now());
 
             } catch (IOException e) {
                 throw new RuntimeException("Error al guardar la imagen", e);
             }
         }
 
-        return partRepository.save(newPart);
+        newPart.setFechaActualizacion(LocalDateTime.now());
+        newPart.setVersion("actual");
+        partRepository.save(newPart);
     }
 
 
-    public Part updatePartByNumeroParte(String numeroParte, Part updatedPart, MultipartFile imageFile, UserDetails userDetails) {
-        Part existente = partRepository.findByNumeroParte(numeroParte)
-            .orElseThrow(() -> new IllegalArgumentException("La parte con número " + numeroParte + " no existe."));
+    public void updatePartById(String id, Part updatedPart, MultipartFile imageFile, UserDetails userDetails) {
+        Part existente = partRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("La parte con número " + id + " no existe."));
 
         int changes = 0;
-        Part nuevaVersion = new Part();
         // Copiar todos los campos del nuevaVersion
-        BeanUtils.copyProperties(existente, nuevaVersion, "id", "version", "fechaCreacion");
         LocalDateTime  fechaActual = LocalDateTime.now();
         PartLog log = new PartLog();
         log.setFecha(fechaActual);
         log.setEstatus("Pendiente");
         log.setUserName(userDetails.getUsername());
-        log.setNumeroParte(updatedPart.getNumeroParte());
+        log.setOldPartId(existente.getId());
+        log.setNewPartId(updatedPart.getId());
 
         List<CampoActualizado> cambios = new ArrayList<>();
-        if (!updatedPart.getProyecto().equals(existente.getProyecto())) {
-            nuevaVersion.setProyecto(updatedPart.getProyecto());
+        updatedPart.setId(null);
+        if (!Objects.equals(updatedPart.getProyecto(), existente.getProyecto())) {
             cambios.add(new CampoActualizado("Proyecto", existente.getProyecto(), updatedPart.getProyecto()));
             changes++;
         }
-        if (!updatedPart.getDescripcion().equals(existente.getDescripcion())) {
-            nuevaVersion.setDescripcion(updatedPart.getDescripcion());
+        if (!Objects.equals(updatedPart.getDescripcion(), existente.getDescripcion())) {
             cambios.add(new CampoActualizado("Descripcion", existente.getDescripcion(), updatedPart.getDescripcion()));
             changes++;
         }
-        if (!updatedPart.getNivelIngenieria().equals(existente.getNivelIngenieria())) {
-            nuevaVersion.setNivelIngenieria(updatedPart.getNivelIngenieria());
+        if (!Objects.equals(updatedPart.getNivelIngenieria(), existente.getNivelIngenieria())) {
             cambios.add(new CampoActualizado("Nivel Ingenieria", existente.getNivelIngenieria(), updatedPart.getNivelIngenieria()));
             changes++;
         }
-        if (!updatedPart.getFechaInicioProyecto().equals(existente.getFechaInicioProyecto())) {
-            nuevaVersion.setFechaInicioProyecto(updatedPart.getFechaInicioProyecto());
+        if (!Objects.equals(updatedPart.getFechaInicioProyecto(), existente.getFechaInicioProyecto())) {
             cambios.add(new CampoActualizado("Fecha Inicio Proyecto", existente.getFechaInicioProyecto().toString(), updatedPart.getFechaInicioProyecto().toString()));
             changes++;
         }
-        if (!updatedPart.getFechaFinProyecto().equals(existente.getFechaFinProyecto())) {
-            nuevaVersion.setFechaFinProyecto(updatedPart.getFechaFinProyecto());
+        if (!Objects.equals(updatedPart.getFechaFinProyecto(), existente.getFechaFinProyecto())) {
             cambios.add(new CampoActualizado("Fecha Fin Proyecto", existente.getFechaFinProyecto().toString(), updatedPart.getFechaFinProyecto().toString()));
             changes++;
         }
-        if (!updatedPart.getVolumenVendidoProyectoAnual().equals(existente.getVolumenVendidoProyectoAnual())) {
-            nuevaVersion.setVolumenVendidoProyectoAnual(updatedPart.getVolumenVendidoProyectoAnual());
+        if (!Objects.equals(updatedPart.getVolumenVendidoProyectoAnual(), existente.getVolumenVendidoProyectoAnual())) {
             cambios.add(new CampoActualizado("Volumen Vendido Proyecto Anual", existente.getVolumenVendidoProyectoAnual(), updatedPart.getVolumenVendidoProyectoAnual()));
             changes++;
         }
-        if (!updatedPart.getEspecificacionMaterial().equals(existente.getEspecificacionMaterial())) {
-            nuevaVersion.setEspecificacionMaterial(updatedPart.getEspecificacionMaterial());
+        if (!Objects.equals(updatedPart.getEspecificacionMaterial(), existente.getEspecificacionMaterial())) {
             cambios.add(new CampoActualizado("Especificacion Material", existente.getEspecificacionMaterial(), updatedPart.getEspecificacionMaterial()));
             changes++;
         }
-        if (!updatedPart.getTipoProveedor().equals(existente.getTipoProveedor())) {
-            nuevaVersion.setTipoProveedor(updatedPart.getTipoProveedor());
+        if (!Objects.equals(updatedPart.getTipoProveedor(), existente.getTipoProveedor())) {
             cambios.add(new CampoActualizado("Tipo Proveedor", existente.getTipoProveedor(), updatedPart.getTipoProveedor()));
             changes++;
         }
-        if (!updatedPart.getNombreProveedor().equals(existente.getNombreProveedor())) {
-            nuevaVersion.setNombreProveedor(updatedPart.getNombreProveedor());
+        if (!Objects.equals(updatedPart.getNombreProveedor(), existente.getNombreProveedor())) {
             cambios.add(new CampoActualizado("Nombre Proveedor", existente.getNombreProveedor(), updatedPart.getNombreProveedor()));
             changes++;
         }
-        if (!updatedPart.getCodigoIdentificacionMaterial().equals(existente.getCodigoIdentificacionMaterial())) {
-            nuevaVersion.setCodigoIdentificacionMaterial(updatedPart.getCodigoIdentificacionMaterial());
+        if (!Objects.equals(updatedPart.getCodigoIdentificacionMaterial(), existente.getCodigoIdentificacionMaterial())) {
             cambios.add(new CampoActualizado("Codigo Identificacion Material", existente.getCodigoIdentificacionMaterial(), updatedPart.getCodigoIdentificacionMaterial()));
             changes++;
         }
-        if (!updatedPart.getPresentacionMateriaPrima().equals(existente.getPresentacionMateriaPrima())) {
-            nuevaVersion.setPresentacionMateriaPrima(updatedPart.getPresentacionMateriaPrima());
+        if (!Objects.equals(updatedPart.getPresentacionMateriaPrima(), existente.getPresentacionMateriaPrima())) {
             cambios.add(new CampoActualizado("Presentacion Materia Prima", existente.getPresentacionMateriaPrima(), updatedPart.getPresentacionMateriaPrima()));
             changes++;
         }
-        if (!updatedPart.getPesoEstandarPackMP().equals(existente.getPesoEstandarPackMP())) {
-            nuevaVersion.setPesoEstandarPackMP(updatedPart.getPesoEstandarPackMP());
+        if (!Objects.equals(updatedPart.getPesoEstandarPackMP(), existente.getPesoEstandarPackMP())) {
             cambios.add(new CampoActualizado("Peso Estandar Pack MP", existente.getPesoEstandarPackMP(), updatedPart.getPesoEstandarPackMP()));
             changes++;
         }
-        if (!updatedPart.getDiametroInterno().equals(existente.getDiametroInterno())) {
-            nuevaVersion.setDiametroInterno(updatedPart.getDiametroInterno());
+        if (!Objects.equals(updatedPart.getDiametroInterno(), existente.getDiametroInterno())) {
             cambios.add(new CampoActualizado("Diametro Interno", existente.getDiametroInterno(), updatedPart.getDiametroInterno()));
             changes++;
         }
 
-        if (!updatedPart.getLargoCintaBlank().equals(existente.getLargoCintaBlank())) {
-            nuevaVersion.setLargoCintaBlank(updatedPart.getLargoCintaBlank());
+        if (!Objects.equals(updatedPart.getLargoCintaBlank(), existente.getLargoCintaBlank())) {
             cambios.add(new CampoActualizado("Largo Cinta Blank", existente.getLargoCintaBlank(), updatedPart.getLargoCintaBlank()));
             changes++;
         }
-        if (!updatedPart.getLargoMaterialMaximaTolerancia().equals(existente.getLargoMaterialMaximaTolerancia())) {
-            nuevaVersion.setLargoMaterialMaximaTolerancia(updatedPart.getLargoMaterialMaximaTolerancia());
+        if (!Objects.equals(updatedPart.getLargoMaterialMaximaTolerancia(), existente.getLargoMaterialMaximaTolerancia())) {
             cambios.add(new CampoActualizado("Largo Material Maxima Tolerancia", existente.getLargoMaterialMaximaTolerancia(), updatedPart.getLargoMaterialMaximaTolerancia()));
             changes++;
         }
-        if (!updatedPart.getAnchoCintaBlank().equals(existente.getAnchoCintaBlank())) {
-            nuevaVersion.setAnchoCintaBlank(updatedPart.getAnchoCintaBlank());
+        if (!Objects.equals(updatedPart.getAnchoCintaBlank(), existente.getAnchoCintaBlank())) {
             cambios.add(new CampoActualizado("Ancho Cinta Blank", existente.getAnchoCintaBlank(), updatedPart.getAnchoCintaBlank()));
             changes++;
         }
-        if (!updatedPart.getAnchoMaterialMaximaTolerancia().equals(existente.getAnchoMaterialMaximaTolerancia())) {
-            nuevaVersion.setAnchoMaterialMaximaTolerancia(updatedPart.getAnchoMaterialMaximaTolerancia());
+        if (!Objects.equals(updatedPart.getAnchoMaterialMaximaTolerancia(), existente.getAnchoMaterialMaximaTolerancia())) {
             cambios.add(new CampoActualizado("Ancho Material Maxima Tolerancia", existente.getAnchoMaterialMaximaTolerancia(), updatedPart.getAnchoMaterialMaximaTolerancia()));
             changes++;
         }
-        if (!updatedPart.getEspesor().equals(existente.getEspesor())) {
-            nuevaVersion.setEspesor(updatedPart.getEspesor());
+        if (!Objects.equals(updatedPart.getEspesor(), existente.getEspesor())) {
             cambios.add(new CampoActualizado("Espesor", existente.getEspesor(), updatedPart.getEspesor()));
             changes++;
         }
-        if (!updatedPart.getEspesorMaterialMaximaTolerancia().equals(existente.getEspesorMaterialMaximaTolerancia())) {
-            nuevaVersion.setEspesorMaterialMaximaTolerancia(updatedPart.getEspesorMaterialMaximaTolerancia());
+        if (!Objects.equals(updatedPart.getEspesorMaterialMaximaTolerancia(), existente.getEspesorMaterialMaximaTolerancia())) {
             cambios.add(new CampoActualizado("Espesor Material Maxima Tolerancia", existente.getEspesorMaterialMaximaTolerancia(), updatedPart.getEspesorMaterialMaximaTolerancia()));
             changes++;
         }
 
-        if (!updatedPart.getCoeficienteMaterial().equals(existente.getCoeficienteMaterial())) {
-            nuevaVersion.setCoeficienteMaterial(updatedPart.getCoeficienteMaterial());
+        if (!Objects.equals(updatedPart.getCoeficienteMaterial(), existente.getCoeficienteMaterial())) {
             cambios.add(new CampoActualizado("Coeficiente Material", existente.getCoeficienteMaterial(), updatedPart.getCoeficienteMaterial()));
             changes++;
         }
-        if (!updatedPart.getPesoBlankMax().equals(existente.getPesoBlankMax())) {
-            nuevaVersion.setPesoBlankMax(updatedPart.getPesoBlankMax());
+        if (!Objects.equals(updatedPart.getPesoBlankMax(), existente.getPesoBlankMax())) {
             cambios.add(new CampoActualizado("Peso Blank Max", existente.getPesoBlankMax(), updatedPart.getPesoBlankMax()));
             changes++;
         }
-        if (!updatedPart.getPesoPiezaTroquelado().equals(existente.getPesoPiezaTroquelado())) {
-            nuevaVersion.setPesoPiezaTroquelado(existente.getPesoPiezaTroquelado());
+        if (!Objects.equals(updatedPart.getPesoPiezaTroquelado(), existente.getPesoPiezaTroquelado())) {
             cambios.add(new CampoActualizado("Peso Pieza Troquelado", existente.getPesoPiezaTroquelado(), updatedPart.getPesoPiezaTroquelado()));
             changes++;
         }
-        if (!updatedPart.getPesoPiezaComponente().equals(existente.getPesoPiezaComponente())) {
-            nuevaVersion.setPesoPiezaComponente(updatedPart.getPesoPiezaComponente());
+        if (!Objects.equals(updatedPart.getPesoPiezaComponente(), existente.getPesoPiezaComponente())) {
             cambios.add(new CampoActualizado("Peso Pieza Componente", existente.getPesoPiezaComponente(), updatedPart.getPesoPiezaComponente()));
             changes++;
         }
-        if (!updatedPart.getFactorConsumo().equals(existente.getFactorConsumo())) {
-            nuevaVersion.setFactorConsumo(updatedPart.getFactorConsumo());
+        if (!Objects.equals(updatedPart.getFactorConsumo(), existente.getFactorConsumo())) {
             cambios.add(new CampoActualizado("Factor Consumo", existente.getFactorConsumo(), updatedPart.getFactorConsumo()));
             changes++;
         }
 
-        if (!updatedPart.getCodigoEmpaque().equals(existente.getCodigoEmpaque())) {
-            nuevaVersion.setCodigoEmpaque(updatedPart.getCodigoEmpaque());
+        if (!Objects.equals(updatedPart.getCodigoEmpaque(), existente.getCodigoEmpaque())) {
             cambios.add(new CampoActualizado("Codigo Empaque", existente.getCodigoEmpaque(), updatedPart.getCodigoEmpaque()));
             changes++;
         }
-        if (!updatedPart.getFactorConsumoEmpaquePieza().equals(existente.getFactorConsumoEmpaquePieza())) {
-            nuevaVersion.setFactorConsumoEmpaquePieza(updatedPart.getFactorConsumoEmpaquePieza());
+        if (!Objects.equals(updatedPart.getFactorConsumoEmpaquePieza(), existente.getFactorConsumoEmpaquePieza())) {
             cambios.add(new CampoActualizado("Factor Consumo Empaque Pieza", existente.getFactorConsumoEmpaquePieza(), updatedPart.getFactorConsumoEmpaquePieza()));
             changes++;
         }
-        if (!updatedPart.getPiezasPallet().equals(existente.getPiezasPallet())) {
-            nuevaVersion.setPiezasPallet(updatedPart.getPiezasPallet());
+        if (!Objects.equals(updatedPart.getPiezasPallet(), existente.getPiezasPallet())) {
             cambios.add(new CampoActualizado("Piezas Pallet", existente.getPiezasPallet(), updatedPart.getPiezasPallet()));
             changes++;
         }
 
-        if (!updatedPart.getNumeroOperaciones().equals(existente.getNumeroOperaciones())) {
-            nuevaVersion.setNumeroOperaciones(updatedPart.getNumeroOperaciones());
+        if (!Objects.equals(updatedPart.getNumeroOperaciones(), existente.getNumeroOperaciones())) {
             cambios.add(new CampoActualizado("Numero Operaciones", existente.getNumeroOperaciones(), updatedPart.getNumeroOperaciones()));
             changes++;
         }
-        if (!updatedPart.getNumeroMaquinas().equals(existente.getNumeroMaquinas())) {
-            nuevaVersion.setNumeroMaquinas(updatedPart.getNumeroMaquinas());
+        if (!Objects.equals(updatedPart.getNumeroMaquinas(), existente.getNumeroMaquinas())) {
             cambios.add(new CampoActualizado("Numero Maquinas", existente.getNumeroMaquinas(), updatedPart.getNumeroMaquinas()));
             changes++;
         }
-        if (!updatedPart.getNumeroOperadores().equals(existente.getNumeroOperadores())) {
-            nuevaVersion.setNumeroOperadores(updatedPart.getNumeroOperadores());
+        if (!Objects.equals(updatedPart.getNumeroOperadores(), existente.getNumeroOperadores())) {
             cambios.add(new CampoActualizado("Numero Operadores", existente.getNumeroOperadores(), updatedPart.getNumeroOperadores()));
             changes++;
         }
-        if (!updatedPart.getNumeroAyudantes().equals(existente.getNumeroAyudantes())) {
-            nuevaVersion.setNumeroAyudantes(updatedPart.getNumeroAyudantes());
+        if (!Objects.equals(updatedPart.getNumeroAyudantes(), existente.getNumeroAyudantes())) {
             cambios.add(new CampoActualizado("Numero Ayudantes", existente.getNumeroAyudantes(), updatedPart.getNumeroAyudantes()));
             changes++;
         }
-        if (!updatedPart.getPersonalRequerido().equals(existente.getPersonalRequerido())) {
-            nuevaVersion.setPersonalRequerido(updatedPart.getPersonalRequerido());
+        if (!Objects.equals(updatedPart.getPersonalRequerido(), existente.getPersonalRequerido())) {
             cambios.add(new CampoActualizado("Personal Requerido", existente.getPersonalRequerido(), updatedPart.getPersonalRequerido()));
             changes++;
         }
-        if (!updatedPart.getTiempoCicloTotal().equals(existente.getTiempoCicloTotal())) {
-            nuevaVersion.setTiempoCicloTotal(updatedPart.getTiempoCicloTotal());
+        if (!Objects.equals(updatedPart.getTiempoCicloTotal(), existente.getTiempoCicloTotal())) {
             cambios.add(new CampoActualizado("Tiempo Ciclo Total", existente.getTiempoCicloTotal(), updatedPart.getTiempoCicloTotal()));
             changes++;
         }
-        if (!updatedPart.getTiempoCicloMaximo().equals(existente.getTiempoCicloMaximo())) {
-            nuevaVersion.setTiempoCicloMaximo(updatedPart.getTiempoCicloMaximo());
+        if (!Objects.equals(updatedPart.getTiempoCicloMaximo(), existente.getTiempoCicloMaximo())) {
             cambios.add(new CampoActualizado("Tiempo Ciclo Maximo", existente.getTiempoCicloMaximo(), updatedPart.getTiempoCicloMaximo()));
             changes++;
         }
-        if (!updatedPart.getTiempoLlenadoCelula().equals(existente.getTiempoLlenadoCelula())) {
-            nuevaVersion.setTiempoLlenadoCelula(updatedPart.getTiempoLlenadoCelula());
+        if (!Objects.equals(updatedPart.getTiempoLlenadoCelula(), existente.getTiempoLlenadoCelula())) {
             cambios.add(new CampoActualizado("Tiempo Llenado Celula", existente.getTiempoLlenadoCelula(), updatedPart.getTiempoLlenadoCelula()));
             changes++;
         }
-        if (!updatedPart.getPiezasPorHora().equals(existente.getPiezasPorHora())) {
-            nuevaVersion.setPiezasPorHora(updatedPart.getPiezasPorHora());
+        if (!Objects.equals(updatedPart.getPiezasPorHora(), existente.getPiezasPorHora())) {
             cambios.add(new CampoActualizado("Piezas Por Hora", existente.getPiezasPorHora(), updatedPart.getPiezasPorHora()));
             changes++;
         }
-        if (!updatedPart.getTiempoTotalCambioModelo().equals(existente.getTiempoTotalCambioModelo())) {
-            nuevaVersion.setTiempoTotalCambioModelo(updatedPart.getTiempoTotalCambioModelo());
+        if (!Objects.equals(updatedPart.getTiempoTotalCambioModelo(), existente.getTiempoTotalCambioModelo())) {
             cambios.add(new CampoActualizado("Tiempo Total Cambio Modelo", existente.getTiempoTotalCambioModelo(), updatedPart.getTiempoTotalCambioModelo()));
             changes++;
         }
-        if (!updatedPart.getTiempoLiberacion().equals(existente.getTiempoLiberacion())) {
-            nuevaVersion.setTiempoLiberacion(updatedPart.getTiempoLiberacion());
+        if (!Objects.equals(updatedPart.getTiempoLiberacion(), existente.getTiempoLiberacion())) {
             cambios.add(new CampoActualizado("Tiempo Liberacion", existente.getTiempoLiberacion(), updatedPart.getTiempoLiberacion()));
             changes++;
         }
-        if (!updatedPart.getTiempoAjustePorFechador().equals(existente.getTiempoAjustePorFechador())) {
-            nuevaVersion.setTiempoAjustePorFechador(updatedPart.getTiempoAjustePorFechador());
+        if (!Objects.equals(updatedPart.getTiempoAjustePorFechador(), existente.getTiempoAjustePorFechador())) {
             cambios.add(new CampoActualizado("Tiempo Ajuste Por Fechador", existente.getTiempoAjustePorFechador(), updatedPart.getTiempoAjustePorFechador()));
             changes++;
         }
-        if (!updatedPart.getPiezasDeAjuste().equals(existente.getPiezasDeAjuste())) {
-            nuevaVersion.setPiezasDeAjuste(updatedPart.getPiezasDeAjuste());
+        if (!Objects.equals(updatedPart.getPiezasDeAjuste(), existente.getPiezasDeAjuste())) {
             cambios.add(new CampoActualizado("Piezas De Ajuste", existente.getPiezasDeAjuste(), updatedPart.getPiezasDeAjuste()));
             changes++;
         }
-        if (!updatedPart.getCantidadEconomicaPedido().equals(existente.getCantidadEconomicaPedido())) {
-            nuevaVersion.setCantidadEconomicaPedido(updatedPart.getCantidadEconomicaPedido());
+        if (!Objects.equals(updatedPart.getCantidadEconomicaPedido(), existente.getCantidadEconomicaPedido())) {
             cambios.add(new CampoActualizado("Cantidad Economica Pedido", existente.getCantidadEconomicaPedido(), updatedPart.getCantidadEconomicaPedido()));
             changes++;
-        }        
+        }
 
-        nuevaVersion.setComponentes(updatedPart.getComponentes());
-        nuevaVersion.setRutas(updatedPart.getRutas());
-
-        // Asignar versión nueva con fecha y hora
-        String fechaVersion = fechaActual.format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-        nuevaVersion.setVersion(fechaVersion);
-        nuevaVersion.setFechaActualizacion(fechaActual);
+        updatedPart.setVersion("nueva");
+        updatedPart.setFechaActualizacion(fechaActual);
 
         // Procesar imagen si viene una nueva
         if (imageFile != null && !imageFile.isEmpty()) {
@@ -369,7 +320,7 @@ public class PartService {
                     extension = originalFilename.substring(dotIndex + 1);
                 }
 
-                String safeNumeroParte = nuevaVersion.getNumeroParte().trim().replaceAll("[^a-zA-Z0-9_-]", "_");
+                String safeNumeroParte = updatedPart.getNumeroParte().trim().replaceAll("[^a-zA-Z0-9_-]", "_");
                 String fileName = safeNumeroParte + "." + extension;
 
                 // Ruta para guardar
@@ -402,7 +353,7 @@ public class PartService {
                 }
 
                 // Actualizar nombre del archivo en la entidad
-                nuevaVersion.setFileName(fileName);
+                updatedPart.setFileName(fileName);
 
             } catch (IOException e) {
                 throw new RuntimeException("Error al actualizar la imagen", e);
@@ -420,24 +371,23 @@ public class PartService {
             if (!emails.isEmpty()) {
                 emailService.sendPartChageAprobalRequest(emails.toArray(new String[0]), existente.getNumeroParte());
             }
+            existente.setActualizacionPendiente(true);
+            partRepository.save(existente);
+            partRepository.save(updatedPart);
         }
-        existente.setActualizacionPendiente(true);
-        partRepository.save(existente);
-
-        return partRepository.save(nuevaVersion);
     }
 
-    public Part getPartByNumeroParte(String numeroParte) {
-        return partRepository.findByNumeroParteAndVersion(numeroParte, "actual")
-            .orElseThrow(() -> new IllegalArgumentException("La parte con número " + numeroParte + " no existe o no es la versión actual."));
+    public Part getPartById(String id) {
+        return partRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("La parte con id " + id + " no existe o no es la versión actual."));
     }
 
-    public List<PartLog> getLogByNumeroParte(String numeroParte) {
-        List<PartLog> logs = logRepository.findByNumeroParte(numeroParte);
+    public List<PartLog> getLogByPartId(String id) {
+        List<PartLog> logs = logRepository.findByOldPartId(id);
 
         if (logs.isEmpty()) {
             throw new IllegalArgumentException(
-                "La parte con número " + numeroParte + " no tiene registros en log."
+                "La parte con id " + id + " no tiene registros en log."
             );
         }
 
@@ -478,19 +428,16 @@ public class PartService {
         log.setEstatus("Aprobada");
         logRepository.save(log);
 
-        String numeroParte = log.getNumeroParte();
-
         // Eliminar la versión obsoleta
-        Part oldPart = partRepository.findByNumeroParteAndVersion(numeroParte, "actual")
+        Part oldPart = partRepository.findById(log.getOldPartId())
                 .orElseThrow(() -> new IllegalArgumentException(
-                        "La parte con número " + numeroParte + " no existe o no es la versión actual."));
+                        "La parte con id " + log.getOldPartId() + " no existe o no es la versión actual."));
         partRepository.delete(oldPart);
 
         // Actualizar la nueva parte a versión actual
-        Part newPart = partRepository.findByNumeroParte(numeroParte)
+        Part newPart = partRepository.findById(log.getNewPartId())
                 .orElseThrow(() -> new IllegalArgumentException(
-                        "La nueva parte con número " + numeroParte + " no existe."));
-        newPart.setVersion("actual");
+                        "La nueva parte con id " + log.getNewPartId() + " no existe."));
         partRepository.save(newPart);
     }
 
@@ -504,18 +451,16 @@ public class PartService {
         log.setEstatus("Rechazada");
         logRepository.save(log);
 
-        String numeroParte = log.getNumeroParte();
-
         // Eliminar version actualizada
-        Part newPart = partRepository.findByNumeroParteAndVersion(numeroParte, log.getFecha().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")))
+        Part newPart = partRepository.findById(log.getNewPartId())
                 .orElseThrow(() -> new IllegalArgumentException(
-                        "La nueva parte con número " + numeroParte + " no existe."));
+                        "La nueva parte con id " + log.getNewPartId() + " no existe."));
         partRepository.delete(newPart);
 
         //Actualizar parte actual para que no tenga actualizacion pendiente
-        Part currentPart = partRepository.findByNumeroParteAndVersion(numeroParte, "actual")
+        Part currentPart = partRepository.findById(log.getOldPartId())
                 .orElseThrow(() -> new IllegalArgumentException(
-                        "La nueva parte con número " + numeroParte + " no existe."));
+                        "La nueva parte con id " + log.getOldPartId() + " no existe."));
         currentPart.setActualizacionPendiente(false);
         partRepository.save(currentPart);
     }

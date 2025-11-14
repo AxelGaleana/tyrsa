@@ -10,6 +10,5 @@ import java.util.Optional;
 public interface PartRepository extends MongoRepository<Part, String> {
     boolean existsByNumeroParte(String numeroParte);
     Optional<Part> findByNumeroParte(String numeroParte);
-    Optional<Part> findByNumeroParteAndVersion(String numeroParte, String version);
     List<Part> findAllByVersionOrderByFechaActualizacionDesc(String version);
 }

@@ -1049,9 +1049,9 @@ export default {
     validate() {
       this.valid = this.$refs.form.validate();
     },
-    loadItem(numeroParte) {
-        if (numeroParte !== 'nueva') {
-            PartService.getPart(numeroParte)
+    loadItem(id) {
+        if (id !== 'nueva') {
+            PartService.getPart(id)
             .then((response) => {
                 console.log("response.data: ", response.data);
                 if (!response.data.componentes) response.data.componentes = [];
@@ -1197,7 +1197,7 @@ export default {
     this.axios.defaults.headers.common[
       "Authorization"
     ] = `Bearer ${this.$store.getters.getUser.token}`;
-    this.editedIndex = this.$route.params.numeroParte;
+    this.editedIndex = this.$route.params.id;
     this.loadItem(this.editedIndex);
     this.getAllParts();
   },
