@@ -438,6 +438,7 @@ public class PartService {
         Part newPart = partRepository.findById(log.getNewPartId())
                 .orElseThrow(() -> new IllegalArgumentException(
                         "La nueva parte con id " + log.getNewPartId() + " no existe."));
+        newPart.setVersion("actual");
         partRepository.save(newPart);
     }
 
