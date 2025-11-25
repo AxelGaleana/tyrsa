@@ -27,10 +27,12 @@ public class PartController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createPart(
             @RequestPart("part") Part partRequest,
-            @RequestPart(value = "image", required = false) MultipartFile imageFile) {
+            @RequestPart(value = "image", required = false) MultipartFile imageFile,
+            Authentication authentication) {
 
         try {
-            partService.createPart(partRequest, imageFile);
+            CustomUserDetails ud = (CustomUserDetails) authentication.getPrincipal();
+            partService.createPart(partRequest, imageFile, ud.getName());
             return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (IllegalStateException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
