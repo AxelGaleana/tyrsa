@@ -876,7 +876,7 @@ export default {
     },
     openLog(item) {
       
-      return PartService.getPartLog(item.id)
+      return PartService.getPartLog(item.rootPartId)
         .then((response) => {
           this.log = response.data;
           this.loading = false;

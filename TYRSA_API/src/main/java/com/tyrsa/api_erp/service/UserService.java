@@ -19,6 +19,7 @@ import com.tyrsa.api_erp.model.Role;
 import com.tyrsa.api_erp.model.User;
 import com.tyrsa.api_erp.repository.RoleRepository;
 import com.tyrsa.api_erp.repository.UserRepository;
+import com.tyrsa.api_erp.security.CustomUserDetails;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -64,11 +65,9 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username)
-             .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        return new org.springframework.security.core.userdetails.User(
-             user.getUsername(), user.getPassword(),
-             List.of(new SimpleGrantedAuthority(user.getRole()))
-        );
+            .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        return new CustomUserDetails(user);
     }
 
     public User save(User user) {

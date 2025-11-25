@@ -12,6 +12,7 @@ import lombok.Data;
 public class Part {
     @Id
     private String id;
+    private String rootPartId;
     private String numeroParte;
     private String proyecto;
     private String descripcion;

@@ -14,6 +14,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class PartLog {
     @Id
     private String id;
+    private String rootPartId;
     private String oldPartId;
     private String newPartId;
     private LocalDateTime fecha;

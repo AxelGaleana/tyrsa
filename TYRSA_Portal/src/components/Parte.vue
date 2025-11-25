@@ -30,10 +30,9 @@
                             autocomplete="off"
                             maxLength="255"
                             outlined
-                            :rules="editedIndex === 'nueva' ? [rules.required, rules.numeroParte] : [rules.required]"
+                            :rules="rulesNumeroParte"
                             required
                             v-model="editedItem.numeroParte"
-                            :disabled="editedIndex !== 'nueva'"
                             ></v-text-field>
                         </v-col>
                         <v-col cols="6">
@@ -1035,6 +1034,7 @@ export default {
         .then((response) => {
           this.parts = response.data;
           this.loading = false;
+          console.log("this.parts: ", this.parts);
         })
         .catch((error) => {
           this.loading = false;
@@ -1057,6 +1057,7 @@ export default {
                 if (!response.data.componentes) response.data.componentes = [];
                 if (!response.data.rutas) response.data.rutas = [];
                 this.editedItem = response.data;
+                console.log("this.editedItem: ", this.editedItem);
             })
             .catch((error) => {
               this.loading = false;
@@ -1191,6 +1192,20 @@ export default {
             return isNaN(tiempo) ? 0 : tiempo;
         })
         );
+    },
+    rulesNumeroParte() {
+        const original = this.parts?.find(item => item.id === this.editedItem?.id);
+        console.log("original: ", original)
+
+        if (this.editedIndex === "nueva") {
+        return [this.rules.required, this.rules.numeroParte];
+        }
+
+        if (this.editedItem && original && this.editedItem.numeroParte !== original.numeroParte) {
+        return [this.rules.required, this.rules.numeroParte];
+        }
+
+        return [this.rules.required];
     }
   },
   created() {

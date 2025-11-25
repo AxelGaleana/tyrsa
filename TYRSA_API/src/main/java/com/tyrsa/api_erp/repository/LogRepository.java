@@ -9,5 +9,5 @@ import com.tyrsa.api_erp.model.PartLog;
 
 @Repository
 public interface LogRepository extends MongoRepository<PartLog, String> {
-    List<PartLog> findByOldPartId(String oldPartId);
+    List<PartLog> findByRootPartId(String oldPartId);
 }

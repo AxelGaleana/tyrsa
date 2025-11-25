@@ -45,8 +45,8 @@ export default {
   getPart(id) {
     return Vue.axios.get("/parts/" + id);
   },
-  getPartLog(partId){
-    return Vue.axios.get("/parts/log/" + partId);
+  getPartLog(rootPartId){
+    return Vue.axios.get("/parts/log/" + rootPartId);
   },
   approvePartUpdate(logId){
     return Vue.axios.put("/parts/log/approve/" + logId);

@@ -113,26 +113,27 @@ public class PartService {
 
         newPart.setFechaActualizacion(LocalDateTime.now());
         newPart.setVersion("actual");
-        partRepository.save(newPart);
+        Part saved = partRepository.save(newPart);
+
+        saved.setRootPartId(saved.getId());
+        partRepository.save(saved);
     }
 
 
-    public void updatePartById(String id, Part updatedPart, MultipartFile imageFile, UserDetails userDetails) {
+    public void updatePartById(String id, Part updatedPart, MultipartFile imageFile, String userGivenName) {
         Part existente = partRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("La parte con número " + id + " no existe."));
 
         int changes = 0;
         // Copiar todos los campos del nuevaVersion
         LocalDateTime  fechaActual = LocalDateTime.now();
-        PartLog log = new PartLog();
-        log.setFecha(fechaActual);
-        log.setEstatus("Pendiente");
-        log.setUserName(userDetails.getUsername());
-        log.setOldPartId(existente.getId());
-        log.setNewPartId(updatedPart.getId());
 
         List<CampoActualizado> cambios = new ArrayList<>();
         updatedPart.setId(null);
+        if (!Objects.equals(updatedPart.getNumeroParte(), existente.getNumeroParte())) {
+            cambios.add(new CampoActualizado("Numero de Parte", existente.getNumeroParte(), updatedPart.getNumeroParte()));
+            changes++;
+        }
         if (!Objects.equals(updatedPart.getProyecto(), existente.getProyecto())) {
             cambios.add(new CampoActualizado("Proyecto", existente.getProyecto(), updatedPart.getProyecto()));
             changes++;
@@ -360,7 +361,20 @@ public class PartService {
             }
         }
         if (changes > 0){
+            existente.setActualizacionPendiente(true);
+            partRepository.save(existente);
+
+            updatedPart.setRootPartId(existente.getRootPartId());
+            updatedPart = partRepository.save(updatedPart);
+
+            PartLog log = new PartLog();
+            log.setFecha(fechaActual);
+            log.setEstatus("Pendiente");
+            log.setUserName(userGivenName);
+            log.setOldPartId(existente.getId());
+            log.setNewPartId(updatedPart.getId());
             log.setCambios(cambios);
+            log.setRootPartId(existente.getRootPartId());
             logRepository.save(log);
 
             List<String> emails = userService.getUsersByRole("ROLE_GERENTE_INGENIERIA").stream()
@@ -371,9 +385,6 @@ public class PartService {
             if (!emails.isEmpty()) {
                 emailService.sendPartChageAprobalRequest(emails.toArray(new String[0]), existente.getNumeroParte());
             }
-            existente.setActualizacionPendiente(true);
-            partRepository.save(existente);
-            partRepository.save(updatedPart);
         }
     }
 
@@ -382,12 +393,12 @@ public class PartService {
             .orElseThrow(() -> new IllegalArgumentException("La parte con id " + id + " no existe o no es la versión actual."));
     }
 
-    public List<PartLog> getLogByPartId(String id) {
-        List<PartLog> logs = logRepository.findByOldPartId(id);
+    public List<PartLog> getLogByRootPartId(String rootPartId) {
+        List<PartLog> logs = logRepository.findByRootPartId(rootPartId);
 
         if (logs.isEmpty()) {
             throw new IllegalArgumentException(
-                "La parte con id " + id + " no tiene registros en log."
+                "La parte con rootPartId " + rootPartId + " no tiene registros en log."
             );
         }
 

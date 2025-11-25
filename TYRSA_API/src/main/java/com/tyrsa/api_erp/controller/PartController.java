@@ -2,6 +2,7 @@ package com.tyrsa.api_erp.controller;
 
 import com.tyrsa.api_erp.model.Part;
 import com.tyrsa.api_erp.model.PartLog;
+import com.tyrsa.api_erp.security.CustomUserDetails;
 import com.tyrsa.api_erp.service.PartService;
 
 import java.util.List;
@@ -47,9 +48,9 @@ public class PartController {
             @RequestPart(value = "image", required = false) MultipartFile imageFile,
             Authentication authentication) {
         try {
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            CustomUserDetails ud = (CustomUserDetails) authentication.getPrincipal();
 
-            partService.updatePartById(id, partRequest, imageFile, userDetails);
+            partService.updatePartById(id, partRequest, imageFile, ud.getName());
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
@@ -70,10 +71,10 @@ public class PartController {
         }
     }
 
-    @GetMapping("/log/{partId}")
-    public ResponseEntity<?> getLogByPartId(@PathVariable String partId) {
+    @GetMapping("/log/{rootPartId}")
+    public ResponseEntity<?> getLogByRootPartId(@PathVariable String rootPartId) {
         try {
-            List<PartLog> log = partService.getLogByPartId(partId);
+            List<PartLog> log = partService.getLogByRootPartId(rootPartId);
             return new ResponseEntity<>(log, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
@@ -85,8 +86,8 @@ public class PartController {
     @PutMapping("/log/approve/{logId}")
     public ResponseEntity<?> approvePartUpdate(@PathVariable String logId, Authentication authentication) {
         try {
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            partService.approvePartUpdate(logId, userDetails.getUsername());
+            CustomUserDetails ud = (CustomUserDetails) authentication.getPrincipal();
+            partService.approvePartUpdate(logId, ud.getName());
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
@@ -98,8 +99,8 @@ public class PartController {
     @PutMapping("/log/deny/{logId}")
     public ResponseEntity<?> denyPartUpdate(@PathVariable String logId, Authentication authentication) {
         try {
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            partService.denyPartUpdate(logId, userDetails.getUsername());
+            CustomUserDetails ud = (CustomUserDetails) authentication.getPrincipal();
+            partService.denyPartUpdate(logId, ud.getName());
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
