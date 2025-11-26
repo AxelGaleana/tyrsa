@@ -461,22 +461,34 @@
                                 v-model="personalRequerido"
                                 ></v-text-field>
                             </v-col>
-                            <v-col cols="3">
+                            <v-col cols="2">
                                 <v-text-field
                                 label="Tiempo ciclo total (seg)"
                                 autocomplete="off"
                                 maxLength="255"
                                 outlined
                                 v-model="tiempoCicloTotal"
+                                type="number"
                                 ></v-text-field>
                             </v-col>
-                            <v-col cols="3">
+                            <v-col cols="2">
                                 <v-text-field
                                 label="Tiempo ciclo Máximo"
                                 autocomplete="off"
                                 maxLength="255"
                                 outlined
                                 v-model="tiempoCicloMaximo"
+                                type="number"
+                                ></v-text-field>
+                            </v-col>
+                            <v-col cols="2">
+                                <v-text-field
+                                label="WIP por Máquina"
+                                autocomplete="off"
+                                maxLength="255"
+                                outlined
+                                v-model="editedItem.wipPorMaquina"
+                                type="number"
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="3">
@@ -486,7 +498,8 @@
                                 maxLength="255"
                                 outlined
                                 title="Tiempo de llenado de célula"
-                                v-model="editedItem.tiempoLlenadoCelula"
+                                v-model="tiempoLlenadoCelula"
+                                disabled
                                 ></v-text-field>
                             </v-col>
                         </v-row>
@@ -619,7 +632,7 @@
                   </template>
                   <template v-slot:expanded-item="{ item }">
                     <td :colspan="headers.length" class="text-center pa-4">
-                      <v-simple-table dense class="mx-auto" style="max-width: 800px;">
+                      <v-simple-table dense class="mx-auto" style="width: 100%;">
                         <thead>
                           <tr>
                             <th class="text-center">Campo</th>
@@ -629,9 +642,142 @@
                         </thead>
                         <tbody>
                           <tr v-for="(cambio, index) in item.cambios" :key="index">
-                            <td class="text-center">{{ cambio.campo }}</td>
-                            <td class="text-center">{{ cambio.de }}</td>
-                            <td class="text-center">{{ cambio.a }}</td>
+                             <td class="text-center">{{ cambio.campo }}</td>
+                            <td class="text-center">
+
+                              <template v-if="cambio.campo === 'Imagen'">
+                                <div class="d-flex justify-center">
+                                  <v-img
+                                  :src="getThumbUrl(cambio.de)"
+                                  @error="onImgError($event)"
+                                  cover
+                                  max-height="40"
+                                  max-width="40"
+                                  class="mb-3"
+                                  style="border-radius: 12px;"
+                                  ></v-img>
+                                </div>
+                              </template>
+
+                              <template v-else-if="cambio.campo === 'Componentes'">
+                                <v-simple-table dense class="mx-auto" :style="{ maxWidth: '700px;', border: '1px solid #ccc', borderRadius: '4px',  backgroundColor: '#f0f0f0' }">
+                                  <thead>
+                                    <tr>
+                                      <th class="text-center">Especificación</th>
+                                      <th class="text-center">Tipo proveedor</th>
+                                      <th class="text-center">Nombre proveedor</th>
+                                      <th class="text-center">Código</th>
+                                      <th class="text-center">Cantidad</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr v-for="(comp, i) in cambio.de" :key="comp._id || i">
+                                      <td class="text-center">{{ comp.especificacionComponente }}</td>
+                                      <td class="text-center">{{ comp.tipoProveedor }}</td>
+                                      <td class="text-center">{{ comp.nombreProveedor }}</td>
+                                      <td class="text-center">{{ comp.codigoIdentificacionComponente }}</td>
+                                      <td class="text-center">{{ comp.cantidadComponentesPorPieza }}</td>
+                                    </tr>
+                                  </tbody>
+                                </v-simple-table>
+                              </template>
+
+                              <template v-else-if="cambio.campo === 'Rutas'">
+                                <v-simple-table dense class="mx-auto" :style="{ maxWidth: '700px;', border: '1px solid #ccc', borderRadius: '4px',  backgroundColor: '#f0f0f0' }">
+                                  <thead>
+                                    <tr>
+                                      <th class="text-center">Operación</th>
+                                      <th class="text-center">No. de Máquina</th>
+                                      <th class="text-center">Tonelaje</th>
+                                      <th class="text-center">Descripción</th>
+                                      <th class="text-center">FPC</th>
+                                      <th class="text-center">Tiempo de Ciclo</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr v-for="(comp, i) in cambio.de" :key="comp._id || i">
+                                      <td class="text-center">{{ comp.operacion }}</td>
+                                      <td class="text-center">{{ comp.numeroMaquina }}</td>
+                                      <td class="text-center">{{ comp.tonelaje }}</td>
+                                      <td class="text-center">{{ comp.descripcion }}</td>
+                                      <td class="text-center">{{ comp.fpc }}</td>
+                                      <td class="text-center">{{ comp.tiempoCiclo }}</td>
+                                    </tr>
+                                  </tbody>
+                                </v-simple-table>
+                              </template>
+
+                              <template v-else>
+                                {{ cambio.de }}
+                              </template>
+                            </td>
+                            <td class="text-center">
+                              <template v-if="cambio.campo === 'Imagen'">
+                                <div class="d-flex justify-center">
+                                  <v-img
+                                  :src="getThumbUrl(cambio.a)"
+                                  @error="onImgError($event)"
+                                  cover
+                                  max-height="40"
+                                  max-width="40"
+                                  class="mb-3"
+                                  style="border-radius: 12px;"
+                                  ></v-img>
+                                </div>
+                              </template>
+
+                              <template v-else-if="cambio.campo === 'Componentes'">
+                                <v-simple-table dense class="mx-auto" :style="{ maxWidth: '700px;', border: '1px solid #ccc', borderRadius: '4px',  backgroundColor: '#d4edda' }">
+                                  <thead>
+                                    <tr>
+                                      <th class="text-center">Especificación</th>
+                                      <th class="text-center">Tipo proveedor</th>
+                                      <th class="text-center">Nombre proveedor</th>
+                                      <th class="text-center">Código</th>
+                                      <th class="text-center">Cantidad</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr v-for="(comp, i) in cambio.a" :key="comp._id || i">
+                                      <td class="text-center">{{ comp.especificacionComponente }}</td>
+                                      <td class="text-center">{{ comp.tipoProveedor }}</td>
+                                      <td class="text-center">{{ comp.nombreProveedor }}</td>
+                                      <td class="text-center">{{ comp.codigoIdentificacionComponente }}</td>
+                                      <td class="text-center">{{ comp.cantidadComponentesPorPieza }}</td>
+                                    </tr>
+                                  </tbody>
+                                </v-simple-table>
+                              </template>
+
+                              <template v-else-if="cambio.campo === 'Rutas'">
+                                <v-simple-table dense class="mx-auto" :style="{ maxWidth: '700px;', border: '1px solid #ccc', borderRadius: '4px',  backgroundColor: '#d4edda' }">
+                                  <thead>
+                                    <tr>
+                                      <th class="text-center">Operación</th>
+                                      <th class="text-center">No. de Máquina</th>
+                                      <th class="text-center">Tonelaje</th>
+                                      <th class="text-center">Descripción</th>
+                                      <th class="text-center">FPC</th>
+                                      <th class="text-center">Tiempo de Ciclo</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr v-for="(comp, i) in cambio.a" :key="comp._id || i">
+                                      <td class="text-center">{{ comp.operacion }}</td>
+                                      <td class="text-center">{{ comp.numeroMaquina }}</td>
+                                      <td class="text-center">{{ comp.tonelaje }}</td>
+                                      <td class="text-center">{{ comp.descripcion }}</td>
+                                      <td class="text-center">{{ comp.fpc }}</td>
+                                      <td class="text-center">{{ comp.tiempoCiclo }}</td>
+                                    </tr>
+                                  </tbody>
+                                </v-simple-table>
+                              </template>
+
+                              <template v-else>
+                                {{ cambio.a }}
+                              </template>
+                            </td>
                           </tr>
                         </tbody>
                       </v-simple-table>
@@ -1015,7 +1161,11 @@ export default {
             return isNaN(tiempo) ? 0 : tiempo;
         })
         );
-    }
+    },
+    tiempoLlenadoCelula() {
+        if (this.tiempoCicloTotal && this.editedItem.wipPorMaquina) return this.tiempoCicloTotal*this.editedItem.wipPorMaquina;
+        else return 0;
+    },
   },
   watch: {
     dialog(val) {

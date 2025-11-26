@@ -52,7 +52,8 @@ public class Part {
     private String personalRequerido;
     private String tiempoCicloTotal;
     private String tiempoCicloMaximo;
-    private String tiempoLlenadoCelula;
+    private String wipPorMaquina;
+    //private String tiempoLlenadoCelula;
     private String piezasPorHora;
     private String tiempoTotalCambioModelo;
     private String tiempoLiberacion;

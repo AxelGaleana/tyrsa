@@ -28,6 +28,7 @@ import com.tyrsa.api_erp.model.CampoActualizado;
 import com.tyrsa.api_erp.model.Part;
 import com.tyrsa.api_erp.model.PartLog;
 import com.tyrsa.api_erp.repository.PartRepository;
+import com.tyrsa.api_erp.util.ComparadorListas;
 import com.tyrsa.api_erp.repository.LogRepository;
 
 
@@ -162,8 +163,11 @@ public class PartService {
         if (newPart.getTiempoCicloMaximo() != null)
             cambios.add(new CampoActualizado("Tiempo Ciclo Maximo", "-", newPart.getTiempoCicloMaximo()));
 
-        if (newPart.getTiempoLlenadoCelula() != null)
-            cambios.add(new CampoActualizado("Tiempo Llenado Celula", "-", newPart.getTiempoLlenadoCelula()));
+        if (newPart.getWipPorMaquina() != null)
+            cambios.add(new CampoActualizado("WIP por Máquina", "-", newPart.getWipPorMaquina()));
+
+        /*if (newPart.getTiempoLlenadoCelula() != null)
+            cambios.add(new CampoActualizado("Tiempo Llenado Celula", "-", newPart.getTiempoLlenadoCelula()));*/
 
         if (newPart.getPiezasPorHora() != null)
             cambios.add(new CampoActualizado("Piezas Por Hora", "-", newPart.getPiezasPorHora()));
@@ -195,18 +199,17 @@ public class PartService {
 
                 int dotIndex = originalFilename.lastIndexOf('.');
                 if (dotIndex >= 0) {
-                    extension = originalFilename.substring(dotIndex + 1); // sin el punto
+                    extension = originalFilename.substring(dotIndex + 1).toLowerCase(); // sin el punto
                 }
-
-                //String fileName = newPart.getNumeroParte().trim() + "." + extension;
-                String safeNumeroParte = newPart.getNumeroParte().trim().replaceAll("[^a-zA-Z0-9_-]", "_");
-                String fileName = safeNumeroParte + "." + extension;
 
                 // Ruta original
                 Path uploadPath = Paths.get(uploadDir);
                 Files.createDirectories(uploadPath);
-                Path originalImagePath = uploadPath.resolve(fileName);
-                Files.copy(imageFile.getInputStream(), originalImagePath, StandardCopyOption.REPLACE_EXISTING);
+
+                String safeFilename = getAvailableFilename(uploadPath, originalFilename);
+                Path originalImagePath = uploadPath.resolve(safeFilename);
+
+                Files.copy(imageFile.getInputStream(), originalImagePath);
 
                 // Crear miniatura
                 try (InputStream in = Files.newInputStream(originalImagePath)) {
@@ -228,11 +231,12 @@ public class PartService {
                     Path thumbsPath = uploadPath.resolve("thumbs");
                     Files.createDirectories(thumbsPath);
 
-                    Path thumbnailPath = thumbsPath.resolve(fileName);
+                    Path thumbnailPath = thumbsPath.resolve(safeFilename);
                     ImageIO.write(thumbnail, extension, thumbnailPath.toFile());
                 }
 
-                newPart.setFileName(fileName);
+                newPart.setFileName(safeFilename);
+                cambios.add(new CampoActualizado("Imagen", "-", newPart.getFileName()));
 
             } catch (IOException e) {
                 throw new RuntimeException("Error al guardar la imagen", e);
@@ -381,9 +385,12 @@ public class PartService {
         if (!Objects.equals(updatedPart.getTiempoCicloMaximo(), existente.getTiempoCicloMaximo())) {
             cambios.add(new CampoActualizado("Tiempo Ciclo Maximo", existente.getTiempoCicloMaximo(), updatedPart.getTiempoCicloMaximo()));
         }
-        if (!Objects.equals(updatedPart.getTiempoLlenadoCelula(), existente.getTiempoLlenadoCelula())) {
-            cambios.add(new CampoActualizado("Tiempo Llenado Celula", existente.getTiempoLlenadoCelula(), updatedPart.getTiempoLlenadoCelula()));
+        if (!Objects.equals(updatedPart.getWipPorMaquina(), existente.getWipPorMaquina())) {
+            cambios.add(new CampoActualizado("WIP por Máquina", existente.getWipPorMaquina(), updatedPart.getWipPorMaquina()));
         }
+        /*if (!Objects.equals(updatedPart.getTiempoLlenadoCelula(), existente.getTiempoLlenadoCelula())) {
+            cambios.add(new CampoActualizado("Tiempo Llenado Celula", existente.getTiempoLlenadoCelula(), updatedPart.getTiempoLlenadoCelula()));
+        }*/
         if (!Objects.equals(updatedPart.getPiezasPorHora(), existente.getPiezasPorHora())) {
             cambios.add(new CampoActualizado("Piezas Por Hora", existente.getPiezasPorHora(), updatedPart.getPiezasPorHora()));
         }
@@ -402,6 +409,21 @@ public class PartService {
         if (!Objects.equals(updatedPart.getCantidadEconomicaPedido(), existente.getCantidadEconomicaPedido())) {
             cambios.add(new CampoActualizado("Cantidad Economica Pedido", existente.getCantidadEconomicaPedido(), updatedPart.getCantidadEconomicaPedido()));
         }
+        if (ComparadorListas.listasDiferentes(existente.getComponentes(), updatedPart.getComponentes())) {
+            cambios.add(new CampoActualizado(
+                "Componentes",
+                existente.getComponentes(),
+                updatedPart.getComponentes()
+            ));
+        }
+
+        if (ComparadorListas.listasDiferentes(updatedPart.getRutas(), existente.getRutas())) {
+            cambios.add(new CampoActualizado(
+                "Rutas",
+                existente.getRutas(),
+                updatedPart.getRutas()
+            ));
+        }
 
         updatedPart.setVersion("nueva");
         updatedPart.setFechaActualizacion(fechaActual);
@@ -416,25 +438,25 @@ public class PartService {
                 }
 
                 String extension = "";
+
                 int dotIndex = originalFilename.lastIndexOf('.');
                 if (dotIndex >= 0) {
-                    extension = originalFilename.substring(dotIndex + 1);
+                    extension = originalFilename.substring(dotIndex + 1).toLowerCase(); // sin el punto
                 }
 
-                String safeNumeroParte = updatedPart.getNumeroParte().trim().replaceAll("[^a-zA-Z0-9_-]", "_");
-                String fileName = safeNumeroParte + "." + extension;
-
-                // Ruta para guardar
+                // Ruta original
                 Path uploadPath = Paths.get(uploadDir);
-                System.out.println("Upload directory: " + uploadDir);
                 Files.createDirectories(uploadPath);
 
-                Path originalImagePath = uploadPath.resolve(fileName);
-                Files.copy(imageFile.getInputStream(), originalImagePath, StandardCopyOption.REPLACE_EXISTING);
+                String safeFilename = getAvailableFilename(uploadPath, originalFilename);
+                Path originalImagePath = uploadPath.resolve(safeFilename);
 
-                // Miniatura
+                Files.copy(imageFile.getInputStream(), originalImagePath);
+
+                // Crear miniatura
                 try (InputStream in = Files.newInputStream(originalImagePath)) {
                     BufferedImage originalImage = ImageIO.read(in);
+
                     if (originalImage == null) {
                         throw new IllegalArgumentException("El archivo no es una imagen válida.");
                     }
@@ -447,19 +469,22 @@ public class PartService {
                     g.drawImage(originalImage, 0, 0, thumbnailWidth, thumbnailHeight, null);
                     g.dispose();
 
+                    // Guardar miniatura
                     Path thumbsPath = uploadPath.resolve("thumbs");
                     Files.createDirectories(thumbsPath);
-                    Path thumbnailPath = thumbsPath.resolve(fileName);
+
+                    Path thumbnailPath = thumbsPath.resolve(safeFilename);
                     ImageIO.write(thumbnail, extension, thumbnailPath.toFile());
                 }
 
-                // Actualizar nombre del archivo en la entidad
-                updatedPart.setFileName(fileName);
+                updatedPart.setFileName(safeFilename);
+                cambios.add(new CampoActualizado("Imagen", existente.getFileName(), updatedPart.getFileName()));
 
             } catch (IOException e) {
-                throw new RuntimeException("Error al actualizar la imagen", e);
+                throw new RuntimeException("Error al guardar la imagen", e);
             }
         }
+        
         if (cambios.size() > 0){
             existente.setActualizacionPendiente(true);
             partRepository.save(existente);
@@ -576,5 +601,31 @@ public class PartService {
         currentPart.setActualizacionPendiente(false);
         partRepository.save(currentPart);
     }
+
+    private String getAvailableFilename(Path uploadPath, String originalFilename) {
+        String name = originalFilename;
+        String baseName;
+        String extension = "";
+
+        int dotIndex = originalFilename.lastIndexOf('.');
+        if (dotIndex > 0) {
+            baseName = originalFilename.substring(0, dotIndex);
+            extension = originalFilename.substring(dotIndex); // incluye el punto
+        } else {
+            baseName = originalFilename;
+        }
+
+        Path filePath = uploadPath.resolve(name);
+        int counter = 1;
+
+        while (Files.exists(filePath)) {
+            name = baseName + "-" + counter + extension;
+            filePath = uploadPath.resolve(name);
+            counter++;
+        }
+
+        return name;
+    }
+
     
 }

@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CampoActualizado {
     private String campo;
-    private String de;
-    private String a;    
+    private Object de;
+    private Object a;    
 }

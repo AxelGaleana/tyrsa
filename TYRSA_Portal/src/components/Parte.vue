@@ -620,22 +620,34 @@
                             disabled
                             ></v-text-field>
                         </v-col>
-                        <v-col cols="3">
+                        <v-col cols="2">
                             <v-text-field
                             label="Tiempo ciclo total (seg)"
                             autocomplete="off"
                             maxLength="255"
                             outlined
                             v-model="tiempoCicloTotal"
+                            type="number"
                             ></v-text-field>
                         </v-col>
-                        <v-col cols="3">
+                        <v-col cols="2">
                             <v-text-field
                             label="Tiempo ciclo Máximo"
                             autocomplete="off"
                             maxLength="255"
                             outlined
                             v-model="tiempoCicloMaximo"
+                            type="number"
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="2">
+                            <v-text-field
+                            label="WIP por Máquina"
+                            autocomplete="off"
+                            maxLength="255"
+                            outlined
+                            v-model="editedItem.wipPorMaquina"
+                            type="number"
                             ></v-text-field>
                         </v-col>
                         <v-col cols="3">
@@ -645,7 +657,8 @@
                             maxLength="255"
                             outlined
                             title="Tiempo de llenado de célula"
-                            v-model="editedItem.tiempoLlenadoCelula"
+                            v-model="tiempoLlenadoCelula"
+                            disabled
                             ></v-text-field>
                         </v-col>
                     </v-row>
@@ -1192,6 +1205,10 @@ export default {
             return isNaN(tiempo) ? 0 : tiempo;
         })
         );
+    },
+    tiempoLlenadoCelula() {
+        if (this.tiempoCicloTotal && this.editedItem.wipPorMaquina) return this.tiempoCicloTotal*this.editedItem.wipPorMaquina;
+        else return 0;
     },
     rulesNumeroParte() {
         const original = this.parts?.find(item => item.id === this.editedItem?.id);
