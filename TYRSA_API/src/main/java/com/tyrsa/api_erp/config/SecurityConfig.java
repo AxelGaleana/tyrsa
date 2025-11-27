@@ -54,6 +54,7 @@ public class SecurityConfig {
                 .requestMatchers("/auth/**").permitAll()       // rutas públicas (login, register)
                 .requestMatchers(HttpMethod.POST, "/user/*/reset-password").permitAll()
                 .requestMatchers("/user/**").authenticated()       // Requiere token JWT
+                .requestMatchers("/clientes/**").authenticated()       // Requiere token JWT
                 .requestMatchers("/parts/**").authenticated()       // Requiere token JWT
                 .requestMatchers("/api/protegido").authenticated()  // Requiere token JWT
                 .anyRequest().authenticated()                 // todas las demás requieren JWT

@@ -140,6 +140,11 @@ export default {
           text: "Users"
         },
         {
+          to: "/clientes",
+          icon: "mdi-account-group",
+          text: "Clientes"
+        },
+        {
           to: "/industrializacion",
           icon: "mdi-nut",
           text: "Industrialización"
@@ -162,7 +167,7 @@ export default {
       let l = [];
       this.links.forEach(function (element) {
         const name = element.text.toString();
-        if (name === "Industrialización") {
+        if (name === "Industrialización" || name === "Clientes") {
           l.push(element);
           return;
         }

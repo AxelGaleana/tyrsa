@@ -1,7 +1,6 @@
 package com.tyrsa.api_erp.repository;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
-
 import com.tyrsa.api_erp.model.Part;
 
 import java.util.List;

@@ -15,6 +15,8 @@ public class Part {
     private String rootPartId;
     private String numeroParte;
     private String proyecto;
+    private String idCliente;
+    private String nombreCliente;
     private String descripcion;
     private String nivelIngenieria;
     private LocalDate fechaInicioProyecto;

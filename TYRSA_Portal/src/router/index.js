@@ -2,6 +2,7 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import VueMask from 'v-mask'
 import AdminsPage from "../components/Users.vue";
+import Cliente from "../components/Clientes.vue"
 import Parte from "../components/Parte.vue";
 import Industrializacion from "../components/Industrializacion.vue";
 import store from "../store/index.js";
@@ -31,7 +32,21 @@ const routes = [
     }
   },
   {
-    path: "/parte/:numeroParte",
+    path: "/clientes",
+    name: "Clientes",
+    component: Cliente,
+    beforeEnter: (to, from, next) => {
+      if (!!store.getters.getUser.role && 
+          store.getters.getUser.role === "ROLE_ADMIN")
+      {
+        next();
+      } else {
+        next("/");
+      }
+    }
+  },
+  {
+    path: "/parte/:id",
     name: "Parte",
     component: Parte
   },

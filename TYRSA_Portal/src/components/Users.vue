@@ -7,7 +7,7 @@
             {{ text }}
           </v-snackbar>
           <v-snackbar v-model="snackbar_error" :timeout="timeout" color="error">
-            Hubo un problema al guardar administrador.
+            Hubo un problema al guardar Usuario.
           </v-snackbar>
         </div>
         <v-layout align-end justify-end>

@@ -17,7 +17,7 @@
                           <!-- Columna izquierda: campos -->
                           <v-col cols="8">
                               <v-row>
-                              <v-col cols="6">
+                              <v-col cols="4">
                                   <v-text-field
                                   label="Numero de parte"
                                   autocomplete="off"
@@ -26,7 +26,7 @@
                                   v-model="editedItem.numeroParte"
                                   ></v-text-field>
                               </v-col>
-                              <v-col cols="6">
+                              <v-col cols="4">
                                   <v-text-field
                                   label="Proyecto"
                                   autocomplete="off"
@@ -34,6 +34,20 @@
                                   outlined
                                   v-model="editedItem.proyecto"
                                   ></v-text-field>
+                              </v-col>
+                              <v-col cols="4">
+                                  <v-select
+                                      v-model="editedItem.idCliente"
+                                      :items="clientes"
+                                      prepend-icon="assignment_ind"
+                                      item-text="name"
+                                      item-value="id"
+                                      label="Cliente"
+                                      :rules="[(v) => !!v || 'Campo requerido']"
+                                      required
+                                      autocomplete="off"
+                                      outlined
+                                  ></v-select>
                               </v-col>
                               <v-col cols="6">
                                   <v-text-field
@@ -884,12 +898,14 @@
 
 <script>
 import PartService from "@/services/PartService";
+import ClienteService from "@/services/ClienteService";
 
 export default {
   data() {
     return {
       defaultImage: require('@/assets/placeholder-image.png'),
       parts:[],
+      clientes:[],
       dialog: false,
       dialogLog: false,
       search: "",
@@ -942,6 +958,7 @@ export default {
           width: "10px"
         },
         { text: "Proyecto", value: "proyecto" },
+        { text: "Cliente", value: "nombreCliente" },
         { text: "Descripción", value: "descripcion" },
         { text: "Nivel Ingeniería", value: "nivelIngenieria" },
         { text: "Fecha Inicio", value: "fechaInicioProyecto", width: '110px' },
@@ -978,6 +995,23 @@ export default {
     };
   },
   methods: {
+    getClientes() {
+      return ClienteService.getAllClientes()
+        .then((response) => {
+          this.clientes = response.data;
+          this.loading = false;
+          console.log("this.parts: ", this.parts);
+        })
+        .catch((error) => {
+          this.loading = false;
+          if (
+            error.response.data.error &&
+            error.response.data.error.toUpperCase().includes("TOKEN")
+          ) {
+            this.$store.dispatch("tokenerror", error.response.data.error);
+          }
+        });
+    },
     getThumbUrl(fileName) {
       if (fileName) {
         const timestamp = new Date().getTime();
@@ -1185,6 +1219,7 @@ export default {
       "Authorization"
     ] = `Bearer ${this.$store.getters.getUser.token}`;
     this.getParts();
+    this.getClientes();
   },
 };
 </script>

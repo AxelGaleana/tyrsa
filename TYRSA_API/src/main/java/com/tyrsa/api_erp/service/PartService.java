@@ -3,26 +3,21 @@ package com.tyrsa.api_erp.service;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
-
 import javax.imageio.ImageIO;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Path;
-
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import com.tyrsa.api_erp.dto.UserResponse;
 import com.tyrsa.api_erp.model.CampoActualizado;
 import com.tyrsa.api_erp.model.Part;
@@ -43,6 +38,8 @@ public class PartService {
     private EmailService emailService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private ClienteService clienteService;
 
     @Value("${upload.path}")
     private String uploadDir;
@@ -63,6 +60,9 @@ public class PartService {
 
         if (newPart.getProyecto() != null && !newPart.getProyecto().toString().isBlank())
             cambios.add(new CampoActualizado("Proyecto", "-", newPart.getProyecto()));
+
+        if (newPart.getIdCliente() != null && !newPart.getIdCliente().toString().isBlank())
+            cambios.add(new CampoActualizado("Cliente", "-", newPart.getNombreCliente()));
 
         if (newPart.getDescripcion() != null && !newPart.getDescripcion().toString().isBlank())
             cambios.add(new CampoActualizado("Descripcion", "-", newPart.getDescripcion()));
@@ -280,6 +280,9 @@ public class PartService {
         }
         if (!Objects.equals(updatedPart.getProyecto(), existente.getProyecto())) {
             cambios.add(new CampoActualizado("Proyecto", existente.getProyecto(), updatedPart.getProyecto()));
+        }
+        if (!Objects.equals(updatedPart.getIdCliente(), existente.getIdCliente())) {
+            cambios.add(new CampoActualizado("Cliente", existente.getNombreCliente(), updatedPart.getNombreCliente()));
         }
         if (!Objects.equals(updatedPart.getDescripcion(), existente.getDescripcion())) {
             cambios.add(new CampoActualizado("Descripcion", existente.getDescripcion(), updatedPart.getDescripcion()));
@@ -551,7 +554,14 @@ public class PartService {
     }
 
     public List<Part> getAllParts() {
-        return partRepository.findAllByVersionOrderByFechaActualizacionDesc("actual");
+        Map<String, String> clientes = clienteService.getClientesMap();
+        List<Part> parts = partRepository.findAllByVersionOrderByFechaActualizacionDesc("actual");
+
+        for (Part part : parts) {
+            part.setNombreCliente(clientes.get(part.getIdCliente()));
+        }
+
+        return parts;
     }
 
     public void approvePartUpdate(String logId, String approver) {

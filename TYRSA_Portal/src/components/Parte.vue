@@ -24,7 +24,7 @@
                     <!-- Columna izquierda: campos -->
                     <v-col cols="8">
                         <v-row>
-                        <v-col cols="6">
+                        <v-col cols="4">
                             <v-text-field
                             label="Numero de parte"
                             autocomplete="off"
@@ -35,7 +35,7 @@
                             v-model="editedItem.numeroParte"
                             ></v-text-field>
                         </v-col>
-                        <v-col cols="6">
+                        <v-col cols="4">
                             <v-text-field
                             label="Proyecto"
                             autocomplete="off"
@@ -45,6 +45,21 @@
                             required
                             v-model="editedItem.proyecto"
                             ></v-text-field>
+                        </v-col>
+                        <v-col cols="4">
+                            <v-select
+                                v-model="editedItem.idCliente"
+                                :items="clientes"
+                                prepend-icon="assignment_ind"
+                                item-text="name"
+                                item-value="id"
+                                label="Cliente"
+                                :rules="[(v) => !!v || 'Campo requerido']"
+                                required
+                                autocomplete="off"
+                                outlined
+                                returnObject
+                            ></v-select>
                         </v-col>
                         <v-col cols="6">
                             <v-text-field
@@ -859,6 +874,7 @@
 
 <script>
 import PartService from "@/services/PartService";
+import ClienteService from "@/services/ClienteService";
 
 export default {
   data() {
@@ -868,6 +884,7 @@ export default {
         dialogComponente: false,
         dialogRuta: false,
         parts: [],
+        clientes: [],
         loading: false,
         valid: true,
         validComponente: true,
@@ -930,6 +947,23 @@ export default {
     };
   },
   methods: {
+    getClientesActivos() {
+      return ClienteService.getAllClientesActivos()
+        .then((response) => {
+          this.clientes = response.data;
+          this.loading = false;
+          console.log("this.parts: ", this.parts);
+        })
+        .catch((error) => {
+          this.loading = false;
+          if (
+            error.response.data.error &&
+            error.response.data.error.toUpperCase().includes("TOKEN")
+          ) {
+            this.$store.dispatch("tokenerror", error.response.data.error);
+          }
+        });
+    },
     getImageUrl(fileName) {
       if (fileName) {
         const timestamp = new Date().getTime();
@@ -1088,6 +1122,13 @@ export default {
       this.validate();
       if (this.valid) {
         this.loading = true;
+        if(this.editedItem.idCliente) {
+            let idCliente = this.editedItem.idCliente.id;
+            let nombreCliente = this.editedItem.idCliente.name;
+
+            this.editedItem.idCliente = idCliente;
+            this.editedItem.nombreCliente = nombreCliente;
+        }
         if (this.editedIndex !== 'nueva') {
             console.log('Imagen a enviar:', this.imageFile);
           PartService.updatePart(this.editedItem, this.imageFile)
@@ -1232,6 +1273,7 @@ export default {
     this.editedIndex = this.$route.params.id;
     this.loadItem(this.editedIndex);
     this.getAllParts();
+    this.getClientesActivos();
   },
 };
 </script>
