@@ -188,59 +188,15 @@ public class PartService {
             cambios.add(new CampoActualizado("Cantidad Economica Pedido", "-", newPart.getCantidadEconomicaPedido()));
 
         if (imageFile != null && !imageFile.isEmpty()) {
+            String safeFilename = null;
+
             try {
-                String originalFilename = imageFile.getOriginalFilename();
-
-                if (originalFilename == null || originalFilename.isBlank()) {
-                    throw new IllegalArgumentException("El nombre del archivo es inválido.");
-                }
-
-                String extension = "";
-
-                int dotIndex = originalFilename.lastIndexOf('.');
-                if (dotIndex >= 0) {
-                    extension = originalFilename.substring(dotIndex + 1).toLowerCase(); // sin el punto
-                }
-
-                // Ruta original
-                Path uploadPath = Paths.get(uploadDir);
-                Files.createDirectories(uploadPath);
-
-                String safeFilename = getAvailableFilename(uploadPath, originalFilename);
-                Path originalImagePath = uploadPath.resolve(safeFilename);
-
-                Files.copy(imageFile.getInputStream(), originalImagePath);
-
-                // Crear miniatura
-                try (InputStream in = Files.newInputStream(originalImagePath)) {
-                    BufferedImage originalImage = ImageIO.read(in);
-
-                    if (originalImage == null) {
-                        throw new IllegalArgumentException("El archivo no es una imagen válida.");
-                    }
-
-                    int thumbnailWidth = 150;
-                    int thumbnailHeight = (originalImage.getHeight() * thumbnailWidth) / originalImage.getWidth();
-
-                    BufferedImage thumbnail = new BufferedImage(thumbnailWidth, thumbnailHeight, BufferedImage.TYPE_INT_RGB);
-                    Graphics2D g = thumbnail.createGraphics();
-                    g.drawImage(originalImage, 0, 0, thumbnailWidth, thumbnailHeight, null);
-                    g.dispose();
-
-                    // Guardar miniatura
-                    Path thumbsPath = uploadPath.resolve("thumbs");
-                    Files.createDirectories(thumbsPath);
-
-                    Path thumbnailPath = thumbsPath.resolve(safeFilename);
-                    ImageIO.write(thumbnail, extension, thumbnailPath.toFile());
-                }
-
-                newPart.setFileName(safeFilename);
-                cambios.add(new CampoActualizado("Imagen", "-", newPart.getFileName()));
-
+                safeFilename = procesarImagen(imageFile);
             } catch (IOException e) {
-                throw new RuntimeException("Error al guardar la imagen", e);
+                throw new RuntimeException("Error al procesar la imagen", e);
             }
+            newPart.setFileName(safeFilename);
+            cambios.add(new CampoActualizado("Imagen", "-", newPart.getFileName()));
         }
 
         LocalDateTime  fechaActual = LocalDateTime.now();
@@ -433,62 +389,18 @@ public class PartService {
 
         // Procesar imagen si viene una nueva
         if (imageFile != null && !imageFile.isEmpty()) {
+            String safeFilename = null;
+
             try {
-                String originalFilename = imageFile.getOriginalFilename();
-
-                if (originalFilename == null || originalFilename.isBlank()) {
-                    throw new IllegalArgumentException("El nombre del archivo es inválido.");
-                }
-
-                String extension = "";
-
-                int dotIndex = originalFilename.lastIndexOf('.');
-                if (dotIndex >= 0) {
-                    extension = originalFilename.substring(dotIndex + 1).toLowerCase(); // sin el punto
-                }
-
-                // Ruta original
-                Path uploadPath = Paths.get(uploadDir);
-                Files.createDirectories(uploadPath);
-
-                String safeFilename = getAvailableFilename(uploadPath, originalFilename);
-                Path originalImagePath = uploadPath.resolve(safeFilename);
-
-                Files.copy(imageFile.getInputStream(), originalImagePath);
-
-                // Crear miniatura
-                try (InputStream in = Files.newInputStream(originalImagePath)) {
-                    BufferedImage originalImage = ImageIO.read(in);
-
-                    if (originalImage == null) {
-                        throw new IllegalArgumentException("El archivo no es una imagen válida.");
-                    }
-
-                    int thumbnailWidth = 150;
-                    int thumbnailHeight = (originalImage.getHeight() * thumbnailWidth) / originalImage.getWidth();
-
-                    BufferedImage thumbnail = new BufferedImage(thumbnailWidth, thumbnailHeight, BufferedImage.TYPE_INT_RGB);
-                    Graphics2D g = thumbnail.createGraphics();
-                    g.drawImage(originalImage, 0, 0, thumbnailWidth, thumbnailHeight, null);
-                    g.dispose();
-
-                    // Guardar miniatura
-                    Path thumbsPath = uploadPath.resolve("thumbs");
-                    Files.createDirectories(thumbsPath);
-
-                    Path thumbnailPath = thumbsPath.resolve(safeFilename);
-                    ImageIO.write(thumbnail, extension, thumbnailPath.toFile());
-                }
-
-                updatedPart.setFileName(safeFilename);
-                cambios.add(new CampoActualizado("Imagen", existente.getFileName(), updatedPart.getFileName()));
-
+                safeFilename = procesarImagen(imageFile);
             } catch (IOException e) {
-                throw new RuntimeException("Error al guardar la imagen", e);
+                throw new RuntimeException("Error al procesar la imagen", e);
             }
+            updatedPart.setFileName(safeFilename);
+            cambios.add(new CampoActualizado("Imagen", existente.getFileName(), updatedPart.getFileName()));
         }
         
-        if (cambios.size() > 0){
+        if (!cambios.isEmpty()){
             existente.setActualizacionPendiente(true);
             partRepository.save(existente);
 
@@ -515,6 +427,51 @@ public class PartService {
             }
         }
     }
+
+    private String procesarImagen(MultipartFile imageFile) throws IOException {
+
+        String originalFilename = imageFile.getOriginalFilename();
+
+        if (originalFilename == null || originalFilename.isBlank()) {
+            throw new IllegalArgumentException("El nombre del archivo es inválido.");
+        }
+
+        Path uploadPath = Paths.get(uploadDir);
+        Files.createDirectories(uploadPath);
+
+        String safeFilename = getAvailableFilename(uploadPath, originalFilename);
+        Path originalImagePath = uploadPath.resolve(safeFilename);
+
+        Files.copy(imageFile.getInputStream(), originalImagePath);
+
+        // Miniatura
+        try (InputStream in = Files.newInputStream(originalImagePath)) {
+            BufferedImage originalImage = ImageIO.read(in);
+
+            if (originalImage == null) {
+                throw new IllegalArgumentException("El archivo no es una imagen válida.");
+            }
+
+            int thumbnailWidth = 150;
+            int thumbnailHeight = (originalImage.getHeight() * thumbnailWidth) / originalImage.getWidth();
+
+            BufferedImage thumbnail = new BufferedImage(thumbnailWidth, thumbnailHeight, BufferedImage.TYPE_INT_RGB);
+            Graphics2D g = thumbnail.createGraphics();
+            g.drawImage(originalImage, 0, 0, thumbnailWidth, thumbnailHeight, null);
+            g.dispose();
+
+            Path thumbsPath = uploadPath.resolve("thumbs");
+            Files.createDirectories(thumbsPath);
+
+            Path thumbnailPath = thumbsPath.resolve(safeFilename);
+            String extension = safeFilename.substring(safeFilename.lastIndexOf('.') + 1);
+
+            ImageIO.write(thumbnail, extension, thumbnailPath.toFile());
+        }
+
+        return safeFilename;
+    }
+
 
     public Part getPartById(String id) {
         return partRepository.findById(id)

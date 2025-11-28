@@ -58,7 +58,7 @@
                                 required
                                 autocomplete="off"
                                 outlined
-                                returnObject
+                                return-object
                             ></v-select>
                         </v-col>
                         <v-col cols="6">
@@ -1122,7 +1122,8 @@ export default {
       this.validate();
       if (this.valid) {
         this.loading = true;
-        if(this.editedItem.idCliente) {
+        if(this.editedItem.idCliente && typeof this.editedItem.idCliente === 'object') {
+            console.log("this.editedItem.idCliente: ", this.editedItem.idCliente);
             let idCliente = this.editedItem.idCliente.id;
             let nombreCliente = this.editedItem.idCliente.name;
 
