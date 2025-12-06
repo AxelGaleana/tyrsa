@@ -204,6 +204,7 @@
                             maxLength="255"
                             outlined
                             v-model="editedItem.volumenVendidoProyectoAnual"
+                            type="number"
                             ></v-text-field>
                         </v-col>
                     </v-row>
@@ -269,6 +270,7 @@
                             maxLength="255"
                             outlined
                             v-model="editedItem.pesoEstandarPackMP"
+                            type="number"
                             ></v-text-field>
                         </v-col>
                     </v-row>
@@ -282,6 +284,7 @@
                             maxLength="255"
                             outlined
                             v-model="editedItem.diametroInterno"
+                            type="number"
                             ></v-text-field>
                         </v-col>
                         <v-col cols="6">
@@ -291,6 +294,7 @@
                             maxLength="255"
                             outlined
                             v-model="editedItem.diametroExterno"
+                            type="number"
                             ></v-text-field>
                         </v-col>
                     </v-row>
@@ -360,6 +364,7 @@
                                             required
                                             autocomplete="off"
                                             maxLength = "50"
+                                            type="number"
                                         ></v-text-field>
                                     </v-col>
                                 </v-row>
@@ -407,6 +412,7 @@
                             outlined
                             title="Largo de cinta/blank (Avance real) (mm)"
                             v-model="editedItem.largoCintaBlank"
+                            type="number"
                             ></v-text-field>
                         </v-col>
                         <v-col cols="4">
@@ -417,6 +423,7 @@
                             outlined
                             title="Largo del material en máxima tolerancia"
                             v-model="editedItem.largoMaterialMaximaTolerancia"
+                            type="number"
                             ></v-text-field>
                         </v-col>
                         <v-col cols="4">
@@ -427,6 +434,7 @@
                             outlined
                             title="Ancho cinta/blank (mm)"
                             v-model="editedItem.anchoCintaBlank"
+                            type="number"
                             ></v-text-field>
                         </v-col>
                     </v-row>
@@ -439,6 +447,7 @@
                             outlined
                             title="Ancho del material en máxima tolerancia"
                             v-model="editedItem.anchoMaterialMaximaTolerancia"
+                            type="number"
                             ></v-text-field>
                         </v-col>
                         <v-col cols="4">
@@ -448,6 +457,7 @@
                             maxLength="255"
                             outlined
                             v-model="editedItem.espesor"
+                            type="number"
                             ></v-text-field>
                         </v-col>
                         <v-col cols="4">
@@ -458,6 +468,7 @@
                             outlined
                             title="Espesor del material en máxima tolerancia"
                             v-model="editedItem.espesorMaterialMaximaTolerancia"
+                            type="number"
                             ></v-text-field>
                         </v-col>
                     </v-row>
@@ -470,6 +481,7 @@
                             maxLength="255"
                             outlined
                             v-model="editedItem.coeficienteMaterial"
+                            type="number"
                             ></v-text-field>
                         </v-col>
                         <v-col cols="3">
@@ -499,6 +511,7 @@
                             outlined
                             title="Peso pieza (troquelado) (KG)"
                             v-model="editedItem.pesoPiezaTroquelado"
+                            type="number"
                             ></v-text-field>
                         </v-col>
                     </v-row>
@@ -511,6 +524,7 @@
                             outlined
                             title="Peso pieza (componente) (Si aplica)"
                             v-model="editedItem.pesoPiezaComponente"
+                            type="number"
                             ></v-text-field>
                         </v-col>
                         <v-col cols="3">
@@ -570,6 +584,7 @@
                             outlined
                             title="Factor de consumo de empaque por pieza"
                             v-model="editedItem.factorConsumoEmpaquePieza"
+                            type="number"
                             ></v-text-field>
                         </v-col>
                         <v-col cols="4">
@@ -579,6 +594,7 @@
                             maxLength="255"
                             outlined
                             v-model="editedItem.piezasPallet"
+                            type="number"
                             ></v-text-field>
                         </v-col>
                     </v-row>
@@ -594,6 +610,7 @@
                             maxLength="255"
                             outlined
                             v-model="editedItem.numeroOperaciones"
+                            type="number"
                             ></v-text-field>
                         </v-col>
                         <v-col cols="3">
@@ -603,6 +620,7 @@
                             maxLength="255"
                             outlined
                             v-model="editedItem.numeroMaquinas"
+                            type="number"
                             ></v-text-field>
                         </v-col>
                         <v-col cols="3">
@@ -612,6 +630,7 @@
                             maxLength="255"
                             outlined
                             v-model="editedItem.numeroOperadores"
+                            type="number"
                             ></v-text-field>
                         </v-col>
                         <v-col cols="3">
@@ -621,6 +640,7 @@
                             maxLength="255"
                             outlined
                             v-model="editedItem.numeroAyudantes"
+                            type="number"
                             ></v-text-field>
                         </v-col>
                     </v-row>
@@ -685,6 +705,7 @@
                             maxLength="255"
                             outlined
                             v-model="editedItem.piezasPorHora"
+                            type="number"
                             ></v-text-field>
                         </v-col>
                         <v-col cols="3">
@@ -695,6 +716,7 @@
                             outlined
                             title="Tiempo total de cambio de modelo (min)"
                             v-model="editedItem.tiempoTotalCambioModelo"
+                            type="number"
                             ></v-text-field>
                         </v-col>
                         <v-col cols="3">
@@ -705,6 +727,7 @@
                             outlined
                             title="Tiempo de liberación (min)"
                             v-model="editedItem.tiempoLiberacion"
+                            type="number"
                             ></v-text-field>
                         </v-col>
                         <v-col cols="3">
@@ -715,6 +738,7 @@
                             outlined
                             title="Tiempo de ajuste por fechador (min)"
                             v-model="editedItem.tiempoAjustePorFechador"
+                            type="number"
                             ></v-text-field>
                         </v-col>
                     </v-row>
@@ -726,6 +750,7 @@
                             maxLength="255"
                             outlined
                             v-model="editedItem.piezasDeAjuste"
+                            type="number"
                             ></v-text-field>
                         </v-col>
                         <v-col cols="3">
@@ -736,6 +761,7 @@
                             outlined
                             title="Cantidad económica de pedido"
                             v-model="editedItem.cantidadEconomicaPedido"
+                            type="number"
                             ></v-text-field>
                         </v-col>
                     </v-row>
@@ -775,11 +801,12 @@
                                     <v-col cols="12">
                                     <v-text-field
                                         v-model="editedRuta.numeroMaquina"
-                                        label="No. de máquina"
+                                        label="No. de máquinas"
                                         :rules="[v => !!v || 'Campo requerido']"
                                         required
                                         autocomplete="off"
                                         maxLength="50"
+                                        type="number"
                                     ></v-text-field>
                                     </v-col>
                                     <v-col cols="12">
@@ -790,6 +817,7 @@
                                             required
                                             autocomplete="off"
                                             maxLength = "50"
+                                            type="number"
                                         ></v-text-field>
                                     </v-col>
                                     <v-col cols="12">
@@ -820,6 +848,7 @@
                                             required
                                             autocomplete="off"
                                             maxLength = "50"
+                                            type="number"
                                         ></v-text-field>
                                     </v-col>
                                 </v-row>
@@ -1216,7 +1245,7 @@ export default {
         return diffDays >= 0 ? diffDays : 0;
     },
     estatus() {
-        return this.diasDisponibles >= 10 ? 'ACTIVO' : this.diasDisponibles > 0 && this.diasDisponibles < 10 ? 'PROXIMO A VENCER' : this.diasDisponibles === 0 ? 'VENCIDO' : 'N/A'
+        return this.diasDisponibles >= 182 ? 'ACTIVO' : this.diasDisponibles > 0 && this.diasDisponibles < 182 ? 'PROXIMO A VENCER' : this.diasDisponibles === 0 ? 'VENCIDO' : 'N/A'
     },
     pesoBlank() {
         return this.editedItem.largoCintaBlank ? this.editedItem.largoCintaBlank*this.editedItem.anchoCintaBlank*this.editedItem.espesor*this.editedItem.coeficienteMaterial : ""

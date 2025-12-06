@@ -1162,7 +1162,7 @@ export default {
             return {
                 ...part,
                 dias_disponibles: diffDays >= 0 ? diffDays : 0,
-                estatus: diffDays >= 10 ? 'ACTIVO' : diffDays >= 0 && diffDays < 10 ? 'PROXIMO A VENCER' : 'VENCIDO'
+                estatus: diffDays >= 182 ? 'ACTIVO' : diffDays > 0 && diffDays < 182 ? 'PROXIMO A VENCER' : 'VENCIDO'
             };
         });
     },

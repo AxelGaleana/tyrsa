@@ -247,11 +247,18 @@ public class PartService {
             cambios.add(new CampoActualizado("Nivel Ingenieria", existente.getNivelIngenieria(), updatedPart.getNivelIngenieria()));
         }
         if (!Objects.equals(updatedPart.getFechaInicioProyecto(), existente.getFechaInicioProyecto())) {
-            cambios.add(new CampoActualizado("Fecha Inicio Proyecto", existente.getFechaInicioProyecto().toString(), updatedPart.getFechaInicioProyecto().toString()));
+            cambios.add(new CampoActualizado(
+                    "Fecha Inicio Proyecto",
+                    existente.getFechaInicioProyecto() == null ? "-" : existente.getFechaInicioProyecto().toString(),
+                    updatedPart.getFechaInicioProyecto() == null ? "-" : updatedPart.getFechaInicioProyecto().toString()
+            ));
         }
         if (!Objects.equals(updatedPart.getFechaFinProyecto(), existente.getFechaFinProyecto())) {
-            cambios.add(new CampoActualizado("Fecha Fin Proyecto", existente.getFechaFinProyecto().toString(), updatedPart.getFechaFinProyecto().toString()));
-
+            cambios.add(new CampoActualizado(
+                    "Fecha Fin Proyecto",
+                    existente.getFechaFinProyecto() == null ? "-" : existente.getFechaFinProyecto().toString(),
+                    updatedPart.getFechaFinProyecto() == null ? "-" : updatedPart.getFechaFinProyecto().toString()
+            ));
         }
         if (!Objects.equals(updatedPart.getVolumenVendidoProyectoAnual(), existente.getVolumenVendidoProyectoAnual())) {
             cambios.add(new CampoActualizado("Volumen Vendido Proyecto Anual", existente.getVolumenVendidoProyectoAnual(), updatedPart.getVolumenVendidoProyectoAnual()));
