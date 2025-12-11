@@ -323,6 +323,7 @@
                                 maxLength="255"
                                 outlined
                                 v-model="pesoBlank"
+                                disabled
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="3">
@@ -331,7 +332,8 @@
                                 autocomplete="off"
                                 maxLength="255"
                                 outlined
-                                v-model="editedItem.pesoBlankMax"
+                                v-model="pesoBlankMax"
+                                disabled
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="3">
@@ -363,17 +365,19 @@
                                 maxLength="255"
                                 outlined
                                 title="Factor de consumo (logística)"
-                                v-model="editedItem.factorConsumo"
+                                v-model="pesoBlank"
+                                disabled
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="3">
                                 <v-text-field
-                                label="Factor de aprovechamiento"
+                                label="% Factor de aprovechamiento"
                                 autocomplete="off"
                                 maxLength="255"
                                 outlined
-                                title="Factor de aprovechamiento"
+                                title="% Factor de aprovechamiento"
                                 v-model="factorAprovechamiento"
+                                disabled
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="3">
@@ -383,6 +387,7 @@
                                 maxLength="255"
                                 outlined
                                 v-model="merma"
+                                disabled
                                 ></v-text-field>
                             </v-col>
                         </v-row>
@@ -483,6 +488,7 @@
                                 outlined
                                 v-model="tiempoCicloTotal"
                                 type="number"
+                                disabled
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="2">
@@ -493,6 +499,7 @@
                                 outlined
                                 v-model="tiempoCicloMaximo"
                                 type="number"
+                                disabled
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="2">
@@ -524,7 +531,8 @@
                                 autocomplete="off"
                                 maxLength="255"
                                 outlined
-                                v-model="editedItem.piezasPorHora"
+                                v-model="piezasPorHora"
+                                disabled
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="3">
@@ -1167,13 +1175,34 @@ export default {
         });
     },
     pesoBlank() {
-        return this.editedItem.largoCintaBlank ? this.editedItem.largoCintaBlank*this.editedItem.anchoCintaBlank*this.editedItem.espesor*this.editedItem.coeficienteMaterial : ""
+        return this.editedItem.largoCintaBlank && this.editedItem.anchoCintaBlank && this.editedItem.espesor && this.editedItem.coeficienteMaterial
+            ? parseFloat((
+                Number(this.editedItem.largoCintaBlank) *
+                Number(this.editedItem.anchoCintaBlank) *
+                Number(this.editedItem.espesor) *
+                Number(this.editedItem.coeficienteMaterial)
+            ).toFixed(4))
+            : "";
+    },
+    pesoBlankMax() {
+        return this.editedItem.largoCintaBlank && this.editedItem.anchoCintaBlank && this.editedItem.espesor && this.editedItem.coeficienteMaterial
+            ? (
+                (Number(this.editedItem.largoCintaBlank) + (Number(this.editedItem.largoMaterialMaximaTolerancia) || 0)) *
+                (Number(this.editedItem.anchoCintaBlank) + (Number(this.editedItem.anchoMaterialMaximaTolerancia) || 0)) *
+                (Number(this.editedItem.espesor) + (Number(this.editedItem.espesorMaterialMaximaTolerancia) || 0)) *
+                Number(this.editedItem.coeficienteMaterial)
+            ).toFixed(4)
+            : "";
     },
     merma() {
-        return this.pesoBlank !== 0 && this.pesoBlank != null && this.editedItem.pesoPiezaTroquelado != null ? (((this.pesoBlank - this.editedItem.pesoPiezaTroquelado) / this.pesoBlank) * 100) : "";
+        return this.pesoBlank !== 0 && this.pesoBlank != null && this.editedItem.pesoPiezaTroquelado != null
+            ? Math.round(((this.pesoBlank - this.editedItem.pesoPiezaTroquelado) / this.pesoBlank) * 100)
+            : "";
     },
     factorAprovechamiento() {
-        return !isNaN(this.merma) && this.merma != null ? (100 - this.merma)  : "";
+        return !isNaN(this.merma) && this.merma != null
+            ? Math.round(100 - this.merma)
+            : "";
     },
     personalRequerido() {
         return this.editedItem.numeroOperadores ? parseInt(this.editedItem.numeroOperadores) + parseInt(this.editedItem.numeroAyudantes) : "";
@@ -1196,9 +1225,14 @@ export default {
         })
         );
     },
+    piezasPorHora() {
+        return this.tiempoCicloMaximo ? 3600*this.tiempoCicloMaximo : ""
+
+    },
     tiempoLlenadoCelula() {
-        if (this.tiempoCicloTotal && this.editedItem.wipPorMaquina) return this.tiempoCicloTotal*this.editedItem.wipPorMaquina;
-        else return 0;
+        return (this.tiempoCicloTotal && this.editedItem.wipPorMaquina)
+            ? parseFloat((this.tiempoCicloTotal * this.editedItem.wipPorMaquina).toFixed(4))
+            : 0;
     },
   },
   watch: {

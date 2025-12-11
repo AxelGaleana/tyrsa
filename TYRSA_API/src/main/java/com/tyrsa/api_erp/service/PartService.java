@@ -219,6 +219,16 @@ public class PartService {
         log.setFechaAprobacion(fechaActual.toLocalDate());
         log.setEstatus("Aprobada");
         logRepository.save(log);
+
+        //Enviar notificación a todos los equipos multidiciplinarios
+        List<String> emails = userService.getActiveUsers().stream()
+                .map(UserResponse::getEmail)
+                .filter(email -> email != null && !email.isEmpty())
+                .toList();
+
+        if (!emails.isEmpty()) {
+            emailService.newPartAdded(emails.toArray(new String[0]), newPart);
+        }
     }
 
 
@@ -550,6 +560,16 @@ public class PartService {
                         "La nueva parte con id " + log.getNewPartId() + " no existe."));
         newPart.setVersion("actual");
         partRepository.save(newPart);
+
+        //Enviar notificación a todos los equipos multidiciplinarios
+        List<String> emails = userService.getActiveUsers().stream()
+                .map(UserResponse::getEmail)
+                .filter(email -> email != null && !email.isEmpty())
+                .toList();
+
+        if (!emails.isEmpty()) {
+            emailService.partUpdated(emails.toArray(new String[0]), newPart);
+        }
     }
 
     public void denyPartUpdate(String logId, String approver) {

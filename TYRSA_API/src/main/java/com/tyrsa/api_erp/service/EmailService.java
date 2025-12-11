@@ -2,6 +2,9 @@ package com.tyrsa.api_erp.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.tyrsa.api_erp.model.Part;
+
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.SimpleMailMessage;
 
@@ -25,8 +28,28 @@ public class EmailService {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(toEmails);
         message.setSubject("Actualizacion de parte requiere su aprobacion");
-        message.setText("El numero de parte: " + partNumber + " ha sido actualizada y requiere de su aprobación" +
+        message.setText("El item con número de parte: " + partNumber + " ha sido actualizado y requiere de su aprobación" +
                         "\nPor favor, ingrese al sistema para ver los cambios.");
+
+        mailSender.send(message);
+    }
+
+    public void newPartAdded(String[] toEmails, Part part) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(toEmails);
+        message.setSubject("Actualizacion de parte requiere su aprobacion");
+        message.setText("El item con numero de parte: " + part.getNumeroParte() + " y descripción '" + part.getDescripcion() + "'' ha sido dado de alta." +
+                        "\nIngresa al sistema para ver más detalles.");
+
+        mailSender.send(message);
+    }
+
+    public void partUpdated(String[] toEmails, Part part) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(toEmails);
+        message.setSubject("Actualizacion de parte requiere su aprobacion");
+        message.setText("El item con numero de parte: " + part.getNumeroParte() + " y descripción '" + part.getDescripcion() + "'' ha sido actualizado." +
+                        "\nIngresa al sistema para ver más detalles.");
 
         mailSender.send(message);
     }
