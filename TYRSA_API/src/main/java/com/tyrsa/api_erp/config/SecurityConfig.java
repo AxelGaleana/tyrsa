@@ -55,6 +55,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/user/*/reset-password").permitAll()
                 .requestMatchers("/user/**").authenticated()       // Requiere token JWT
                 .requestMatchers("/clientes/**").authenticated()       // Requiere token JWT
+                .requestMatchers("/materiales/**").authenticated()       // Requiere token JWT
                 .requestMatchers("/parts/**").authenticated()       // Requiere token JWT
                 .requestMatchers("/api/protegido").authenticated()  // Requiere token JWT
                 .anyRequest().authenticated()                 // todas las demás requieren JWT

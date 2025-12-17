@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.tyrsa.api_erp.model.Cliente;
 import com.tyrsa.api_erp.service.ClienteService;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RestController

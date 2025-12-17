@@ -7,12 +7,12 @@
             {{ text }}
           </v-snackbar>
           <v-snackbar v-model="snackbar_error" :timeout="timeout" color="error">
-            Hubo un problema al guardar cliente.
+            Hubo un problema al guardar material.
           </v-snackbar>
         </div>
         <v-layout align-end justify-end>
           <v-btn color="primary" dark class="mb-2" v-on="on">
-            cliente<v-icon right color="white">add</v-icon>
+            material<v-icon right color="white">add</v-icon>
           </v-btn>
         </v-layout>
       </template>
@@ -28,7 +28,17 @@
                   <v-text-field
                     v-model="editedItem.name"
                     label="Nombre"
-                    :rules="rulesNombreCliente"
+                    :rules="rulesNombreMaterial"
+                    required
+                    autocomplete="off"
+                    maxLength="50"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12">
+                  <v-text-field
+                    v-model="editedItem.coeficiente"
+                    label="Coeficiente de material"
+                    :rules="rulesNombreMaterial"
                     required
                     autocomplete="off"
                     maxLength="50"
@@ -73,7 +83,7 @@
       <v-card-text>
         <v-data-table
           :headers="headers"
-          :items="clientes"
+          :items="materials"
           :search="search"
           :options.sync="options"
           :loading="loading"
@@ -98,7 +108,7 @@
 </template>
 
 <script>
-import clienteService from "@/services/ClienteService";
+import materialService from "@/services/MaterialService";
 
 export default {
   data() {
@@ -117,31 +127,33 @@ export default {
       loading: true,
       headers: [
         { text: "Nombre", value: "name" },
+        { text: "Coeficiente de material", value: "coeficiente" },
         { text: "Activo", value: "active" },
         { text: "Acciones", value: "actions" },
       ],
       rules: {
         required: (value) => !!value || "Campo Requerido",
-        clientes: (value) => {
+        materials: (value) => {
           return (
-            !this.nombreClientes.includes(value) || "El nombre de cliente ya existe"
+            !this.nombreMaterials.includes(value) || "El nombre de material ya existe"
           );
         }
       },
-      clientes: [],
+      materials: [],
       editedIndex: -1,
       editedItem: {
         id: null,
         name: null,
+        coeficiente: null,
         activo: true
       }
     };
   },
   methods: {
-    getClientes() {
-      return clienteService.getAllClientes()
+    getMaterials() {
+      return materialService.getAllMaterials()
         .then((response) => {
-          this.clientes = response.data;
+          this.materials = response.data;
           this.loading = false;
         })
         .catch((error) => {
@@ -155,7 +167,7 @@ export default {
         });
     },
     editItem(item) {
-      this.editedIndex = this.clientes.indexOf(item);
+      this.editedIndex = this.materials.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialog = true;
     },
@@ -174,13 +186,13 @@ export default {
       this.validate();
       if (this.valid) {
         if (this.editedIndex > -1) {
-          clienteService.actualizarCliente(this.editedItem)
+          materialService.actualizarMaterial(this.editedItem)
             .then(() => {
               this.loading = true;
               this.close();
-              this.text = "El cliente ha sido actualizado exitosamente.";
+              this.text = "El material ha sido actualizado exitosamente.";
               this.snackbar = true;
-              this.getClientes();
+              this.getMaterials();
             })
             .catch((error) => {
               this.loading = false;
@@ -193,13 +205,13 @@ export default {
               this.snackbar_error = true;
             });
         } else {
-          clienteService.crearCliente(this.editedItem)
+          materialService.crearMaterial(this.editedItem)
             .then(() => {
               this.loading = true;
               this.close();
-              this.text = "El cliente ha sido creado exitosamente.";
+              this.text = "El material ha sido creado exitosamente.";
               this.snackbar = true;
-              this.getClientes();
+              this.getMaterials();
             })
             .catch((error) => {
               this.loading = false;
@@ -218,24 +230,24 @@ export default {
   computed: {
     formTitle() {
       return this.editedIndex === -1
-        ? "Nuevo Cliente"
-        : "Editar Cliente";
+        ? "Nuevo Material"
+        : "Editar Material";
     },
-    nombreClientes() {
-      return this.clientes.map(
-        (cliente) => cliente.name
+    nombreMaterials() {
+      return this.materials.map(
+        (material) => material.name
       );
     },
-    rulesNombreCliente() {
-        const original = this.clientes?.find(item => item.id === this.editedItem?.id);
+    rulesNombreMaterial() {
+        const original = this.materials?.find(item => item.id === this.editedItem?.id);
         console.log("original: ", original)
 
         if (this.editedIndex === -1) {
-        return [this.rules.required, this.rules.clientes];
+        return [this.rules.required, this.rules.materials];
         }
 
         if (this.editedItem && original && this.editedItem.name !== original.name) {
-        return [this.rules.required, this.rules.clientes];
+        return [this.rules.required, this.rules.materials];
         }
 
         return [this.rules.required];
@@ -251,7 +263,7 @@ export default {
     this.axios.defaults.headers.common[
       "Authorization"
     ] = `Bearer ${this.$store.getters.getUser.token}`;
-    this.getClientes();
+    this.getMaterials();
   },
 };
 </script>

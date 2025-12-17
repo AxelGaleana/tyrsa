@@ -145,6 +145,11 @@ export default {
           text: "Clientes"
         },
         {
+          to: "/materiales",
+          icon: "mdi-layers",
+          text: "Materiales"
+        },
+        {
           to: "/industrializacion",
           icon: "mdi-nut",
           text: "Industrialización"
@@ -167,7 +172,7 @@ export default {
       let l = [];
       this.links.forEach(function (element) {
         const name = element.text.toString();
-        if (name === "Industrialización" || name === "Clientes") {
+        if (name === "Industrialización" || name === "Clientes" || name === "Materiales") {
           l.push(element);
           return;
         }
