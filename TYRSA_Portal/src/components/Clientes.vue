@@ -134,6 +134,11 @@ export default {
         id: null,
         name: null,
         activo: true
+      },
+      defaultItem: {
+        id: null,
+        name: null,
+        activo: true
       }
     };
   },

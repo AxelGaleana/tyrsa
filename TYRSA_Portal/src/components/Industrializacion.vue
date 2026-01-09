@@ -712,7 +712,8 @@
                                       <th class="text-center">No. de Máquina</th>
                                       <th class="text-center">Tonelaje</th>
                                       <th class="text-center">Descripción</th>
-                                      <th class="text-center">FPC</th>
+                                      <th class="text-center">Número Operadores</th>
+                                      <th class="text-center">Número Ayudantes</th>
                                       <th class="text-center">Tiempo de Ciclo</th>
                                     </tr>
                                   </thead>
@@ -722,7 +723,8 @@
                                       <td class="text-center">{{ comp.numeroMaquina }}</td>
                                       <td class="text-center">{{ comp.tonelaje }}</td>
                                       <td class="text-center">{{ comp.descripcion }}</td>
-                                      <td class="text-center">{{ comp.fpc }}</td>
+                                      <td class="text-center">{{ comp.numeroOperadores }}</td>
+                                      <td class="text-center">{{ comp.numeroAyudantes }}</td>
                                       <td class="text-center">{{ comp.tiempoCiclo }}</td>
                                     </tr>
                                   </tbody>
@@ -779,7 +781,8 @@
                                       <th class="text-center">No. de Máquina</th>
                                       <th class="text-center">Tonelaje</th>
                                       <th class="text-center">Descripción</th>
-                                      <th class="text-center">FPC</th>
+                                      <th class="text-center">Número Operadores</th>
+                                      <th class="text-center">Número Ayudantes</th>
                                       <th class="text-center">Tiempo de Ciclo</th>
                                     </tr>
                                   </thead>
@@ -789,7 +792,8 @@
                                       <td class="text-center">{{ comp.numeroMaquina }}</td>
                                       <td class="text-center">{{ comp.tonelaje }}</td>
                                       <td class="text-center">{{ comp.descripcion }}</td>
-                                      <td class="text-center">{{ comp.fpc }}</td>
+                                      <td class="text-center">{{ comp.numeroOperadores }}</td>
+                                      <td class="text-center">{{ comp.numeroAyudantes }}</td>
                                       <td class="text-center">{{ comp.tiempoCiclo }}</td>
                                     </tr>
                                   </tbody>
@@ -806,13 +810,35 @@
                     </td>
                   </template>
                   <template v-slot:item.actions="{ item }">
-                    <span v-if="item && item.estatus === 'Pendiente' && ($store.getters.getUser.role === 'ROLE_GERENTE_INGENIERIA' || $store.getters.getUser.role === 'ROLE_ADMIN')">
-                      <v-icon color="green" @click="approvePartUpdate(item)" title="Aprobar Cambio">
-                      mdi-check
-                      </v-icon>
-                      <v-icon color="red" @click="denyPartUpdate(item)" title="Rechazar Cambio">
-                      mdi-close
-                      </v-icon>
+                    <span
+                      v-if="item && item.estatus === 'Pendiente' &&
+                        ($store.getters.getUser.role === 'ROLE_GERENTE_INGENIERIA' ||
+                        $store.getters.getUser.role === 'ROLE_ADMIN')">
+
+                      <v-btn
+                        icon
+                        x-small
+                        style="padding:0; min-width:24px; width:24px; height:24px;"
+                        color="green"
+                        :loading="loadingApprove"
+                        @click="approvePartUpdate(item)"
+                        title="Aprobar Cambio"
+                      >
+                        <v-icon>mdi-check</v-icon>
+                      </v-btn>
+
+                      <v-btn
+                        icon
+                        x-small
+                        style="padding:0; min-width:24px; width:24px; height:24px;"
+                        color="red"
+                        :loading="loadingDeny"
+                        @click="denyPartUpdate(item)"
+                        title="Rechazar Cambio"
+                      >
+                        <v-icon>mdi-close</v-icon>
+                      </v-btn>
+
                     </span>
                   </template>
                 </v-data-table>
@@ -921,6 +947,8 @@ export default {
         itemsPerPage: 10,
       },
       loading: true,
+      loadingApprove: false,
+      loadingDeny: false,
       log:[],
       logItems: [
         {
@@ -1083,16 +1111,19 @@ export default {
         });
     },
     approvePartUpdate(item){
+      this.loadingApprove = true;
       return PartService.approvePartUpdate(item.id)
         .then(() => {
           console.log("item: ", item);
           this.getParts();
           this.openLog(item);
+          this.loadingApprove = false;
         })
         .catch((error) => {
           this.log = [];
           this.getParts();
           this.openLog(item);
+          this.loadingApprove = false;
           if (
             error.response.data.error &&
             error.response.data.error.toUpperCase().includes("TOKEN")
@@ -1102,15 +1133,18 @@ export default {
         });
     },
     denyPartUpdate(item){
+      this.loadingDeny = true;
       return PartService.denyPartUpdate(item.id)
         .then(() => {
           console.log("item: ", item);
           this.getParts();
           this.openLog(item);
+          this.loadingDeny = false;
         })
         .catch((error) => {
           this.getParts();
           this.openLog(item);
+          this.loadingDeny = false;
           if (
             error.response.data.error &&
             error.response.data.error.toUpperCase().includes("TOKEN")

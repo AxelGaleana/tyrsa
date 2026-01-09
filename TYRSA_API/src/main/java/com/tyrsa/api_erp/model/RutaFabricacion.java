@@ -9,6 +9,8 @@ public class RutaFabricacion {
     private String numeroMaquina;
     private String tonelaje;
     private String descripcion;
-    private String fpc;
     private String tiempoCiclo;
+    private String numeroMaquinas;
+    private String numeroOperadores;
+    private String numeroAyudantes;
 }

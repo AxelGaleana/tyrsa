@@ -91,6 +91,9 @@ public class PartService {
         if (newPart.getCodigoIdentificacionMaterial() != null && !newPart.getCodigoIdentificacionMaterial().isBlank())
             cambios.add(new CampoActualizado("Codigo Identificacion Material", "-", newPart.getCodigoIdentificacionMaterial()));
 
+        if (newPart.getIdClasificacionMaterial() != null && !newPart.getIdClasificacionMaterial().isBlank())
+            cambios.add(new CampoActualizado("Clasificación de material", "-", newPart.getNombreClasificacionMaterial()));
+
         if (newPart.getPresentacionMateriaPrima() != null && !newPart.getPresentacionMateriaPrima().isBlank())
             cambios.add(new CampoActualizado("Presentacion Materia Prima", "-", newPart.getPresentacionMateriaPrima()));
 
@@ -141,18 +144,6 @@ public class PartService {
 
         if (newPart.getPiezasPallet() != null)
             cambios.add(new CampoActualizado("Piezas Pallet", "-", newPart.getPiezasPallet()));
-
-        if (newPart.getNumeroOperaciones() != null)
-            cambios.add(new CampoActualizado("Numero Operaciones", "-", newPart.getNumeroOperaciones()));
-
-        if (newPart.getNumeroMaquinas() != null)
-            cambios.add(new CampoActualizado("Numero Maquinas", "-", newPart.getNumeroMaquinas()));
-
-        if (newPart.getNumeroOperadores() != null)
-            cambios.add(new CampoActualizado("Numero Operadores", "-", newPart.getNumeroOperadores()));
-
-        if (newPart.getNumeroAyudantes() != null)
-            cambios.add(new CampoActualizado("Numero Ayudantes", "-", newPart.getNumeroAyudantes()));
 
         if (newPart.getPersonalRequerido() != null)
             cambios.add(new CampoActualizado("Personal Requerido", "-", newPart.getPersonalRequerido()));
@@ -285,6 +276,9 @@ public class PartService {
         if (!Objects.equals(updatedPart.getCodigoIdentificacionMaterial(), existente.getCodigoIdentificacionMaterial())) {
             cambios.add(new CampoActualizado("Codigo Identificacion Material", existente.getCodigoIdentificacionMaterial(), updatedPart.getCodigoIdentificacionMaterial()));
         }
+        if (!Objects.equals(updatedPart.getIdClasificacionMaterial(), existente.getIdClasificacionMaterial())) {
+            cambios.add(new CampoActualizado("Clasificación de material", existente.getNombreClasificacionMaterial(), updatedPart.getNombreClasificacionMaterial()));
+        }
         if (!Objects.equals(updatedPart.getPresentacionMateriaPrima(), existente.getPresentacionMateriaPrima())) {
             cambios.add(new CampoActualizado("Presentacion Materia Prima", existente.getPresentacionMateriaPrima(), updatedPart.getPresentacionMateriaPrima()));
         }
@@ -340,18 +334,6 @@ public class PartService {
             cambios.add(new CampoActualizado("Piezas Pallet", existente.getPiezasPallet(), updatedPart.getPiezasPallet()));
         }
 
-        if (!Objects.equals(updatedPart.getNumeroOperaciones(), existente.getNumeroOperaciones())) {
-            cambios.add(new CampoActualizado("Numero Operaciones", existente.getNumeroOperaciones(), updatedPart.getNumeroOperaciones()));
-        }
-        if (!Objects.equals(updatedPart.getNumeroMaquinas(), existente.getNumeroMaquinas())) {
-            cambios.add(new CampoActualizado("Numero Maquinas", existente.getNumeroMaquinas(), updatedPart.getNumeroMaquinas()));
-        }
-        if (!Objects.equals(updatedPart.getNumeroOperadores(), existente.getNumeroOperadores())) {
-            cambios.add(new CampoActualizado("Numero Operadores", existente.getNumeroOperadores(), updatedPart.getNumeroOperadores()));
-        }
-        if (!Objects.equals(updatedPart.getNumeroAyudantes(), existente.getNumeroAyudantes())) {
-            cambios.add(new CampoActualizado("Numero Ayudantes", existente.getNumeroAyudantes(), updatedPart.getNumeroAyudantes()));
-        }
         if (!Objects.equals(updatedPart.getPersonalRequerido(), existente.getPersonalRequerido())) {
             cambios.add(new CampoActualizado("Personal Requerido", existente.getPersonalRequerido(), updatedPart.getPersonalRequerido()));
         }

@@ -26,6 +26,8 @@ public class Part {
     private String tipoProveedor;
     private String nombreProveedor;
     private String codigoIdentificacionMaterial;
+    private String idClasificacionMaterial;
+    private String nombreClasificacionMaterial;
     private String presentacionMateriaPrima;
     private String pesoEstandarPackMP;
     private String diametroInterno;
@@ -47,10 +49,10 @@ public class Part {
     private String codigoEmpaque;
     private String factorConsumoEmpaquePieza;
     private String piezasPallet;
-    private String numeroOperaciones;
-    private String numeroMaquinas;
-    private String numeroOperadores;
-    private String numeroAyudantes;
+    //private String numeroOperaciones;
+    //private String numeroMaquinas;
+    //private String numeroOperadores;
+    //private String numeroAyudantes;
     private String personalRequerido;
     private String tiempoCicloTotal;
     private String tiempoCicloMaximo;

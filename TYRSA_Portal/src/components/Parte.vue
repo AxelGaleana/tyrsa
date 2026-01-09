@@ -218,7 +218,7 @@
                     <v-divider class="my-4"></v-divider>
                     <v-subheader class="text-h6">Aceros</v-subheader>
                     <v-row>
-                        <v-col cols="2">
+                        <v-col cols="3">
                             <v-text-field
                             label="Especificación de Material"
                             autocomplete="off"
@@ -227,7 +227,7 @@
                             v-model="editedItem.especificacionMaterial"
                             ></v-text-field>
                         </v-col>
-                        <v-col cols="2">
+                        <v-col cols="3">
                             <v-text-field
                             label="Tipo de proveedor"
                             autocomplete="off"
@@ -236,7 +236,7 @@
                             v-model="editedItem.tipoProveedor"
                             ></v-text-field>
                         </v-col>
-                        <v-col cols="2">
+                        <v-col cols="3">
                             <v-text-field
                             label="Nombre de proveedor"
                             autocomplete="off"
@@ -245,7 +245,7 @@
                             v-model="editedItem.nombreProveedor"
                             ></v-text-field>
                         </v-col>
-                        <v-col cols="2">
+                        <v-col cols="3">
                             <v-text-field
                             label="Codigo de identificación de materia"
                             autocomplete="off"
@@ -254,18 +254,36 @@
                             v-model="editedItem.codigoIdentificacionMaterial"
                             ></v-text-field>
                         </v-col>
-                        <v-col cols="2">
+                    </v-row>
+                    <v-row>
+                        <v-col cols="3">
+                            <v-select
+                                v-model="editedItem.idClasificacionMaterial"
+                                :items="materiales"
+                                prepend-icon="mdi-layers"
+                                item-text="name"
+                                item-value="id"
+                                label="Clasificación de material"
+                                required
+                                autocomplete="off"
+                                outlined
+                                return-object
+                            ></v-select>
+                        </v-col>
+                        <v-col cols="3">
                             <v-text-field
                             label="Presentacion de materia prima"
+                            title="Presentacion de materia prima"
                             autocomplete="off"
                             maxLength="255"
                             outlined
                             v-model="editedItem.presentacionMateriaPrima"
                             ></v-text-field>
                         </v-col>
-                        <v-col cols="2">
+                        <v-col cols="3">
                             <v-text-field
                             label="Peso de estándar pack MP"
+                            title="Peso de estándar pack MP"
                             autocomplete="off"
                             maxLength="255"
                             outlined
@@ -480,13 +498,14 @@
                             autocomplete="off"
                             maxLength="255"
                             outlined
-                            v-model="editedItem.coeficienteMaterial"
+                            v-model="coeficienteMaterial"
                             type="number"
+                            disabled
                             ></v-text-field>
                         </v-col>
                         <v-col cols="3">
                             <v-text-field
-                            label="Peso blank (kg)=F.C."
+                            label="Factor de consumo"
                             autocomplete="off"
                             maxLength="255"
                             outlined
@@ -496,7 +515,7 @@
                         </v-col>
                         <v-col cols="3">
                             <v-text-field
-                            label="Peso blank (kg)=F.C. Max"
+                            label="Factor de consumo Max"
                             autocomplete="off"
                             maxLength="255"
                             outlined
@@ -526,17 +545,6 @@
                             title="Peso pieza (componente) (Si aplica)"
                             v-model="editedItem.pesoPiezaComponente"
                             type="number"
-                            ></v-text-field>
-                        </v-col>
-                        <v-col cols="3">
-                            <v-text-field
-                            label="Factor de consumo"
-                            autocomplete="off"
-                            maxLength="255"
-                            outlined
-                            title="Factor de consumo (logística)"
-                            v-model="pesoBlank"
-                            disabled
                             ></v-text-field>
                         </v-col>
                         <v-col cols="3">
@@ -602,50 +610,138 @@
                     </v-row>
                 </v-card-text>
             </v-card>
-            <v-card class="mb-4" outlined style="border-width: 3px; background-color: #f7f5fb;">
+            <v-card class="mb-4" outlined style="border-width: 3px; background-color: #fff5f7;">
+                <v-card-title>
+                    Ruta de fabricación
+                </v-card-title>
                 <v-card-text>
+                        <v-dialog v-model="dialogRuta" max-width="400px">
+                        <template v-slot:activator="{ on }">
+                            <v-layout align-end justify-end>
+                            <v-btn color="primary" dark class="mb-2" v-on="on">
+                                Ruta<v-icon right color="white">add</v-icon>
+                            </v-btn>
+                            </v-layout>
+                        </template>
+                        <v-form ref="formRuta" lazy-validation v-model="validRuta">
+                            <v-card>
+                            <v-card-title>
+                                <span class="heading">{{ rutaTitle + " ruta de fabricación" }}</span>
+                            </v-card-title>
+                            <v-card-text>
+                                <v-container>
+                                <v-row>
+                                    <v-col cols="12">
+                                    <v-text-field
+                                        v-model="editedRuta.operacion"
+                                        label= "Operacion"
+                                        :rules="[rules.required]"
+                                        required
+                                        autocomplete="off"
+                                        maxLength="255"
+                                    ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12">
+                                    <v-text-field
+                                        v-model="editedRuta.numeroMaquina"
+                                        label="No. de máquinas"
+                                        :rules="[v => !!v || 'Campo requerido']"
+                                        required
+                                        autocomplete="off"
+                                        maxLength="50"
+                                        type="number"
+                                    ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12">
+                                        <v-text-field
+                                            v-model="editedRuta.tonelaje"
+                                            label="Tonelaje (Tn)"
+                                            :rules="[rules.required]"
+                                            required
+                                            autocomplete="off"
+                                            maxLength = "50"
+                                            type="number"
+                                        ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12">
+                                        <v-text-field
+                                            v-model="editedRuta.descripcion"
+                                            label="Descripción"
+                                            :rules="[rules.required]"
+                                            required
+                                            autocomplete="off"
+                                            maxLength = "50"
+                                        ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12">
+                                        <v-text-field
+                                            v-model="editedRuta.numeroOperadores"
+                                            label="Número de Operadores"
+                                            :rules="[rules.required]"
+                                            required
+                                            autocomplete="off"
+                                            maxLength = "50"
+                                        ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12">
+                                        <v-text-field
+                                            v-model="editedRuta.numeroAyudantes"
+                                            label="Número de Ayudantes"
+                                            :rules="[rules.required]"
+                                            required
+                                            autocomplete="off"
+                                            maxLength = "50"
+                                        ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12">
+                                        <v-text-field
+                                            v-model="editedRuta.tiempoCiclo"
+                                            label="Tiempo de ciclo"
+                                            :rules="[rules.required]"
+                                            required
+                                            autocomplete="off"
+                                            maxLength = "50"
+                                            type="number"
+                                        ></v-text-field>
+                                    </v-col>
+                                </v-row>
+                                </v-container>
+                            </v-card-text>
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn color="blue darken-1" text @click="closeRuta"> Cancelar </v-btn>
+                                <v-btn color="blue darken-1" :disabled="!validRuta" text @click="saveRuta">
+                                Agregar
+                                </v-btn>
+                            </v-card-actions>
+                            </v-card>
+                        </v-form>
+                        </v-dialog>
                     <v-row>
-                        <v-col cols="3">
-                            <v-text-field
-                            label="Número de operaciones"
-                            autocomplete="off"
-                            maxLength="255"
-                            outlined
-                            v-model="editedItem.numeroOperaciones"
-                            type="number"
-                            ></v-text-field>
-                        </v-col>
-                        <v-col cols="3">
-                            <v-text-field
-                            label="Número de máquinas"
-                            autocomplete="off"
-                            maxLength="255"
-                            outlined
-                            v-model="editedItem.numeroMaquinas"
-                            type="number"
-                            ></v-text-field>
-                        </v-col>
-                        <v-col cols="3">
-                            <v-text-field
-                            label="Número de operadores"
-                            autocomplete="off"
-                            maxLength="255"
-                            outlined
-                            v-model="editedItem.numeroOperadores"
-                            type="number"
-                            ></v-text-field>
-                        </v-col>
-                        <v-col cols="3">
-                            <v-text-field
-                            label="Número de ayudantes"
-                            autocomplete="off"
-                            maxLength="255"
-                            outlined
-                            v-model="editedItem.numeroAyudantes"
-                            type="number"
-                            ></v-text-field>
+                        <v-col cols="12">
+                            <v-data-table
+                            :headers="headers_ruta_fabricacion"
+                            :items="editedItem.rutas"
+                            :options.sync="options"
+                            loading-text="Consultando información..."
+                            no-data-text="No se encontró información."
+                            :style="{ border: '1px solid #ccc', borderRadius: '4px',  backgroundColor: '#fff5f7' }"
+                            >
+                            <template v-slot:item.actions="{ item }">
+                                <v-icon small class="mr-2" @click="editRuta(item)">
+                                mdi-pencil
+                                </v-icon>
+                                <v-icon small @click="deleteRuta(item)">
+                                mdi-delete
+                                </v-icon>
+                            </template>
+                            </v-data-table>
                         </v-col>
                     </v-row>
+                </v-card-text>
+            </v-card>
+            <v-card class="mb-4" outlined style="border-width: 3px; background-color: #f7f5fb;">
+                <v-card-text>
                     <v-row>
                         <v-col cols="3">
                             <v-text-field
@@ -772,126 +868,6 @@
                     </v-row>
                 </v-card-text>
             </v-card>
-            <v-card class="mb-4" outlined style="border-width: 3px; background-color: #fff5f7;">
-                <v-card-title>
-                    Ruta de fabricación
-                </v-card-title>
-                <v-card-text>
-                        <v-dialog v-model="dialogRuta" max-width="400px">
-                        <template v-slot:activator="{ on }">
-                            <v-layout align-end justify-end>
-                            <v-btn color="primary" dark class="mb-2" v-on="on">
-                                Ruta<v-icon right color="white">add</v-icon>
-                            </v-btn>
-                            </v-layout>
-                        </template>
-                        <v-form ref="formRuta" lazy-validation v-model="validRuta">
-                            <v-card>
-                            <v-card-title>
-                                <span class="heading">{{ rutaTitle + " ruta de fabricación" }}</span>
-                            </v-card-title>
-                            <v-card-text>
-                                <v-container>
-                                <v-row>
-                                    <v-col cols="12">
-                                    <v-text-field
-                                        v-model="editedRuta.operacion"
-                                        label= "Operacion"
-                                        :rules="[rules.required]"
-                                        required
-                                        autocomplete="off"
-                                        maxLength="255"
-                                    ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12">
-                                    <v-text-field
-                                        v-model="editedRuta.numeroMaquina"
-                                        label="No. de máquinas"
-                                        :rules="[v => !!v || 'Campo requerido']"
-                                        required
-                                        autocomplete="off"
-                                        maxLength="50"
-                                        type="number"
-                                    ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12">
-                                        <v-text-field
-                                            v-model="editedRuta.tonelaje"
-                                            label="Tonelaje (Tn)"
-                                            :rules="[rules.required]"
-                                            required
-                                            autocomplete="off"
-                                            maxLength = "50"
-                                            type="number"
-                                        ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12">
-                                        <v-text-field
-                                            v-model="editedRuta.descripcion"
-                                            label="Descripción"
-                                            :rules="[rules.required]"
-                                            required
-                                            autocomplete="off"
-                                            maxLength = "50"
-                                        ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12">
-                                        <v-text-field
-                                            v-model="editedRuta.fpc"
-                                            label="FPC"
-                                            :rules="[rules.required]"
-                                            required
-                                            autocomplete="off"
-                                            maxLength = "50"
-                                        ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12">
-                                        <v-text-field
-                                            v-model="editedRuta.tiempoCiclo"
-                                            label="Tiempo de ciclo"
-                                            :rules="[rules.required]"
-                                            required
-                                            autocomplete="off"
-                                            maxLength = "50"
-                                            type="number"
-                                        ></v-text-field>
-                                    </v-col>
-                                </v-row>
-                                </v-container>
-                            </v-card-text>
-                            <v-card-actions>
-                                <v-spacer></v-spacer>
-                                <v-btn color="blue darken-1" text @click="closeRuta"> Cancelar </v-btn>
-                                <v-btn color="blue darken-1" :disabled="!validRuta" text @click="saveRuta">
-                                Agregar
-                                </v-btn>
-                            </v-card-actions>
-                            </v-card>
-                        </v-form>
-                        </v-dialog>
-                    <v-row>
-                        <v-col cols="12">
-                            <v-data-table
-                            :headers="headers_ruta_fabricacion"
-                            :items="editedItem.rutas"
-                            :options.sync="options"
-                            loading-text="Consultando información..."
-                            no-data-text="No se encontró información."
-                            :style="{ border: '1px solid #ccc', borderRadius: '4px',  backgroundColor: '#fff5f7' }"
-                            >
-                            <template v-slot:item.actions="{ item }">
-                                <v-icon small class="mr-2" @click="editRuta(item)">
-                                mdi-pencil
-                                </v-icon>
-                                <v-icon small @click="deleteRuta(item)">
-                                mdi-delete
-                                </v-icon>
-                            </template>
-                            </v-data-table>
-                        </v-col>
-                    </v-row>
-                </v-card-text>
-            </v-card>
         </v-container>
         </v-card-text>
         <v-card-actions>
@@ -909,6 +885,7 @@
 <script>
 import PartService from "@/services/PartService";
 import ClienteService from "@/services/ClienteService";
+import MaterialService from "@/services/MaterialService";
 
 export default {
   data() {
@@ -919,6 +896,7 @@ export default {
         dialogRuta: false,
         parts: [],
         clientes: [],
+        materiales: [],
         loading: false,
         valid: true,
         validComponente: true,
@@ -943,7 +921,8 @@ export default {
             { text: "No. de máquina", value: "numeroMaquina" },
             { text: "Tonelaje (Tn)", value: "tonelaje" },
             { text: "Descripción", value: "descripcion" },
-            { text: "FPC", value: "fpc" },
+            { text: "Número de Operadores", value: "numeroOperadores" },
+            { text: "Número de Ayudantes", value: "numeroAyudantes" },
             { text: "Tiempo de ciclo", value: "tiempoCiclo" },
             { text: "Acciones", value: "actions" },
         ],
@@ -987,6 +966,22 @@ export default {
           this.clientes = response.data;
           this.loading = false;
           console.log("this.parts: ", this.parts);
+        })
+        .catch((error) => {
+          this.loading = false;
+          if (
+            error.response.data.error &&
+            error.response.data.error.toUpperCase().includes("TOKEN")
+          ) {
+            this.$store.dispatch("tokenerror", error.response.data.error);
+          }
+        });
+    },
+    getMaterialesActivos() {
+      return MaterialService.getAllMaterialsActivos()
+        .then((response) => {
+          this.materiales = response.data;
+          this.loading = false;
         })
         .catch((error) => {
           this.loading = false;
@@ -1164,6 +1159,14 @@ export default {
             this.editedItem.idCliente = idCliente;
             this.editedItem.nombreCliente = nombreCliente;
         }
+        if(this.editedItem.idClasificacionMaterial && typeof this.editedItem.idClasificacionMaterial === 'object') {
+            console.log("this.editedItem.idClasificacionMaterial: ", this.editedItem.idClasificacionMaterial);
+            let idMaterial = this.editedItem.idClasificacionMaterial.id;
+            let nombreMaterial = this.editedItem.idClasificacionMaterial.name;
+
+            this.editedItem.idClasificacionMaterial = idMaterial;
+            this.editedItem.nombreClasificacionMaterial = nombreMaterial;
+        }
         if (this.editedIndex !== 'nueva') {
             console.log('Imagen a enviar:', this.imageFile);
           PartService.updatePart(this.editedItem, this.imageFile)
@@ -1253,22 +1256,22 @@ export default {
         return this.diasDisponibles >= 182 ? 'ACTIVO' : this.diasDisponibles > 0 && this.diasDisponibles < 182 ? 'PROXIMO A VENCER' : this.diasDisponibles === 0 ? 'VENCIDO' : 'N/A'
     },
     pesoBlank() {
-        return this.editedItem.largoCintaBlank && this.editedItem.anchoCintaBlank && this.editedItem.espesor && this.editedItem.coeficienteMaterial
+        return this.editedItem.largoCintaBlank && this.editedItem.anchoCintaBlank && this.editedItem.espesor && this.coeficienteMaterial
             ? parseFloat((
                 Number(this.editedItem.largoCintaBlank) *
                 Number(this.editedItem.anchoCintaBlank) *
                 Number(this.editedItem.espesor) *
-                Number(this.editedItem.coeficienteMaterial)
+                Number(this.coeficienteMaterial)
             ).toFixed(4))
             : "";
     },
     pesoBlankMax() {
-        return this.editedItem.largoCintaBlank && this.editedItem.anchoCintaBlank && this.editedItem.espesor && this.editedItem.coeficienteMaterial
+        return this.editedItem.largoCintaBlank && this.editedItem.anchoCintaBlank && this.editedItem.espesor && this.coeficienteMaterial
             ? (
                 (Number(this.editedItem.largoCintaBlank) + (Number(this.editedItem.largoMaterialMaximaTolerancia) || 0)) *
                 (Number(this.editedItem.anchoCintaBlank) + (Number(this.editedItem.anchoMaterialMaximaTolerancia) || 0)) *
                 (Number(this.editedItem.espesor) + (Number(this.editedItem.espesorMaterialMaximaTolerancia) || 0)) *
-                Number(this.editedItem.coeficienteMaterial)
+                Number(this.coeficienteMaterial)
             ).toFixed(4)
             : "";
     },
@@ -1283,7 +1286,17 @@ export default {
             : "";
     },
     personalRequerido() {
-        return this.editedItem.numeroOperadores ? parseInt(this.editedItem.numeroOperadores) + parseInt(this.editedItem.numeroAyudantes) : "";
+        //return this.editedItem.numeroOperadores && this.editedItem.numeroAyudantes ? parseInt(this.editedItem.numeroOperadores) + parseInt(this.editedItem.numeroAyudantes) : "";
+        if (!this.editedItem || !Array.isArray(this.editedItem.rutas)) return 0;
+
+        return this.editedItem.rutas.reduce((acumulado, ruta) => {
+        const operadores = parseFloat(ruta.numeroOperadores);
+        const ayudantes = parseFloat(ruta.numeroAyudantes);
+
+        return acumulado +
+            (isNaN(operadores) ? 0 : operadores) +
+            (isNaN(ayudantes) ? 0 : ayudantes);
+        }, 0);
     },
     tiempoCicloTotal() {
         if (!this.editedItem || !Array.isArray(this.editedItem.rutas)) return 0;
@@ -1325,6 +1338,21 @@ export default {
         }
 
         return [this.rules.required];
+    },
+    coeficienteMaterial(){
+        console.log("this.editedItem.idClasificacionMaterial: ", this.editedItem.idClasificacionMaterial);
+        console.log("this.materiales: ", this.materiales);
+
+        let coeficiente;
+
+        if(this.editedItem.idClasificacionMaterial && typeof this.editedItem.idClasificacionMaterial === 'object') {
+            coeficiente = this.materiales.length > 0 && this.editedItem.idClasificacionMaterial ? this.materiales.find(obj => obj.id === this.editedItem.idClasificacionMaterial.id).coeficiente : "";
+        } else {
+            coeficiente = this.materiales.length > 0 && this.editedItem.idClasificacionMaterial ? this.materiales.find(obj => obj.id === this.editedItem.idClasificacionMaterial).coeficiente : "";
+        }
+
+        return coeficiente;
+
     }
   },
   created() {
@@ -1335,6 +1363,7 @@ export default {
     this.loadItem(this.editedIndex);
     this.getAllParts();
     this.getClientesActivos();
+    this.getMaterialesActivos();
   },
 };
 </script>

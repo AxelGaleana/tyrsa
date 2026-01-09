@@ -146,6 +146,12 @@ export default {
         name: null,
         coeficiente: null,
         activo: true
+      },
+      defaultItem: {
+        id: null,
+        name: null,
+        coeficiente: null,
+        activo: true
       }
     };
   },
