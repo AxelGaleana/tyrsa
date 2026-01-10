@@ -430,165 +430,6 @@
                           </v-row>
                       </v-card-text>
                   </v-card>
-                  <v-card class="mb-4" outlined style="border-width: 3px; background-color: #f7f5fb;">
-                      <v-card-text>
-                        <v-row>
-                            <v-col cols="3">
-                                <v-text-field
-                                label="Número de operaciones"
-                                autocomplete="off"
-                                maxLength="255"
-                                outlined
-                                v-model="editedItem.numeroOperaciones"
-                                ></v-text-field>
-                            </v-col>
-                            <v-col cols="3">
-                                <v-text-field
-                                label="Número de máquinas"
-                                autocomplete="off"
-                                maxLength="255"
-                                outlined
-                                v-model="editedItem.numeroMaquinas"
-                                ></v-text-field>
-                            </v-col>
-                            <v-col cols="3">
-                                <v-text-field
-                                label="Número de operadores"
-                                autocomplete="off"
-                                maxLength="255"
-                                outlined
-                                v-model="editedItem.numeroOperadores"
-                                ></v-text-field>
-                            </v-col>
-                            <v-col cols="3">
-                                <v-text-field
-                                label="Número de ayudantes"
-                                autocomplete="off"
-                                maxLength="255"
-                                outlined
-                                v-model="editedItem.numeroAyudantes"
-                                ></v-text-field>
-                            </v-col>
-                        </v-row>
-                        <v-row>
-                            <v-col cols="3">
-                                <v-text-field
-                                label="Personal requerido"
-                                autocomplete="off"
-                                maxLength="255"
-                                outlined
-                                v-model="personalRequerido"
-                                ></v-text-field>
-                            </v-col>
-                            <v-col cols="2">
-                                <v-text-field
-                                label="Tiempo ciclo total (seg)"
-                                autocomplete="off"
-                                maxLength="255"
-                                outlined
-                                v-model="tiempoCicloTotal"
-                                type="number"
-                                disabled
-                                ></v-text-field>
-                            </v-col>
-                            <v-col cols="2">
-                                <v-text-field
-                                label="Tiempo ciclo Máximo"
-                                autocomplete="off"
-                                maxLength="255"
-                                outlined
-                                v-model="tiempoCicloMaximo"
-                                type="number"
-                                disabled
-                                ></v-text-field>
-                            </v-col>
-                            <v-col cols="2">
-                                <v-text-field
-                                label="WIP por Máquina"
-                                autocomplete="off"
-                                maxLength="255"
-                                outlined
-                                v-model="editedItem.wipPorMaquina"
-                                type="number"
-                                ></v-text-field>
-                            </v-col>
-                            <v-col cols="3">
-                                <v-text-field
-                                label="Tiempo de llenado de célula"
-                                autocomplete="off"
-                                maxLength="255"
-                                outlined
-                                title="Tiempo de llenado de célula"
-                                v-model="tiempoLlenadoCelula"
-                                disabled
-                                ></v-text-field>
-                            </v-col>
-                        </v-row>
-                        <v-row>
-                            <v-col cols="3">
-                                <v-text-field
-                                label="Piezas por hora"
-                                autocomplete="off"
-                                maxLength="255"
-                                outlined
-                                v-model="piezasPorHora"
-                                disabled
-                                ></v-text-field>
-                            </v-col>
-                            <v-col cols="3">
-                                <v-text-field
-                                label="Tiempo total de cambio de modelo (min)"
-                                autocomplete="off"
-                                maxLength="255"
-                                outlined
-                                title="Tiempo total de cambio de modelo (min)"
-                                v-model="editedItem.tiempoTotalCambioModelo"
-                                ></v-text-field>
-                            </v-col>
-                            <v-col cols="3">
-                                <v-text-field
-                                label="Tiempo de liberación (min)"
-                                autocomplete="off"
-                                maxLength="255"
-                                outlined
-                                title="Tiempo de liberación (min)"
-                                v-model="editedItem.tiempoLiberacion"
-                                ></v-text-field>
-                            </v-col>
-                            <v-col cols="3">
-                                <v-text-field
-                                label="Tiempo de ajuste por fechador (min)"
-                                autocomplete="off"
-                                maxLength="255"
-                                outlined
-                                title="Tiempo de ajuste por fechador (min)"
-                                v-model="editedItem.tiempoAjustePorFechador"
-                                ></v-text-field>
-                            </v-col>
-                        </v-row>
-                        <v-row>
-                            <v-col cols="9">
-                                <v-text-field
-                                label="Piezas de ajuste"
-                                autocomplete="off"
-                                maxLength="255"
-                                outlined
-                                v-model="editedItem.piezasDeAjuste"
-                                ></v-text-field>
-                            </v-col>
-                            <v-col cols="3">
-                                <v-text-field
-                                label="Cantidad económica de pedido"
-                                autocomplete="off"
-                                maxLength="255"
-                                outlined
-                                title="Cantidad económica de pedido"
-                                v-model="editedItem.cantidadEconomicaPedido"
-                                ></v-text-field>
-                            </v-col>
-                        </v-row>
-                      </v-card-text>
-                  </v-card>
                   <v-card class="mb-4" outlined style="border-width: 3px; background-color: #fff5f7;">
                       <v-card-title>
                           Ruta de fabricación
@@ -605,6 +446,134 @@
                                   :style="{ border: '1px solid #ccc', borderRadius: '4px',  backgroundColor: '#fff5f7' }"
                                   >
                                   </v-data-table>
+                              </v-col>
+                          </v-row>
+                      </v-card-text>
+                  </v-card>
+                  <v-card class="mb-4" outlined style="border-width: 3px; background-color: #f7f5fb;">
+                      <v-card-text>
+                          <v-row>
+                              <v-col cols="3">
+                                  <v-text-field
+                                  label="Personal requerido"
+                                  autocomplete="off"
+                                  maxLength="255"
+                                  outlined
+                                  v-model="personalRequerido"
+                                  disabled
+                                  ></v-text-field>
+                              </v-col>
+                              <v-col cols="2">
+                                  <v-text-field
+                                  label="Tiempo ciclo total (seg)"
+                                  autocomplete="off"
+                                  maxLength="255"
+                                  outlined
+                                  v-model="tiempoCicloTotal"
+                                  type="number"
+                                  disabled
+                                  ></v-text-field>
+                              </v-col>
+                              <v-col cols="2">
+                                  <v-text-field
+                                  label="Tiempo ciclo Máximo"
+                                  autocomplete="off"
+                                  maxLength="255"
+                                  outlined
+                                  v-model="tiempoCicloMaximo"
+                                  type="number"
+                                  disabled
+                                  ></v-text-field>
+                              </v-col>
+                              <v-col cols="2">
+                                  <v-text-field
+                                  label="WIP por Máquina"
+                                  autocomplete="off"
+                                  maxLength="255"
+                                  outlined
+                                  v-model="editedItem.wipPorMaquina"
+                                  type="number"
+                                  ></v-text-field>
+                              </v-col>
+                              <v-col cols="3">
+                                  <v-text-field
+                                  label="Tiempo de llenado de célula"
+                                  autocomplete="off"
+                                  maxLength="255"
+                                  outlined
+                                  title="Tiempo de llenado de célula"
+                                  v-model="tiempoLlenadoCelula"
+                                  disabled
+                                  ></v-text-field>
+                              </v-col>
+                          </v-row>
+                          <v-row>
+                              <v-col cols="3">
+                                  <v-text-field
+                                  label="Piezas por hora"
+                                  autocomplete="off"
+                                  maxLength="255"
+                                  outlined
+                                  v-model="piezasPorHora"
+                                  type="number"
+                                  disabled
+                                  ></v-text-field>
+                              </v-col>
+                              <v-col cols="3">
+                                  <v-text-field
+                                  label="Tiempo total de cambio de modelo (min)"
+                                  autocomplete="off"
+                                  maxLength="255"
+                                  outlined
+                                  title="Tiempo total de cambio de modelo (min)"
+                                  v-model="editedItem.tiempoTotalCambioModelo"
+                                  type="number"
+                                  ></v-text-field>
+                              </v-col>
+                              <v-col cols="3">
+                                  <v-text-field
+                                  label="Tiempo de liberación (min)"
+                                  autocomplete="off"
+                                  maxLength="255"
+                                  outlined
+                                  title="Tiempo de liberación (min)"
+                                  v-model="editedItem.tiempoLiberacion"
+                                  type="number"
+                                  ></v-text-field>
+                              </v-col>
+                              <v-col cols="3">
+                                  <v-text-field
+                                  label="Tiempo de ajuste por fechador (min)"
+                                  autocomplete="off"
+                                  maxLength="255"
+                                  outlined
+                                  title="Tiempo de ajuste por fechador (min)"
+                                  v-model="editedItem.tiempoAjustePorFechador"
+                                  type="number"
+                                  ></v-text-field>
+                              </v-col>
+                          </v-row>
+                          <v-row>
+                              <v-col cols="9">
+                                  <v-text-field
+                                  label="Piezas de ajuste"
+                                  autocomplete="off"
+                                  maxLength="255"
+                                  outlined
+                                  v-model="editedItem.piezasDeAjuste"
+                                  type="number"
+                                  ></v-text-field>
+                              </v-col>
+                              <v-col cols="3">
+                                  <v-text-field
+                                  label="Cantidad económica de pedido"
+                                  autocomplete="off"
+                                  maxLength="255"
+                                  outlined
+                                  title="Cantidad económica de pedido"
+                                  v-model="editedItem.cantidadEconomicaPedido"
+                                  type="number"
+                                  ></v-text-field>
                               </v-col>
                           </v-row>
                       </v-card-text>
@@ -1016,8 +985,9 @@ export default {
             { text: "No. de máquina", value: "numeroMaquina" },
             { text: "Tonelaje (Tn)", value: "tonelaje" },
             { text: "Descripción", value: "descripcion" },
-            { text: "FPC", value: "fpc" },
-            { text: "Tiempo de ciclo", value: "tiempoCiclo" },
+            { text: "Número de Operadores", value: "numeroOperadores" },
+            { text: "Número de Ayudantes", value: "numeroAyudantes" },
+            { text: "Tiempo de ciclo", value: "tiempoCiclo" }
         ],
       editedItem: {
         name: null,
@@ -1076,6 +1046,7 @@ export default {
       const itemModificado = {
         ...item,
         componentes: item.componentes ? [...item.componentes] : [],
+        rutas: item.rutas ? [...item.rutas] : [],
         dias_disponibles: dias_disponibles,
         estatus:
           dias_disponibles >= 183

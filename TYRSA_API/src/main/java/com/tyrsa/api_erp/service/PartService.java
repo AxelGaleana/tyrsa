@@ -603,5 +603,11 @@ public class PartService {
         return name;
     }
 
+    /**
+     * Verifica si existe una Part por número de parte
+     */
+    public boolean partExiste(String numeroParte) {
+        return partRepository.existsByNumeroParte(numeroParte);
+    }
     
 }

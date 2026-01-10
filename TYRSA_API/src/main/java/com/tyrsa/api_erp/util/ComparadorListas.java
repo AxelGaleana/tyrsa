@@ -37,7 +37,9 @@ public class ComparadorListas {
     }
 
     public static <T> boolean listasDiferentes(T[] arrayOriginal, T[] arrayNueva) {
-        return listasDiferentes(Arrays.asList(arrayOriginal), Arrays.asList(arrayNueva));
+        List<T> listaOriginal = (arrayOriginal == null) ? List.of() : Arrays.asList(arrayOriginal);
+        List<T> listaNueva = (arrayNueva == null) ? List.of() : Arrays.asList(arrayNueva);
+        return listasDiferentes(listaOriginal, listaNueva);
     }
 
 }

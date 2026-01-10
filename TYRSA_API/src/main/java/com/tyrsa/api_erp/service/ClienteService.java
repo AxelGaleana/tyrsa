@@ -73,5 +73,18 @@ public class ClienteService  {
                 .orElseThrow(() -> new RuntimeException("Cliente no encontrado: " + id));
     }
 
+    /**
+     * Verifica si existe un cliente por nombre
+     */
+    public boolean clienteExistePorNombre(String nombre) {
+        return clienteRepository.existsByName(nombre);
+    }
+
+    /**
+     * Obtiene un cliente por nombre
+     */
+    public Optional<Cliente> obtenerClientePorNombre(String nombre) {
+        return clienteRepository.findByName(nombre);
+    }
 
 }

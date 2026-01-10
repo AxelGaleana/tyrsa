@@ -57,6 +57,7 @@ public class SecurityConfig {
                 .requestMatchers("/clientes/**").authenticated()       // Requiere token JWT
                 .requestMatchers("/materiales/**").authenticated()       // Requiere token JWT
                 .requestMatchers("/parts/**").authenticated()       // Requiere token JWT
+                .requestMatchers("/import/**").authenticated()       // Requiere token JWT
                 .requestMatchers("/api/protegido").authenticated()  // Requiere token JWT
                 .anyRequest().authenticated()                 // todas las demás requieren JWT
             )
