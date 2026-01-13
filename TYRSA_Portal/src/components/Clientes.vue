@@ -11,7 +11,7 @@
           </v-snackbar>
         </div>
         <v-layout align-end justify-end>
-          <v-btn color="primary" dark class="mb-2" v-on="on">
+          <v-btn color="primary" dark class="mb-2" v-if="$store.getters.getUser.role === 'ROLE_GERENTE_INGENIERIA' || $store.getters.getUser.role === 'ROLE_ADMIN' || $store.getters.getUser.role === 'ROLE_AREA_INGENIERIA'" v-on="on">
             cliente<v-icon right color="white">add</v-icon>
           </v-btn>
         </v-layout>
@@ -84,7 +84,7 @@
             {{ item.activo === true ? "Activo" : "Inactivo" }}
           </template>
           <template v-slot:item.actions="{ item }">
-            <v-icon small class="mr-2" @click="editItem(item)">
+            <v-icon small class="mr-2" @click="editItem(item)" v-if="$store.getters.getUser.role === 'ROLE_GERENTE_INGENIERIA' || $store.getters.getUser.role === 'ROLE_ADMIN' || $store.getters.getUser.role === 'ROLE_AREA_INGENIERIA'">
               mdi-pencil
             </v-icon>
             <!-- <v-icon small @click="deleteItem(item)">

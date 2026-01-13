@@ -36,15 +36,6 @@ const routes = [
     path: "/clientes",
     name: "Clientes",
     component: Cliente,
-    beforeEnter: (to, from, next) => {
-      if (!!store.getters.getUser.role && 
-          store.getters.getUser.role === "ROLE_ADMIN")
-      {
-        next();
-      } else {
-        next("/");
-      }
-    }
   },
   {
     path: "/materiales",
@@ -52,8 +43,7 @@ const routes = [
     component: Material,
     beforeEnter: (to, from, next) => {
       if (!!store.getters.getUser.role && 
-          store.getters.getUser.role === "ROLE_ADMIN")
-      {
+          (store.getters.getUser.role === "ROLE_ADMIN" || store.getters.getUser.role === "ROLE_GERENTE_INGENIERIA" || store.getters.getUser.role === "ROLE_AREA_INGENIERIA"))      {
         next();
       } else {
         next("/");

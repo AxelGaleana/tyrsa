@@ -10,7 +10,7 @@ public class RutaFabricacion {
     private String tonelaje;
     private String descripcion;
     private String tiempoCiclo;
-    private String numeroMaquinas;
+    //private String numeroMaquinas;
     private String numeroOperadores;
     private String numeroAyudantes;
 }

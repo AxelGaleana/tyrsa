@@ -827,7 +827,7 @@
 
     <v-card flat>
         <v-layout align-end justify-end>
-            <v-btn color="primary" dark class="mb-2" :to="{ name: 'Parte', params: { id: 'nueva' } }">
+            <v-btn color="primary" dark class="mb-2" v-if="$store.getters.getUser.role === 'ROLE_GERENTE_INGENIERIA' || $store.getters.getUser.role === 'ROLE_ADMIN' || $store.getters.getUser.role === 'ROLE_AREA_INGENIERIA'" :to="{ name: 'Parte', params: { id: 'nueva' } }">
             Nueva parte
             <v-icon right color="white">add</v-icon>
             </v-btn>

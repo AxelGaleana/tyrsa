@@ -172,7 +172,11 @@ export default {
       let l = [];
       this.links.forEach(function (element) {
         const name = element.text.toString();
-        if (name === "Industrialización" || name === "Clientes" || name === "Materiales") {
+        if (name === "Industrialización" || name === "Clientes") {
+          l.push(element);
+          return;
+        }
+        if (name === "Materiales" && (role === "ROLE_ADMIN" || role === "ROLE_GERENTE_INGENIERIA" || role === "ROLE_AREA_INGENIERIA")) {
           l.push(element);
           return;
         }
