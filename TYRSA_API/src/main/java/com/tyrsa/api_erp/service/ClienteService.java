@@ -46,7 +46,7 @@ public class ClienteService  {
      * Obtener todos los clientes
      */
     public List<Cliente> getAll() {
-        return clienteRepository.findAll();
+        return clienteRepository.findAllByOrderByNameAsc();
     }
 
     public Map<String, String> getClientesMap() {
@@ -62,7 +62,7 @@ public class ClienteService  {
      * Obtener los clientes activos
      */
     public List<Cliente> getAllActivos() {
-        return clienteRepository.findByActivoTrue();
+        return clienteRepository.findByActivoTrueOrderByNameAsc();
     }
 
     /**

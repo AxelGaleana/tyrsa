@@ -45,14 +45,14 @@ public class MaterialService {
      * Obtener todos los materials
      */
     public List<Material> getAll() {
-        return materialRepository.findAll();
+        return materialRepository.findAllByOrderByNameAsc();
     }
 
     /**
      * Obtener los materials activos
      */
     public List<Material> getAllActivos() {
-        return materialRepository.findByActivoTrue();
+        return materialRepository.findByActivoTrueOrderByNameAsc();
     }
 
     /**

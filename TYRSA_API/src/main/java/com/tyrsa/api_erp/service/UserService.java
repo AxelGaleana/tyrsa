@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -76,7 +77,7 @@ public class UserService implements UserDetailsService {
     }
 
     public List<UserResponse> getAllUsers() {
-        List<User> users = userRepository.findAll();
+        List<User> users = userRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
 
         return users.stream().map(user -> {
             UserResponse dto = new UserResponse();
