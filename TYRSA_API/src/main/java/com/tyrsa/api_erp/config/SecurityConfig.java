@@ -61,7 +61,7 @@ public class SecurityConfig {
     public org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource() {
         var corsConfig = new org.springframework.web.cors.CorsConfiguration();
         // Agrega tanto localhost como la IP por si acaso
-        corsConfig.setAllowedOrigins(List.of("http://localhost:8081", "http://127.0.0.1:8081"));
+        corsConfig.setAllowedOrigins(List.of("http://localhost:8081", "http://127.0.0.1:8081", "http://localhost:8080", "http://127.0.0.1:8080", "http://server.svrtyrsa.lan:8080", "http://192.168.1.144:8080"));
         corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         corsConfig.setAllowedHeaders(List.of("*")); // Permite cualquier cabecera
         corsConfig.setAllowCredentials(true);
