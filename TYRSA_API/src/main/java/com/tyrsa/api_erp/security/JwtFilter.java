@@ -33,28 +33,36 @@ public class JwtFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
+        String path = request.getServletPath();
+        String method = request.getMethod();
+
+        // 1. IMPORTANTE: Dejar pasar peticiones OPTIONS (CORS Preflight) 
+        // y rutas de login sin validar token
+        if ("OPTIONS".equalsIgnoreCase(method) || path.contains("/auth/")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         final String authHeader = request.getHeader("Authorization");
 
-        //Aquí: advertencia si no se envió correctamente el header Authorization
+        // Si no hay header y es una ruta protegida, dejamos que SecurityConfig lo maneje (dará 403)
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            System.out.println("Header 'Authorization' ausente o mal formado: " + authHeader);
+            filterChain.doFilter(request, response);
+            return;
         }
 
         String username = null;
-        String jwt = null;
+        String jwt = authHeader.substring(7);
 
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            jwt = authHeader.substring(7);
-            try {
-                username = jwtUtil.extractUsername(jwt);
-            } catch (Exception e) {
-                System.out.println("Token inválido: " + e.getMessage());
-                // Responder inmediatamente con 401 y mensaje
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.setContentType("application/json");
-                response.getWriter().write("{\"error\": \"TOKEN/SESION EXPIRADA O INVALIDA\"}");
-                return; // Detener el filtro aquí
-            }
+        try {
+            username = jwtUtil.extractUsername(jwt);
+        } catch (Exception e) {
+            // Si el token es inválido en una ruta PROTEGIDA, ahí sí damos 401
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().write("{\"error\": \"TOKEN/SESION EXPIRADA O INVALIDA\"}");
+            return;
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -63,19 +71,12 @@ public class JwtFilter extends OncePerRequestFilter {
             if (jwtUtil.validateToken(jwt, userDetails)) {
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
                 SecurityContextHolder.getContext().setAuthentication(authToken);
-            } else {
-                // Token inválido (firma incorrecta, expirado, etc.)
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.setContentType("application/json");
-                response.getWriter().write("{\"error\": \"TOKEN/SESION EXPIRADA O INVALIDA\"}");
-                return;
             }
         }
 
         filterChain.doFilter(request, response);
     }
+
 }

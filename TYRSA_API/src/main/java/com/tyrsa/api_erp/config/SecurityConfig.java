@@ -37,35 +37,39 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    // ⚠️ Esta parte es clave: define las rutas protegidas
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .cors(cors -> cors.configurationSource(request -> {
-                var corsConfig = new org.springframework.web.cors.CorsConfiguration();
-                corsConfig.setAllowedOrigins(List.of("http://localhost:8081")); // tu frontend
-                corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-                corsConfig.setAllowedHeaders(List.of("*"));
-                corsConfig.setAllowCredentials(true);
-                return corsConfig;
-            }))
+            // 1. Usar un Bean externo para CORS es más fiable en Tomcat
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/**").permitAll()       // rutas públicas (login, register)
+                // 2. PERMITIR explícitamente las peticiones OPTIONS (Preflight)
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .requestMatchers("/auth/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/user/*/reset-password").permitAll()
-                .requestMatchers("/user/**").authenticated()       // Requiere token JWT
-                .requestMatchers("/clientes/**").authenticated()       // Requiere token JWT
-                .requestMatchers("/materiales/**").authenticated()       // Requiere token JWT
-                .requestMatchers("/parts/**").authenticated()       // Requiere token JWT
-                .requestMatchers("/import/**").authenticated()       // Requiere token JWT
-                .requestMatchers("/api/protegido").authenticated()  // Requiere token JWT
-                .anyRequest().authenticated()                 // todas las demás requieren JWT
+                .anyRequest().authenticated()
             )
-            .sessionManagement(sess -> sess
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // JWT no usa sesiones
-            )
-            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class); // agrega tu filtro
+            .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
+
+    // Mover la configuración a un Bean independiente
+    @Bean
+    public org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource() {
+        var corsConfig = new org.springframework.web.cors.CorsConfiguration();
+        // Agrega tanto localhost como la IP por si acaso
+        corsConfig.setAllowedOrigins(List.of("http://localhost:8081", "http://127.0.0.1:8081"));
+        corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        corsConfig.setAllowedHeaders(List.of("*")); // Permite cualquier cabecera
+        corsConfig.setAllowCredentials(true);
+        corsConfig.setMaxAge(3600L); // Cache de la respuesta preflight
+
+        var source = new org.springframework.web.cors.UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", corsConfig);
+        return source;
+    }
+    
 }
