@@ -5,7 +5,7 @@
           <v-card-title>
           <span class="heading">Visor</span>
           </v-card-title>
-          <v-card-text>
+          <v-card-text ref="pdfDialogCard">
             <div ref="scrollContainer" style="max-height: 70vh; overflow-y: auto;">
               <v-container>
                   <v-card class="mb-4" outlined style="border-width: 3px; background-color: #f9fafb;">
@@ -18,8 +18,10 @@
                           <v-col cols="8">
                               <v-row>
                               <v-col cols="4">
+                                <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                  Número de parte
+                                </div>
                                   <v-text-field
-                                  label="Numero de parte"
                                   autocomplete="off"
                                   maxLength="255"
                                   outlined
@@ -27,8 +29,10 @@
                                   ></v-text-field>
                               </v-col>
                               <v-col cols="4">
+                                <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                  Proyecto
+                                </div>
                                   <v-text-field
-                                  label="Proyecto"
                                   autocomplete="off"
                                   maxLength="255"
                                   outlined
@@ -36,22 +40,21 @@
                                   ></v-text-field>
                               </v-col>
                               <v-col cols="4">
-                                  <v-select
-                                      v-model="editedItem.idCliente"
-                                      :items="clientes"
-                                      prepend-icon="assignment_ind"
-                                      item-text="name"
-                                      item-value="id"
-                                      label="Cliente"
-                                      :rules="[(v) => !!v || 'Campo requerido']"
-                                      required
-                                      autocomplete="off"
-                                      outlined
-                                  ></v-select>
+                                <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                  Cliente
+                                </div>
+                                  <v-text-field
+                                  autocomplete="off"
+                                  maxLength="255"
+                                  outlined
+                                  v-model="editedItem.nombreCliente"
+                                  ></v-text-field>
                               </v-col>
                               <v-col cols="6">
+                                <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                  Descripción
+                                </div>
                                   <v-text-field
-                                  label="Descripción"
                                   autocomplete="off"
                                   maxLength="255"
                                   outlined
@@ -59,8 +62,10 @@
                                   ></v-text-field>
                               </v-col>
                               <v-col cols="6">
+                                <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                  Nivel de ingeniería
+                                </div>
                                   <v-text-field
-                                  label="Nivel de ingeniería"
                                   autocomplete="off"
                                   maxLength="255"
                                   outlined
@@ -93,26 +98,31 @@
                       <v-card-text>
                           <v-row>
                               <v-col cols="2">
-
+                                <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                  Fecha de inicio
+                                </div>
                                 <v-text-field
                                 prepend-icon="event"
                                 outlined
-                                label="Fecha de inicio"
                                 v-model="editedItem.fechaInicioProyecto"
                                 ></v-text-field>
 
                               </v-col>
                               <v-col cols="2">
+                                <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                  Fecha de fin
+                                </div>
                                 <v-text-field
                                 prepend-icon="event"
                                 outlined
-                                label="Fecha de inicio"
                                 v-model="editedItem.fechaFinProyecto"
                                 ></v-text-field>
                               </v-col>
                               <v-col cols="2">
+                                <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                  Días disponibles
+                                </div>
                                   <v-text-field
-                                  label="Días disponibles"
                                   autocomplete="off"
                                   maxLength="255"
                                   outlined
@@ -120,8 +130,10 @@
                                   ></v-text-field>
                               </v-col>
                               <v-col cols="2">
+                                <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                  Estatus del proyecto
+                                </div>
                                   <v-text-field
-                                  label="Estatus del proyecto"
                                   autocomplete="off"
                                   maxLength="255"
                                   outlined
@@ -129,8 +141,10 @@
                                   ></v-text-field>
                               </v-col>
                               <v-col cols="4">
+                                <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                  Volumen vendido del proyecto anual
+                                </div>
                                   <v-text-field
-                                  label="Volumen vendido del proyecto anual"
                                   autocomplete="off"
                                   maxLength="255"
                                   outlined
@@ -149,8 +163,10 @@
                           <v-subheader class="text-h6">Aceros</v-subheader>
                             <v-row>
                                 <v-col cols="3">
+                                <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                  Especificación de Material
+                                </div>
                                     <v-text-field
-                                    label="Especificación de Material"
                                     autocomplete="off"
                                     maxLength="255"
                                     outlined
@@ -158,8 +174,10 @@
                                     ></v-text-field>
                                 </v-col>
                                 <v-col cols="3">
+                                <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                  Tipo de proveedor
+                                </div>
                                     <v-text-field
-                                    label="Tipo de proveedor"
                                     autocomplete="off"
                                     maxLength="255"
                                     outlined
@@ -167,8 +185,10 @@
                                     ></v-text-field>
                                 </v-col>
                                 <v-col cols="3">
+                                <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                  Nombre de proveedor
+                                </div>
                                     <v-text-field
-                                    label="Nombre de proveedor"
                                     autocomplete="off"
                                     maxLength="255"
                                     outlined
@@ -176,8 +196,10 @@
                                     ></v-text-field>
                                 </v-col>
                                 <v-col cols="3">
+                                  <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                    Codigo de identificación de materia
+                                  </div>
                                     <v-text-field
-                                    label="Codigo de identificación de materia"
                                     autocomplete="off"
                                     maxLength="255"
                                     outlined
@@ -187,18 +209,21 @@
                             </v-row>
                             <v-row>
                                 <v-col cols="3">
+                                  <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                    Clasificación de material
+                                  </div>
                                     <v-text-field
-                                    label="Clasificación de material"
                                     autocomplete="off"
                                     maxLength="255"
                                     outlined
                                     v-model="editedItem.nombreClasificacionMaterial"
-                                    disabled
                                     ></v-text-field>
                                 </v-col>
                                 <v-col cols="3">
+                                  <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                    Presentacion de materia prima
+                                  </div>
                                     <v-text-field
-                                    label="Presentacion de materia prima"
                                     title="Presentacion de materia prima"
                                     autocomplete="off"
                                     maxLength="255"
@@ -207,8 +232,10 @@
                                     ></v-text-field>
                                 </v-col>
                                 <v-col cols="3">
+                                  <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                    Peso de estándar pack MP (kg)
+                                  </div>
                                     <v-text-field
-                                    label="Peso de estándar pack MP (kg)"
                                     title="Peso de estándar pack MP (kg)"
                                     autocomplete="off"
                                     maxLength="255"
@@ -222,8 +249,10 @@
                           <v-subheader class="text-h6">Especificación de Rollo</v-subheader>
                           <v-row>
                               <v-col cols="6">
+                                  <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                    Diámetro interno (min / max)
+                                  </div>
                                   <v-text-field
-                                  label="Diámetro interno (min / max)"
                                   autocomplete="off"
                                   maxLength="255"
                                   outlined
@@ -231,8 +260,10 @@
                                   ></v-text-field>
                               </v-col>
                               <v-col cols="6">
+                                  <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                    Diámetro externo (min / max)
+                                  </div>
                                   <v-text-field
-                                  label="Diámetro externo (min / max)"
                                   autocomplete="off"
                                   maxLength="255"
                                   outlined
@@ -259,8 +290,10 @@
                           <v-subheader class="text-h6">Especificación de Materia prima</v-subheader>
                           <v-row>
                               <v-col cols="4">
+                                  <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                    Largo de cinta/blank (Avance real) (mm)
+                                  </div>
                                   <v-text-field
-                                  label="Largo de cinta/blank (Avance real) (mm)"
                                   autocomplete="off"
                                   maxLength="255"
                                   outlined
@@ -269,8 +302,10 @@
                                   ></v-text-field>
                               </v-col>
                               <v-col cols="4">
+                                  <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                    Tolerancia máxima de largo de material (mm)
+                                  </div>
                                   <v-text-field
-                                  label="Tolerancia máxima de largo de material (mm)"
                                   autocomplete="off"
                                   maxLength="255"
                                   outlined
@@ -279,8 +314,10 @@
                                   ></v-text-field>
                               </v-col>
                               <v-col cols="4">
+                                  <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                    Ancho cinta/blank (mm)
+                                  </div>
                                   <v-text-field
-                                  label="Ancho cinta/blank (mm)"
                                   autocomplete="off"
                                   maxLength="255"
                                   outlined
@@ -291,8 +328,10 @@
                         </v-row>
                         <v-row>
                               <v-col cols="4">
+                                  <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                    Tolerancia máxima de ancho de material (mm)
+                                  </div>
                                   <v-text-field
-                                  label="Tolerancia máxima de ancho de material (mm)"
                                   autocomplete="off"
                                   maxLength="255"
                                   outlined
@@ -301,8 +340,10 @@
                                   ></v-text-field>
                               </v-col>
                               <v-col cols="4">
+                                  <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                    Espesor (mm)
+                                  </div>
                                   <v-text-field
-                                  label="Espesor (mm)"
                                   autocomplete="off"
                                   maxLength="255"
                                   outlined
@@ -310,8 +351,10 @@
                                   ></v-text-field>
                               </v-col>
                               <v-col cols="4">
+                                  <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                    Tolerancia máxima de espesor de material (mm)
+                                  </div>
                                   <v-text-field
-                                  label="Tolerancia máxima de espesor de material (mm)"
                                   autocomplete="off"
                                   maxLength="255"
                                   outlined
@@ -323,8 +366,10 @@
                           <v-divider class="my-4"></v-divider>
                         <v-row>
                             <v-col cols="3">
+                                  <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                    Coeficiente del material
+                                  </div>
                                 <v-text-field
-                                label="Coeficiente del material"
                                 autocomplete="off"
                                 maxLength="255"
                                 outlined
@@ -332,28 +377,32 @@
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="3">
+                                  <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                    Peso blank (kg)=F.C.
+                                  </div>
                                 <v-text-field
-                                label="Peso blank (kg)=F.C."
                                 autocomplete="off"
                                 maxLength="255"
                                 outlined
                                 v-model="pesoBlank"
-                                disabled
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="3">
+                                  <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                    Peso blank (kg)=F.C. Max
+                                  </div>
                                 <v-text-field
-                                label="Peso blank (kg)=F.C. Max"
                                 autocomplete="off"
                                 maxLength="255"
                                 outlined
                                 v-model="pesoBlankMax"
-                                disabled
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="3">
+                                  <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                    Peso pieza (troquelado) (kg)
+                                  </div>
                                 <v-text-field
-                                label="Peso pieza (troquelado) (kg)"
                                 autocomplete="off"
                                 maxLength="255"
                                 outlined
@@ -364,8 +413,10 @@
                         </v-row>
                         <v-row>
                             <v-col cols="3">
+                                  <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                    Peso pieza (kg)
+                                  </div>
                                 <v-text-field
-                                label="Peso pieza (kg)"
                                 autocomplete="off"
                                 maxLength="255"
                                 outlined
@@ -374,35 +425,38 @@
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="3">
+                                  <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                    Factor de consumo
+                                  </div>
                                 <v-text-field
-                                label="Factor de consumo"
                                 autocomplete="off"
                                 maxLength="255"
                                 outlined
                                 title="Factor de consumo (logística)"
                                 v-model="pesoBlank"
-                                disabled
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="3">
+                                  <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                    % Factor de aprovechamiento
+                                  </div>
                                 <v-text-field
-                                label="% Factor de aprovechamiento"
                                 autocomplete="off"
                                 maxLength="255"
                                 outlined
                                 title="% Factor de aprovechamiento"
                                 v-model="factorAprovechamiento"
-                                disabled
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="3">
+                                  <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                    % Merma
+                                  </div>
                                 <v-text-field
-                                label="% Merma"
                                 autocomplete="off"
                                 maxLength="255"
                                 outlined
                                 v-model="merma"
-                                disabled
                                 ></v-text-field>
                             </v-col>
                         </v-row>
@@ -415,8 +469,10 @@
                       <v-card-text>
                           <v-row>
                             <v-col cols="4">
+                                  <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                    Código de empaque
+                                  </div>
                                 <v-text-field
-                                label="Código de empaque"
                                 autocomplete="off"
                                 maxLength="255"
                                 outlined
@@ -424,8 +480,10 @@
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="4">
+                                  <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                    Factor de consumo de empaque por pieza
+                                  </div>
                                 <v-text-field
-                                label="Factor de consumo de empaque por pieza"
                                 autocomplete="off"
                                 maxLength="255"
                                 outlined
@@ -434,8 +492,10 @@
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="4">
+                                  <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                    Piezas por pallet
+                                  </div>
                                 <v-text-field
-                                label="Piezas por pallet"
                                 autocomplete="off"
                                 maxLength="255"
                                 outlined
@@ -469,40 +529,45 @@
                       <v-card-text>
                           <v-row>
                               <v-col cols="3">
+                                  <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                    Personal requerido
+                                  </div>
                                   <v-text-field
-                                  label="Personal requerido"
                                   autocomplete="off"
                                   maxLength="255"
                                   outlined
                                   v-model="personalRequerido"
-                                  disabled
                                   ></v-text-field>
                               </v-col>
                               <v-col cols="2">
+                                  <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                    Tiempo ciclo total (seg)
+                                  </div>
                                   <v-text-field
-                                  label="Tiempo ciclo total (seg)"
                                   autocomplete="off"
                                   maxLength="255"
                                   outlined
                                   v-model="tiempoCicloTotal"
                                   type="number"
-                                  disabled
                                   ></v-text-field>
                               </v-col>
                               <v-col cols="2">
+                                  <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                    Tiempo ciclo Máximo (seg)
+                                  </div>
                                   <v-text-field
-                                  label="Tiempo ciclo Máximo (seg)"
                                   autocomplete="off"
                                   maxLength="255"
                                   outlined
                                   v-model="tiempoCicloMaximo"
                                   type="number"
-                                  disabled
                                   ></v-text-field>
                               </v-col>
                               <v-col cols="2">
+                                  <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                    WIP por Máquina
+                                  </div>
                                   <v-text-field
-                                  label="WIP por Máquina"
                                   autocomplete="off"
                                   maxLength="255"
                                   outlined
@@ -511,32 +576,36 @@
                                   ></v-text-field>
                               </v-col>
                               <v-col cols="3">
+                                  <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                    Tiempo de llenado de célula (seg)
+                                  </div>
                                   <v-text-field
-                                  label="Tiempo de llenado de célula (seg)"
                                   autocomplete="off"
                                   maxLength="255"
                                   outlined
                                   title="Tiempo de llenado de célula (seg)"
                                   v-model="tiempoLlenadoCelula"
-                                  disabled
                                   ></v-text-field>
                               </v-col>
                           </v-row>
                           <v-row>
                               <v-col cols="3">
+                                  <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                    Piezas por hora
+                                  </div>
                                   <v-text-field
-                                  label="Piezas por hora"
                                   autocomplete="off"
                                   maxLength="255"
                                   outlined
                                   v-model="piezasPorHora"
                                   type="number"
-                                  disabled
                                   ></v-text-field>
                               </v-col>
                               <v-col cols="3">
+                                  <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                    Tiempo total de cambio de modelo (seg)
+                                  </div>
                                   <v-text-field
-                                  label="Tiempo total de cambio de modelo (seg)"
                                   autocomplete="off"
                                   maxLength="255"
                                   outlined
@@ -546,8 +615,10 @@
                                   ></v-text-field>
                               </v-col>
                               <v-col cols="3">
+                                  <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                    Tiempo de liberación (seg)
+                                  </div>
                                   <v-text-field
-                                  label="Tiempo de liberación (seg)"
                                   autocomplete="off"
                                   maxLength="255"
                                   outlined
@@ -557,8 +628,10 @@
                                   ></v-text-field>
                               </v-col>
                               <v-col cols="3">
+                                  <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                    Tiempo de ajuste por fechador (seg)
+                                  </div>
                                   <v-text-field
-                                  label="Tiempo de ajuste por fechador (seg)"
                                   autocomplete="off"
                                   maxLength="255"
                                   outlined
@@ -570,8 +643,10 @@
                           </v-row>
                           <v-row>
                               <v-col cols="9">
+                                  <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                    Piezas de ajuste
+                                  </div>
                                   <v-text-field
-                                  label="Piezas de ajuste"
                                   autocomplete="off"
                                   maxLength="255"
                                   outlined
@@ -580,8 +655,10 @@
                                   ></v-text-field>
                               </v-col>
                               <v-col cols="3">
+                                  <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                    Cantidad económica de pedido
+                                  </div>
                                   <v-text-field
-                                  label="Cantidad económica de pedido"
                                   autocomplete="off"
                                   maxLength="255"
                                   outlined
@@ -598,6 +675,9 @@
           </v-card-text>
           <v-card-actions>
           <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="exportarPDF (editedItem.numeroParte)" :loading="loading">
+            Exportar PDF
+          </v-btn>
           <v-btn color="blue darken-1" text @click="dialog=false">
               Cerrar
           </v-btn>
@@ -608,7 +688,7 @@
     <v-dialog v-model="dialogLog" max-width="90%">
       <v-card flat>
           <v-card-title>
-          <span class="heading">Log del número de parte {{editedItem.numeroParte}}</span>
+          <span class="heading">Log del Número {{editedItem.numeroParte}}</span>
           </v-card-title>
           <v-card-text>
             <div ref="scrollContainer" style="max-height: 70vh; overflow-y: auto;">
@@ -853,7 +933,7 @@
             <v-text-field
               v-model="search"
               append-icon="filter_list"
-              label="Filtrar por número de parte, descripción, proyecto ..."
+              label="Filtrar por Número, descripción, proyecto ..."
               single-line
               hide-details
               clearable
@@ -917,6 +997,8 @@
 <script>
 import PartService from "@/services/PartService";
 import ClienteService from "@/services/ClienteService";
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 export default {
   data() {
@@ -1016,6 +1098,95 @@ export default {
     };
   },
   methods: {
+    async exportarPDF( numeroParte) {
+      this.loading = true;
+      const original = this.$refs.pdfDialogCard;
+      if (!original) return;
+
+      // CLONAR CONTENEDOR
+      const clone = original.cloneNode(true);
+
+      // QUITAR SCROLL Y LIMITES
+      const normalize = (el) => {
+        el.style.maxHeight = 'none';
+        el.style.overflow = 'visible';
+        Array.from(el.children).forEach(normalize);
+      };
+      normalize(clone);
+
+      // OCULTAR CLON
+      clone.style.position = 'absolute';
+      clone.style.top = '-9999px';
+      clone.style.left = '-9999px';
+      document.body.appendChild(clone);
+
+      // OBTENER TODAS LAS SECCIONES
+      const sections = Array.from(clone.querySelectorAll('.v-card'));
+
+      const pdf = new jsPDF('p', 'pt', 'letter');
+
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+
+      const marginTop = 50;
+      const marginBottom = 50;
+      const marginLeft = 40;
+
+      const usableWidth = pageWidth - marginLeft * 2;
+
+      let cursorY = marginTop;
+
+      // TITULO CENTRADO
+      const titulo = 'Número de parte: ' + numeroParte;
+
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(16);
+      pdf.text(
+        titulo,
+        pageWidth / 2,
+        cursorY,
+        { align: 'center' }
+      );
+
+      cursorY += 30;
+
+      // RENDERIZAR SECCION POR SECCION
+      for (const section of sections) {
+
+        const canvas = await html2canvas(section, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: '#ffffff'
+        });
+
+        const imgHeight =
+          (canvas.height * usableWidth) / canvas.width;
+
+        // SI NO CABE COMPLETA, NUEVA PAGINA
+        if (cursorY + imgHeight > pageHeight - marginBottom) {
+          pdf.addPage();
+          cursorY = marginTop;
+        }
+
+        const imgData = canvas.toDataURL('image/jpeg', 0.98);
+
+        pdf.addImage(
+          imgData,
+          'JPEG',
+          marginLeft,
+          cursorY,
+          usableWidth,
+          imgHeight
+        );
+
+        cursorY += imgHeight + 20;
+      }
+
+      pdf.save(numeroParte + '.pdf');
+
+      document.body.removeChild(clone);
+      this.loading = false;
+    },
     getClientes() {
       return ClienteService.getAllClientes()
         .then((response) => {
