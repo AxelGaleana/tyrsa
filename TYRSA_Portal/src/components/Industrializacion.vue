@@ -1226,7 +1226,17 @@ export default {
             : "";
     },
     personalRequerido() {
-        return this.editedItem.numeroOperadores ? parseInt(this.editedItem.numeroOperadores) + parseInt(this.editedItem.numeroAyudantes) : "";
+        //return this.editedItem.numeroOperadores && this.editedItem.numeroAyudantes ? parseInt(this.editedItem.numeroOperadores) + parseInt(this.editedItem.numeroAyudantes) : "";
+        if (!this.editedItem || !Array.isArray(this.editedItem.rutas)) return 0;
+
+        return this.editedItem.rutas.reduce((acumulado, ruta) => {
+        const operadores = parseFloat(ruta.numeroOperadores);
+        const ayudantes = parseFloat(ruta.numeroAyudantes);
+
+        return acumulado +
+            (isNaN(operadores) ? 0 : operadores) +
+            (isNaN(ayudantes) ? 0 : ayudantes);
+        }, 0);
     },
     tiempoCicloTotal() {
         if (!this.editedItem || !Array.isArray(this.editedItem.rutas)) return 0;
