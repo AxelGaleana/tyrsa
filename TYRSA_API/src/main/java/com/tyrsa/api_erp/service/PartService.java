@@ -103,6 +103,9 @@ public class PartService {
         if (newPart.getDiametroInterno() != null)
             cambios.add(new CampoActualizado("Diametro Interno", "-", newPart.getDiametroInterno()));
 
+        if (newPart.getDiametroExterno() != null)
+            cambios.add(new CampoActualizado("Diametro Externo", "-", newPart.getDiametroExterno()));
+
         if (newPart.getLargoCintaBlank() != null)
             cambios.add(new CampoActualizado("Largo Cinta Blank", "-", newPart.getLargoCintaBlank()));
 
@@ -288,24 +291,27 @@ public class PartService {
         if (!Objects.equals(updatedPart.getDiametroInterno(), existente.getDiametroInterno())) {
             cambios.add(new CampoActualizado("Diametro Interno", existente.getDiametroInterno(), updatedPart.getDiametroInterno()));
         }
+        if (!Objects.equals(updatedPart.getDiametroExterno(), existente.getDiametroExterno())) {
+            cambios.add(new CampoActualizado("Diametro Externo", existente.getDiametroExterno(), updatedPart.getDiametroExterno()));
+        }
 
         if (!Objects.equals(updatedPart.getLargoCintaBlank(), existente.getLargoCintaBlank())) {
             cambios.add(new CampoActualizado("Largo Cinta Blank", existente.getLargoCintaBlank(), updatedPart.getLargoCintaBlank()));
         }
         if (!Objects.equals(updatedPart.getLargoMaterialMaximaTolerancia(), existente.getLargoMaterialMaximaTolerancia())) {
-            cambios.add(new CampoActualizado("Largo Material Maxima Tolerancia", existente.getLargoMaterialMaximaTolerancia(), updatedPart.getLargoMaterialMaximaTolerancia()));
+            cambios.add(new CampoActualizado("Tolerancia máxima de largo de material", existente.getLargoMaterialMaximaTolerancia(), updatedPart.getLargoMaterialMaximaTolerancia()));
         }
         if (!Objects.equals(updatedPart.getAnchoCintaBlank(), existente.getAnchoCintaBlank())) {
             cambios.add(new CampoActualizado("Ancho Cinta Blank", existente.getAnchoCintaBlank(), updatedPart.getAnchoCintaBlank()));
         }
         if (!Objects.equals(updatedPart.getAnchoMaterialMaximaTolerancia(), existente.getAnchoMaterialMaximaTolerancia())) {
-            cambios.add(new CampoActualizado("Ancho Material Maxima Tolerancia", existente.getAnchoMaterialMaximaTolerancia(), updatedPart.getAnchoMaterialMaximaTolerancia()));
+            cambios.add(new CampoActualizado("Tolerancia máxima de ancho de material", existente.getAnchoMaterialMaximaTolerancia(), updatedPart.getAnchoMaterialMaximaTolerancia()));
         }
         if (!Objects.equals(updatedPart.getEspesor(), existente.getEspesor())) {
             cambios.add(new CampoActualizado("Espesor", existente.getEspesor(), updatedPart.getEspesor()));
         }
         if (!Objects.equals(updatedPart.getEspesorMaterialMaximaTolerancia(), existente.getEspesorMaterialMaximaTolerancia())) {
-            cambios.add(new CampoActualizado("Espesor Material Maxima Tolerancia", existente.getEspesorMaterialMaximaTolerancia(), updatedPart.getEspesorMaterialMaximaTolerancia()));
+            cambios.add(new CampoActualizado("Tolerancia máxima de espesor de material", existente.getEspesorMaterialMaximaTolerancia(), updatedPart.getEspesorMaterialMaximaTolerancia()));
         }
 
         if (!Objects.equals(updatedPart.getCoeficienteMaterial(), existente.getCoeficienteMaterial())) {
@@ -401,6 +407,7 @@ public class PartService {
         
         if (!cambios.isEmpty()){
             existente.setActualizacionPendiente(true);
+            existente.setFechaActualizacion(fechaActual);
             partRepository.save(existente);
 
             updatedPart.setRootPartId(existente.getRootPartId());

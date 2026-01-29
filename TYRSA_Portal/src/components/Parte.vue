@@ -282,8 +282,8 @@
                         </v-col>
                         <v-col cols="3">
                             <v-text-field
-                            label="Peso de estándar pack MP"
-                            title="Peso de estándar pack MP"
+                            label="Peso de estándar pack MP (kg)"
+                            title="Peso de estándar pack MP (kg)"
                             autocomplete="off"
                             maxLength="255"
                             outlined
@@ -302,7 +302,6 @@
                             maxLength="255"
                             outlined
                             v-model="editedItem.diametroInterno"
-                            type="number"
                             ></v-text-field>
                         </v-col>
                         <v-col cols="6">
@@ -312,7 +311,6 @@
                             maxLength="255"
                             outlined
                             v-model="editedItem.diametroExterno"
-                            type="number"
                             ></v-text-field>
                         </v-col>
                     </v-row>
@@ -435,11 +433,11 @@
                         </v-col>
                         <v-col cols="4">
                             <v-text-field
-                            label="Largo del material en máxima tolerancia"
+                            label="Tolerancia máxima de largo de material (mm)"
                             autocomplete="off"
                             maxLength="255"
                             outlined
-                            title="Largo del material en máxima tolerancia"
+                            title="Tolerancia máxima de largo de material (mm)"
                             v-model="editedItem.largoMaterialMaximaTolerancia"
                             type="number"
                             ></v-text-field>
@@ -459,11 +457,11 @@
                     <v-row>
                         <v-col cols="4">
                             <v-text-field
-                            label="Ancho del material en máxima tolerancia"
+                            label="Tolerancia máxima de ancho de material (mm)"
                             autocomplete="off"
                             maxLength="255"
                             outlined
-                            title="Ancho del material en máxima tolerancia"
+                            title="Tolerancia máxima de ancho de material (mm)"
                             v-model="editedItem.anchoMaterialMaximaTolerancia"
                             type="number"
                             ></v-text-field>
@@ -480,11 +478,11 @@
                         </v-col>
                         <v-col cols="4">
                             <v-text-field
-                            label="Espesor del material en máxima tolerancia"
+                            label="Tolerancia máxima de espesor de material (mm)"
                             autocomplete="off"
                             maxLength="255"
                             outlined
-                            title="Espesor del material en máxima tolerancia"
+                            title="Tolerancia máxima de espesor de material (mm)"
                             v-model="editedItem.espesorMaterialMaximaTolerancia"
                             type="number"
                             ></v-text-field>
@@ -525,11 +523,11 @@
                         </v-col>
                         <v-col cols="3">
                             <v-text-field
-                            label="Peso pieza (troquelado) (KG)"
+                            label="Peso pieza (troquelado) (kg)"
                             autocomplete="off"
                             maxLength="255"
                             outlined
-                            title="Peso pieza (troquelado) (KG)"
+                            title="Peso pieza (troquelado) (kg)"
                             v-model="editedItem.pesoPiezaTroquelado"
                             type="number"
                             ></v-text-field>
@@ -538,11 +536,11 @@
                     <v-row>
                         <v-col cols="3">
                             <v-text-field
-                            label="Peso pieza (componente)"
+                            label="Peso pieza (componente) (kg)"
                             autocomplete="off"
                             maxLength="255"
                             outlined
-                            title="Peso pieza (componente) (Si aplica)"
+                            title="Peso pieza (componente) (Si aplica) (kg)"
                             v-model="editedItem.pesoPiezaComponente"
                             type="number"
                             ></v-text-field>
@@ -644,7 +642,7 @@
                                     <v-col cols="12">
                                     <v-text-field
                                         v-model="editedRuta.numeroMaquina"
-                                        label="No. de máquinas"
+                                        label="No. de máquina"
                                         :rules="[v => !!v || 'Campo requerido']"
                                         required
                                         autocomplete="off"
@@ -696,7 +694,7 @@
                                     <v-col cols="12">
                                         <v-text-field
                                             v-model="editedRuta.tiempoCiclo"
-                                            label="Tiempo de ciclo"
+                                            label="Tiempo de ciclo (seg)"
                                             :rules="[rules.required]"
                                             required
                                             autocomplete="off"
@@ -766,7 +764,7 @@
                         </v-col>
                         <v-col cols="2">
                             <v-text-field
-                            label="Tiempo ciclo Máximo"
+                            label="Tiempo ciclo Máximo (seg)"
                             autocomplete="off"
                             maxLength="255"
                             outlined
@@ -787,11 +785,11 @@
                         </v-col>
                         <v-col cols="3">
                             <v-text-field
-                            label="Tiempo de llenado de célula"
+                            label="Tiempo de llenado de célula (seg)"
                             autocomplete="off"
                             maxLength="255"
                             outlined
-                            title="Tiempo de llenado de célula"
+                            title="Tiempo de llenado de célula (seg)"
                             v-model="tiempoLlenadoCelula"
                             disabled
                             ></v-text-field>
@@ -811,33 +809,33 @@
                         </v-col>
                         <v-col cols="3">
                             <v-text-field
-                            label="Tiempo total de cambio de modelo (min)"
+                            label="Tiempo total de cambio de modelo (seg)"
                             autocomplete="off"
                             maxLength="255"
                             outlined
-                            title="Tiempo total de cambio de modelo (min)"
+                            title="Tiempo total de cambio de modelo (seg)"
                             v-model="editedItem.tiempoTotalCambioModelo"
                             type="number"
                             ></v-text-field>
                         </v-col>
                         <v-col cols="3">
                             <v-text-field
-                            label="Tiempo de liberación (min)"
+                            label="Tiempo de liberación (seg)"
                             autocomplete="off"
                             maxLength="255"
                             outlined
-                            title="Tiempo de liberación (min)"
+                            title="Tiempo de liberación (seg)"
                             v-model="editedItem.tiempoLiberacion"
                             type="number"
                             ></v-text-field>
                         </v-col>
                         <v-col cols="3">
                             <v-text-field
-                            label="Tiempo de ajuste por fechador (min)"
+                            label="Tiempo de ajuste por fechador (seg)"
                             autocomplete="off"
                             maxLength="255"
                             outlined
-                            title="Tiempo de ajuste por fechador (min)"
+                            title="Tiempo de ajuste por fechador (seg)"
                             v-model="editedItem.tiempoAjustePorFechador"
                             type="number"
                             ></v-text-field>
@@ -1052,7 +1050,8 @@ export default {
 
             // Si es nuevo
             if (!this.editedComponent.id) {
-                this.editedComponent.id = crypto.randomUUID();
+                //this.editedComponent.id = crypto.randomUUID();
+                this.editedComponent.id = this.generateUUID(); 
                 this.editedItem.componentes.push(this.editedComponent);
                 this.text = "El nuevo componente ha sido agregado a la lista.";
                 this.snackbar = true;
@@ -1077,7 +1076,8 @@ export default {
 
             // Si es nuevo
             if (!this.editedRuta.id) {
-                this.editedRuta.id = crypto.randomUUID();
+                //this.editedRuta.id = crypto.randomUUID();
+                this.editedRuta.id = this.generateUUID(); 
                 this.editedItem.rutas.push(this.editedRuta);
                 this.text = "La ruta de fabricación ha sido agregado a la lista.";
                 this.snackbar = true;
@@ -1166,6 +1166,7 @@ export default {
 
             this.editedItem.idClasificacionMaterial = idMaterial;
             this.editedItem.nombreClasificacionMaterial = nombreMaterial;
+            this.editedItem.coeficienteMaterial = this.coeficienteMaterial;
         }
         if (this.editedIndex !== 'nueva') {
             console.log('Imagen a enviar:', this.imageFile);
@@ -1213,7 +1214,12 @@ export default {
             });
         }
       }
-    }
+    },
+    generateUUID() {
+      return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+        (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+      );
+    },
   },
   computed: {
     formTitle() {
@@ -1317,7 +1323,7 @@ export default {
         );
     },
     piezasPorHora() {
-        return this.tiempoCicloMaximo ? 3600*this.tiempoCicloMaximo : ""
+        return this.tiempoCicloMaximo ? 3600/this.tiempoCicloMaximo : ""
 
     },
     tiempoLlenadoCelula() {

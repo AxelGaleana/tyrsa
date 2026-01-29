@@ -147,62 +147,77 @@
                       <v-card-text>
                           <v-divider class="my-4"></v-divider>
                           <v-subheader class="text-h6">Aceros</v-subheader>
-                          <v-row>
-                              <v-col cols="2">
-                                  <v-text-field
-                                  label="Especificación de Material"
-                                  autocomplete="off"
-                                  maxLength="255"
-                                  outlined
-                                  v-model="editedItem.especificacionMaterial"
-                                  ></v-text-field>
-                              </v-col>
-                              <v-col cols="2">
-                                  <v-text-field
-                                  label="Tipo de proveedor"
-                                  autocomplete="off"
-                                  maxLength="255"
-                                  outlined
-                                  v-model="editedItem.tipoProveedor"
-                                  ></v-text-field>
-                              </v-col>
-                              <v-col cols="2">
-                                  <v-text-field
-                                  label="Nombre de proveedor"
-                                  autocomplete="off"
-                                  maxLength="255"
-                                  outlined
-                                  v-model="editedItem.nombreProveedor"
-                                  ></v-text-field>
-                              </v-col>
-                              <v-col cols="2">
-                                  <v-text-field
-                                  label="Codigo de identificación de materia"
-                                  autocomplete="off"
-                                  maxLength="255"
-                                  outlined
-                                  v-model="editedItem.codigoIdentificacionMaterial"
-                                  ></v-text-field>
-                              </v-col>
-                              <v-col cols="2">
-                                  <v-text-field
-                                  label="Presentacion de materia prima"
-                                  autocomplete="off"
-                                  maxLength="255"
-                                  outlined
-                                  v-model="editedItem.presentacionMateriaPrima"
-                                  ></v-text-field>
-                              </v-col>
-                              <v-col cols="2">
-                                  <v-text-field
-                                  label="Peso de estándar pack MP"
-                                  autocomplete="off"
-                                  maxLength="255"
-                                  outlined
-                                  v-model="editedItem.pesoEstandarPackMP"
-                                  ></v-text-field>
-                              </v-col>
-                          </v-row>
+                            <v-row>
+                                <v-col cols="3">
+                                    <v-text-field
+                                    label="Especificación de Material"
+                                    autocomplete="off"
+                                    maxLength="255"
+                                    outlined
+                                    v-model="editedItem.especificacionMaterial"
+                                    ></v-text-field>
+                                </v-col>
+                                <v-col cols="3">
+                                    <v-text-field
+                                    label="Tipo de proveedor"
+                                    autocomplete="off"
+                                    maxLength="255"
+                                    outlined
+                                    v-model="editedItem.tipoProveedor"
+                                    ></v-text-field>
+                                </v-col>
+                                <v-col cols="3">
+                                    <v-text-field
+                                    label="Nombre de proveedor"
+                                    autocomplete="off"
+                                    maxLength="255"
+                                    outlined
+                                    v-model="editedItem.nombreProveedor"
+                                    ></v-text-field>
+                                </v-col>
+                                <v-col cols="3">
+                                    <v-text-field
+                                    label="Codigo de identificación de materia"
+                                    autocomplete="off"
+                                    maxLength="255"
+                                    outlined
+                                    v-model="editedItem.codigoIdentificacionMaterial"
+                                    ></v-text-field>
+                                </v-col>
+                            </v-row>
+                            <v-row>
+                                <v-col cols="3">
+                                    <v-text-field
+                                    label="Clasificación de material"
+                                    autocomplete="off"
+                                    maxLength="255"
+                                    outlined
+                                    v-model="editedItem.nombreClasificacionMaterial"
+                                    disabled
+                                    ></v-text-field>
+                                </v-col>
+                                <v-col cols="3">
+                                    <v-text-field
+                                    label="Presentacion de materia prima"
+                                    title="Presentacion de materia prima"
+                                    autocomplete="off"
+                                    maxLength="255"
+                                    outlined
+                                    v-model="editedItem.presentacionMateriaPrima"
+                                    ></v-text-field>
+                                </v-col>
+                                <v-col cols="3">
+                                    <v-text-field
+                                    label="Peso de estándar pack MP (kg)"
+                                    title="Peso de estándar pack MP (kg)"
+                                    autocomplete="off"
+                                    maxLength="255"
+                                    outlined
+                                    v-model="editedItem.pesoEstandarPackMP"
+                                    type="number"
+                                    ></v-text-field>
+                                </v-col>
+                            </v-row>
                           <v-divider class="my-4"></v-divider>
                           <v-subheader class="text-h6">Especificación de Rollo</v-subheader>
                           <v-row>
@@ -255,12 +270,12 @@
                               </v-col>
                               <v-col cols="4">
                                   <v-text-field
-                                  label="Largo del material en máxima tolerancia"
+                                  label="Tolerancia máxima de largo de material (mm)"
                                   autocomplete="off"
                                   maxLength="255"
                                   outlined
-                                    title="Largo del material en máxima tolerancia"
-                                    v-model="editedItem.largoMaterialMaximaTolerancia"
+                                  title="Tolerancia máxima de largo de material (mm)"
+                                  v-model="editedItem.largoMaterialMaximaTolerancia"
                                   ></v-text-field>
                               </v-col>
                               <v-col cols="4">
@@ -277,11 +292,11 @@
                         <v-row>
                               <v-col cols="4">
                                   <v-text-field
-                                  label="Ancho del material en máxima tolerancia"
+                                  label="Tolerancia máxima de ancho de material (mm)"
                                   autocomplete="off"
                                   maxLength="255"
                                   outlined
-                                    title="Ancho del material en máxima tolerancia"
+                                    title="Tolerancia máxima de ancho de material (mm)"
                                     v-model="editedItem.anchoMaterialMaximaTolerancia"
                                   ></v-text-field>
                               </v-col>
@@ -296,11 +311,11 @@
                               </v-col>
                               <v-col cols="4">
                                   <v-text-field
-                                  label="Espesor del material en máxima tolerancia"
+                                  label="Tolerancia máxima de espesor de material (mm)"
                                   autocomplete="off"
                                   maxLength="255"
                                   outlined
-                                    title="Espesor del material en máxima tolerancia"
+                                    title="Tolerancia máxima de espesor de material (mm)"
                                     v-model="editedItem.espesorMaterialMaximaTolerancia"
                                   ></v-text-field>
                               </v-col>
@@ -338,11 +353,11 @@
                             </v-col>
                             <v-col cols="3">
                                 <v-text-field
-                                label="Peso pieza (troquelado) (KG)"
+                                label="Peso pieza (troquelado) (kg)"
                                 autocomplete="off"
                                 maxLength="255"
                                 outlined
-                                title="Peso pieza (troquelado) (KG)"
+                                title="Peso pieza (troquelado) (kg)"
                                 v-model="editedItem.pesoPiezaTroquelado"
                                 ></v-text-field>
                             </v-col>
@@ -350,11 +365,11 @@
                         <v-row>
                             <v-col cols="3">
                                 <v-text-field
-                                label="Peso pieza"
+                                label="Peso pieza (kg)"
                                 autocomplete="off"
                                 maxLength="255"
                                 outlined
-                                title="Peso pieza (componente) (Si aplica)"
+                                title="Peso pieza (componente) (Si aplica) (kg)"
                                 v-model="editedItem.pesoPiezaComponente"
                                 ></v-text-field>
                             </v-col>
@@ -476,7 +491,7 @@
                               </v-col>
                               <v-col cols="2">
                                   <v-text-field
-                                  label="Tiempo ciclo Máximo"
+                                  label="Tiempo ciclo Máximo (seg)"
                                   autocomplete="off"
                                   maxLength="255"
                                   outlined
@@ -497,11 +512,11 @@
                               </v-col>
                               <v-col cols="3">
                                   <v-text-field
-                                  label="Tiempo de llenado de célula"
+                                  label="Tiempo de llenado de célula (seg)"
                                   autocomplete="off"
                                   maxLength="255"
                                   outlined
-                                  title="Tiempo de llenado de célula"
+                                  title="Tiempo de llenado de célula (seg)"
                                   v-model="tiempoLlenadoCelula"
                                   disabled
                                   ></v-text-field>
@@ -521,33 +536,33 @@
                               </v-col>
                               <v-col cols="3">
                                   <v-text-field
-                                  label="Tiempo total de cambio de modelo (min)"
+                                  label="Tiempo total de cambio de modelo (seg)"
                                   autocomplete="off"
                                   maxLength="255"
                                   outlined
-                                  title="Tiempo total de cambio de modelo (min)"
+                                  title="Tiempo total de cambio de modelo (seg)"
                                   v-model="editedItem.tiempoTotalCambioModelo"
                                   type="number"
                                   ></v-text-field>
                               </v-col>
                               <v-col cols="3">
                                   <v-text-field
-                                  label="Tiempo de liberación (min)"
+                                  label="Tiempo de liberación (seg)"
                                   autocomplete="off"
                                   maxLength="255"
                                   outlined
-                                  title="Tiempo de liberación (min)"
+                                  title="Tiempo de liberación (seg)"
                                   v-model="editedItem.tiempoLiberacion"
                                   type="number"
                                   ></v-text-field>
                               </v-col>
                               <v-col cols="3">
                                   <v-text-field
-                                  label="Tiempo de ajuste por fechador (min)"
+                                  label="Tiempo de ajuste por fechador (seg)"
                                   autocomplete="off"
                                   maxLength="255"
                                   outlined
-                                  title="Tiempo de ajuste por fechador (min)"
+                                  title="Tiempo de ajuste por fechador (seg)"
                                   v-model="editedItem.tiempoAjustePorFechador"
                                   type="number"
                                   ></v-text-field>
@@ -1062,6 +1077,7 @@ export default {
       this.dialog = true;
     },
     openLog(item) {
+      this.editedItem = item;
       
       return PartService.getPartLog(item.rootPartId)
         .then((response) => {
@@ -1231,7 +1247,7 @@ export default {
         );
     },
     piezasPorHora() {
-        return this.tiempoCicloMaximo ? 3600*this.tiempoCicloMaximo : ""
+        return this.tiempoCicloMaximo ? 3600/this.tiempoCicloMaximo : ""
 
     },
     tiempoLlenadoCelula() {
