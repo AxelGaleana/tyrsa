@@ -675,7 +675,7 @@
           </v-card-text>
           <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="green darken-1" text @click="exportarPDF (editedItem.numeroParte)">
+          <v-btn color="green darken-1" text @click="exportarPDF (editedItem.numeroParte)" :loading="loading">
             Exportar PDF
           </v-btn>
           <v-btn color="blue darken-1" text @click="dialog=false">
@@ -1098,95 +1098,95 @@ export default {
     };
   },
   methods: {
+    async exportarPDF( numeroParte) {
+      this.loading = true;
+      const original = this.$refs.pdfDialogCard;
+      if (!original) return;
 
-async exportarPDF( numeroParte) {
-  const original = this.$refs.pdfDialogCard;
-  if (!original) return;
+      // CLONAR CONTENEDOR
+      const clone = original.cloneNode(true);
 
-  // CLONAR CONTENEDOR
-  const clone = original.cloneNode(true);
+      // QUITAR SCROLL Y LIMITES
+      const normalize = (el) => {
+        el.style.maxHeight = 'none';
+        el.style.overflow = 'visible';
+        Array.from(el.children).forEach(normalize);
+      };
+      normalize(clone);
 
-  // QUITAR SCROLL Y LIMITES
-  const normalize = (el) => {
-    el.style.maxHeight = 'none';
-    el.style.overflow = 'visible';
-    Array.from(el.children).forEach(normalize);
-  };
-  normalize(clone);
+      // OCULTAR CLON
+      clone.style.position = 'absolute';
+      clone.style.top = '-9999px';
+      clone.style.left = '-9999px';
+      document.body.appendChild(clone);
 
-  // OCULTAR CLON
-  clone.style.position = 'absolute';
-  clone.style.top = '-9999px';
-  clone.style.left = '-9999px';
-  document.body.appendChild(clone);
+      // OBTENER TODAS LAS SECCIONES
+      const sections = Array.from(clone.querySelectorAll('.v-card'));
 
-  // OBTENER TODAS LAS SECCIONES
-  const sections = Array.from(clone.querySelectorAll('.v-card'));
+      const pdf = new jsPDF('p', 'pt', 'letter');
 
-  const pdf = new jsPDF('p', 'pt', 'letter');
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
 
-  const pageWidth = pdf.internal.pageSize.getWidth();
-  const pageHeight = pdf.internal.pageSize.getHeight();
+      const marginTop = 50;
+      const marginBottom = 50;
+      const marginLeft = 40;
 
-  const marginTop = 50;
-  const marginBottom = 50;
-  const marginLeft = 40;
+      const usableWidth = pageWidth - marginLeft * 2;
 
-  const usableWidth = pageWidth - marginLeft * 2;
+      let cursorY = marginTop;
 
-  let cursorY = marginTop;
+      // TITULO CENTRADO
+      const titulo = 'Número de parte: ' + numeroParte;
 
-  // TITULO CENTRADO
-  const titulo = 'Información completa sobre item con número de parte ' + numeroParte;
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(16);
+      pdf.text(
+        titulo,
+        pageWidth / 2,
+        cursorY,
+        { align: 'center' }
+      );
 
-  pdf.setFont('helvetica', 'bold');
-  pdf.setFontSize(16);
-  pdf.text(
-    titulo,
-    pageWidth / 2,
-    cursorY,
-    { align: 'center' }
-  );
+      cursorY += 30;
 
-  cursorY += 30;
+      // RENDERIZAR SECCION POR SECCION
+      for (const section of sections) {
 
-  // RENDERIZAR SECCION POR SECCION
-  for (const section of sections) {
+        const canvas = await html2canvas(section, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: '#ffffff'
+        });
 
-    const canvas = await html2canvas(section, {
-      scale: 2,
-      useCORS: true,
-      backgroundColor: '#ffffff'
-    });
+        const imgHeight =
+          (canvas.height * usableWidth) / canvas.width;
 
-    const imgHeight =
-      (canvas.height * usableWidth) / canvas.width;
+        // SI NO CABE COMPLETA, NUEVA PAGINA
+        if (cursorY + imgHeight > pageHeight - marginBottom) {
+          pdf.addPage();
+          cursorY = marginTop;
+        }
 
-    // SI NO CABE COMPLETA, NUEVA PAGINA
-    if (cursorY + imgHeight > pageHeight - marginBottom) {
-      pdf.addPage();
-      cursorY = marginTop;
-    }
+        const imgData = canvas.toDataURL('image/jpeg', 0.98);
 
-    const imgData = canvas.toDataURL('image/jpeg', 0.98);
+        pdf.addImage(
+          imgData,
+          'JPEG',
+          marginLeft,
+          cursorY,
+          usableWidth,
+          imgHeight
+        );
 
-    pdf.addImage(
-      imgData,
-      'JPEG',
-      marginLeft,
-      cursorY,
-      usableWidth,
-      imgHeight
-    );
+        cursorY += imgHeight + 20;
+      }
 
-    cursorY += imgHeight + 20;
-  }
+      pdf.save(numeroParte + '.pdf');
 
-  pdf.save('Reporte.pdf');
-
-  document.body.removeChild(clone);
-},
-
+      document.body.removeChild(clone);
+      this.loading = false;
+    },
     getClientes() {
       return ClienteService.getAllClientes()
         .then((response) => {
