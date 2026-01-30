@@ -180,7 +180,7 @@ export default {
           l.push(element);
           return;
         }
-        if (name === "Users" && role === "ROLE_ADMIN") {
+        if (name === "Users" && (role === "ROLE_ADMIN" || role === "ROLE_GERENTE_INGENIERIA")) {
           l.push(element);
           return;
         }

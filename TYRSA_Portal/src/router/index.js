@@ -24,7 +24,7 @@ const routes = [
     component: AdminsPage,
     beforeEnter: (to, from, next) => {
       if (!!store.getters.getUser.role && 
-          store.getters.getUser.role === "ROLE_ADMIN")
+          (store.getters.getUser.role === "ROLE_ADMIN" || store.getters.getUser.role === "ROLE_GERENTE_INGENIERIA"))
       {
         next();
       } else {

@@ -90,6 +90,7 @@
                             outlined
                             :hint="this.editedIndex === 'nueva' ? 'Seleccionar imagen' : 'Actualizar imagen'"
                             persistent-hint
+                            :error-messages="photoError"
                             ></v-file-input>
                         </v-col>
                         </v-row>
@@ -297,7 +298,7 @@
                     <v-row>
                         <v-col cols="6">
                             <v-text-field
-                            label="Diámetro interno (min / max)"
+                            label="Diámetro interno (min / max) (mm)"
                             autocomplete="off"
                             maxLength="255"
                             outlined
@@ -306,7 +307,7 @@
                         </v-col>
                         <v-col cols="6">
                             <v-text-field
-                            label="Diámetro externo (min / max)"
+                            label="Diámetro externo (min / max) (mm)"
                             autocomplete="off"
                             maxLength="255"
                             outlined
@@ -503,7 +504,7 @@
                         </v-col>
                         <v-col cols="3">
                             <v-text-field
-                            label="Factor de consumo"
+                            label="Factor de consumo (kg)"
                             autocomplete="off"
                             maxLength="255"
                             outlined
@@ -513,7 +514,7 @@
                         </v-col>
                         <v-col cols="3">
                             <v-text-field
-                            label="Factor de consumo Max"
+                            label="Factor de consumo Max (kg)"
                             autocomplete="off"
                             maxLength="255"
                             outlined
@@ -842,7 +843,18 @@
                         </v-col>
                     </v-row>
                     <v-row>
-                        <v-col cols="9">
+                        <v-col cols="3">
+                            <v-text-field
+                            label="Tiempo de llenado de célula hasta liberación (seg)"
+                            autocomplete="off"
+                            maxLength="255"
+                            outlined
+                            v-model="tiempoLlenadoCelulaHastaLiberación"
+                            type="number"
+                            title="Tiempo de llenado de célula hasta liberación (seg)"
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="3">
                             <v-text-field
                             label="Piezas de ajuste"
                             autocomplete="off"
@@ -1222,6 +1234,18 @@ export default {
     },
   },
   computed: {
+    photoError() {
+        if (!this.imageFile) return []; // No hay error
+
+        const maxSizeMB = parseFloat(process.env.VUE_APP_HUB_IMG_MAX_SIZE);
+        const maxSizeBytes = maxSizeMB * 1024 * 1024;
+
+        if (this.imageFile.size > maxSizeBytes) {
+            return [`La imagen no puede superar los ${maxSizeMB} MB`];
+        }
+
+        return []; // Sin errores
+    },
     formTitle() {
       return this.editedIndex === 'nueva'
         ? "Nueva Parte"
@@ -1359,6 +1383,11 @@ export default {
 
         return coeficiente;
 
+    },
+    tiempoLlenadoCelulaHastaLiberación () {
+        return (this.tiempoLlenadoCelula && this.editedItem.tiempoTotalCambioModelo && this.editedItem.tiempoLiberacion && this.editedItem.tiempoAjustePorFechador)
+            ? Number(this.tiempoLlenadoCelula) + Number(this.editedItem.tiempoTotalCambioModelo) + Number(this.editedItem.tiempoLiberacion) + Number(this.editedItem.tiempoAjustePorFechador)
+            : 0;
     }
   },
   created() {
