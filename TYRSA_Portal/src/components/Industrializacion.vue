@@ -563,7 +563,7 @@
                                   readonly
                                   ></v-text-field>
                               </v-col>
-                              <v-col cols="2">
+                              <v-col cols="3">
                                   <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
                                     Tiempo ciclo total (seg)
                                   </div>
@@ -576,7 +576,7 @@
                                   readonly
                                   ></v-text-field>
                               </v-col>
-                              <v-col cols="2">
+                              <v-col cols="3">
                                   <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
                                     Tiempo ciclo Máximo (seg)
                                   </div>
@@ -589,7 +589,7 @@
                                   readonly
                                   ></v-text-field>
                               </v-col>
-                              <v-col cols="2">
+                              <v-col cols="3">
                                   <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
                                     WIP por Máquina
                                   </div>
@@ -602,6 +602,8 @@
                                   readonly
                                   ></v-text-field>
                               </v-col>
+                          </v-row>
+                          <v-row>
                               <v-col cols="3">
                                   <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
                                     Tiempo de llenado de célula (seg)
@@ -615,9 +617,7 @@
                                   readonly
                                   ></v-text-field>
                               </v-col>
-                          </v-row>
-                          <v-row>
-                              <v-col cols="3">
+                              <v-col cols="2">
                                   <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
                                     Piezas por hora
                                   </div>
@@ -630,7 +630,7 @@
                                   readonly
                                   ></v-text-field>
                               </v-col>
-                              <v-col cols="3">
+                              <v-col cols="4">
                                   <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
                                     Tiempo total de cambio de modelo (seg)
                                   </div>
@@ -658,6 +658,8 @@
                                   readonly
                                   ></v-text-field>
                               </v-col>
+                          </v-row>
+                          <v-row>
                               <v-col cols="3">
                                   <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
                                     Tiempo de ajuste por fechador (seg)
@@ -672,9 +674,7 @@
                                   readonly
                                   ></v-text-field>
                               </v-col>
-                          </v-row>
-                          <v-row>
-                              <v-col cols="3">
+                              <v-col cols="4">
                                   <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
                                     Tiempo de llenado de célula hasta liberación (seg)
                                   </div>
@@ -687,7 +687,7 @@
                                   readonly
                                   ></v-text-field>
                               </v-col>
-                              <v-col cols="3">
+                              <v-col cols="2">
                                   <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
                                     Piezas de ajuste
                                   </div>
@@ -721,13 +721,26 @@
             </div>
           </v-card-text>
           <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="green darken-1" text @click="exportarPDF (editedItem.numeroParte)" :loading="loading">
-            Exportar PDF
-          </v-btn>
-          <v-btn color="blue darken-1" text @click="dialog=false">
+            <v-spacer></v-spacer>
+
+            <v-btn color="green darken-1" text
+                  @click="exportarPDF(editedItem.numeroParte)"
+                  :loading="pdf_loading">
+              <v-icon left color="green">picture_as_pdf</v-icon>
+              Exportar PDF
+            </v-btn>
+
+            <v-btn color="green darken-1" text
+                  @click="exportToExcelHumanTable(editedItem)"
+                  :loading="excel_loading">
+              <v-icon left color="green">mdi-file-excel</v-icon>
+              Exportar Excel
+            </v-btn>
+
+            <v-btn color="blue darken-1" text @click="dialog=false">
+              <v-icon left color="blue">close</v-icon>
               Cerrar
-          </v-btn>
+            </v-btn>
           </v-card-actions>
       </v-card>
     </v-dialog>
@@ -1046,6 +1059,8 @@ import PartService from "@/services/PartService";
 import ClienteService from "@/services/ClienteService";
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import * as XLSX from 'xlsx'
+import { saveAs } from 'file-saver'
 
 export default {
   data() {
@@ -1059,36 +1074,12 @@ export default {
       options: {
         itemsPerPage: 10,
       },
-      loading: true,
+      loading: false,
+      pdf_loading: false,
+      excel_loading: false,
       loadingApprove: false,
       loadingDeny: false,
       log:[],
-      logItems: [
-        {
-          "fecha": "08-10-2025",
-          "estatus": "Pendiente",
-          "solicitante": "Axel Galeana",
-          "aprobador": "Monserrat Urquiza",
-          "fechaAprobacion": "09-10-2025",
-          "cambios": [
-            {"campo": "Descripcion", "de":"EXCLUDER SEAL ", "a": "EXCLUDER SEAL actualizado"},
-            {"campo": "Nivel ingenieria", "de":"b+", "a": "a+"},
-            {"campo": "Fecha fin", "de":"11-12-2025", "a": "11-01-2026"}
-          ]
-        },
-        {
-          "fecha": "06-08-2025",
-          "estatus": "Aprobado",
-          "solicitante": "Axel Galeana",
-          "aprobador": "Monserrat Urquiza",
-          "fechaAprobacion": "07-08-2025",
-          "cambios": [
-            {"campo": "Tiempo de ajuste por fechador", "de":"0", "a": "1"},
-            {"campo": "Especificacion de material", "de":"SAE 1010", "a": "SAE 2010"},
-            {"campo": "Fecha fin", "de":"11-12-2025", "a": "11-01-2026"}
-          ]
-        }
-      ],
       headersLog: [
         { text: "Fecha de cambio", value: "fecha" },
         { text: "Solicitante", value: "userName" },
@@ -1145,8 +1136,143 @@ export default {
     };
   },
   methods: {
+    exportToExcelHumanTable() {
+      this.excel_loading = true;
+      const parte = this.editedItem || {}
+
+      // Propiedades calculadas
+      parte.factorAprovechamiento = this.factorAprovechamiento
+      parte.merma = this.merma
+      parte.personalRequerido = this.personalRequerido
+      parte.tiempoCicloTotal = this.tiempoCicloTotal
+      parte.tiempoCicloMaximo = this.tiempoCicloMaximo
+      parte.piezasPorHora = this.piezasPorHora
+      parte.tiempoLlenadoCelula = this.tiempoLlenadoCelula
+      parte.tiempoLlenadoCelulaHastaLiberación = this.tiempoLlenadoCelulaHastaLiberación
+      parte.factorConsumo = this.pesoBlank
+      parte.factorConsumoMax = this.pesoBlankMax
+
+      // Arrays seguros
+      const componentes = Array.isArray(parte.componentes) ? parte.componentes : []
+      const rutas = Array.isArray(parte.rutas) ? parte.rutas : []
+
+      // Campos de PARTE en orden y con headers humanos
+      const parteFields = [
+        { key: 'numeroParte', label: 'Número de parte' },
+        { key: 'proyecto', label: 'Proyecto' },
+        { key: 'nombreCliente', label: 'Cliente' },
+        { key: 'descripcion', label: 'Descripción' },
+        { key: 'nivelIngenieria', label: 'Nivel de ingeniería' },
+        { key: 'fechaInicioProyecto', label: 'Fecha de inicio' },
+        { key: 'fechaFinProyecto', label: 'Fecha de fin' },
+        { key: 'dias_disponibles', label: 'Días disponibles' },
+        { key: 'estatus', label: 'Estatus del proyecto' },
+        { key: 'volumenVendidoProyectoAnual', label: 'Volumen vendido del proyecto anual' },
+        { key: 'especificacionMaterial', label: 'Especificación de material' },
+        { key: 'tipoProveedor', label: 'Tipo de proveedor' },
+        { key: 'nombreProveedor', label: 'Nombre de proveedor' },
+        { key: 'codigoIdentificacionMaterial', label: 'Código de identificación de materia' },
+        { key: 'nombreClasificacionMaterial', label: 'Clasificación de material' },
+        { key: 'presentacionMateriaPrima', label: 'Presentación de materia prima' },
+        { key: 'pesoEstandarPackMP', label: 'Peso de estándar pack MP (kg)' },
+        { key: 'diametroInterno', label: 'Diámetro interno (min / max) (mm)' },
+        { key: 'diametroExterno', label: 'Diámetro externo (min / max) (mm)' },
+        { key: 'largoCintaBlank', label: 'Largo de cinta/blank (Avance real) (mm)' },
+        { key: 'largoMaterialMaximaTolerancia', label: 'Tolerancia máxima de largo de material (mm)' },
+        { key: 'anchoCintaBlank', label: 'Ancho cinta/blank (mm)' },
+        { key: 'anchoMaterialMaximaTolerancia', label: 'Tolerancia máxima de ancho de material (mm)' },
+        { key: 'espesor', label: 'Espesor (mm)' },
+        { key: 'espesorMaterialMaximaTolerancia', label: 'Tolerancia máxima de espesor de material (mm)' },
+        { key: 'coeficienteMaterial', label: 'Coeficiente del material' },
+        { key: 'factorConsumo', label: 'Factor de consumo (kg)' },
+        { key: 'factorConsumoMax', label: 'Factor de consumo Max (kg)' },
+        { key: 'pesoPiezaTroquelado', label: 'Peso pieza (troquelado) (kg)' },
+        { key: 'pesoPiezaComponente', label: 'Peso pieza (kg)' },
+        { key: 'factorAprovechamiento', label: '% Factor de aprovechamiento' },
+        { key: 'merma', label: '% Merma' },
+        { key: 'codigoEmpaque', label: 'Código de empaque' },
+        { key: 'factorConsumoEmpaquePieza', label: 'Factor de consumo de empaque por pieza' },
+        { key: 'piezasPallet', label: 'Piezas por pallet' },
+        { key: 'personalRequerido', label: 'Personal requerido' },
+        { key: 'tiempoCicloTotal', label: 'Tiempo ciclo total (seg)' },
+        { key: 'tiempoCicloMaximo', label: 'Tiempo ciclo Máximo (seg)' },
+        { key: 'wipPorMaquina', label: 'WIP por Máquina' },
+        { key: 'tiempoLlenadoCelula', label: 'Tiempo de llenado de célula (seg)' },
+        { key: 'piezasPorHora', label: 'Piezas por hora' },
+        { key: 'tiempoTotalCambioModelo', label: 'Tiempo total de cambio de modelo (seg)' },
+        { key: 'tiempoLiberacion', label: 'Tiempo de liberación (seg)' },
+        { key: 'tiempoAjustePorFechador', label: 'Tiempo de ajuste por fechador (seg)' },
+        { key: 'tiempoLlenadoCelulaHastaLiberación', label: 'Tiempo de llenado de célula hasta liberación (seg)' },
+        { key: 'piezasDeAjuste', label: 'Piezas de ajuste' },
+        { key: 'cantidadEconomicaPedido', label: 'Cantidad económica de pedido' }
+      ]
+
+      // Headers
+      const headerRow1 = [
+        'PARTE', ...Array(parteFields.length - 1).fill(''),
+        'COMPONENTES', ...Array(5).fill(''),
+        'RUTA DE FABRICACIÓN', ...Array(7).fill('')
+      ]
+
+      const headerRow2 = [
+        ...parteFields.map(f => f.label),
+        'Especificación de componente',
+        'Tipo de proveedor',
+        'Nombre de proveedor',
+        'Código de identificación de componente',
+        'Cantidad por pieza',
+        'Operación',
+        'Número de máquina',
+        'Tonelaje',
+        'Descripción',
+        'Tiempo ciclo',
+        'Número de operadores',
+        'Número de ayudantes'
+      ]
+
+      // Filas
+      const maxRows = Math.max(componentes.length, rutas.length, 1)
+      const rows = []
+
+      for (let i = 0; i < maxRows; i++) {
+        const comp = componentes[i]
+        const ruta = rutas[i]
+
+        rows.push([
+          ...parteFields.map(f => i === 0 ? (parte[f.key] ?? '') : ''),
+          comp?.especificacionComponente || '',
+          comp?.tipoProveedor || '',
+          comp?.nombreProveedor || '',
+          comp?.codigoIdentificacionComponente || '',
+          comp?.cantidadComponentesPorPieza || '',
+          ruta?.operacion || '',
+          ruta?.numeroMaquina || '',
+          ruta?.tonelaje || '',
+          ruta?.descripcion || '',
+          ruta?.tiempoCiclo || '',
+          ruta?.numeroOperadores || '',
+          ruta?.numeroAyudantes || ''
+        ])
+      }
+
+      const sheetData = [headerRow1, headerRow2, ...rows]
+      const worksheet = XLSX.utils.aoa_to_sheet(sheetData)
+      worksheet['!cols'] = Array(headerRow2.length).fill({ wch: 25 })
+
+      const workbook = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Parte')
+
+      const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' })
+      saveAs(
+        new Blob([excelBuffer], { type: 'application/octet-stream' }),
+        `Parte_${parte.numeroParte || 'SIN_NUMERO'}.xlsx`
+      )
+      setTimeout(() => {
+        this.excel_loading = false;
+      }, 1);
+    },
     async exportarPDF( numeroParte) {
-      this.loading = true;
+      this.pdf_loading = true;
       const original = this.$refs.pdfDialogCard;
       if (!original) return;
 
@@ -1232,7 +1358,7 @@ export default {
       pdf.save(numeroParte + '.pdf');
 
       document.body.removeChild(clone);
-      this.loading = false;
+      this.pdf_loading = false;
     },
     getClientes() {
       return ClienteService.getAllClientes()
