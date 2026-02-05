@@ -20,7 +20,7 @@ Vue.use(VueRouter);
 const routes = [
   {
     path: "/users",
-    name: "Users",
+    name: "Usuarios",
     component: AdminsPage,
     beforeEnter: (to, from, next) => {
       if (!!store.getters.getUser.role && 
@@ -57,7 +57,7 @@ const routes = [
   },
   {
     path: "/industrializacion",
-    name: "Industrializacion",
+    name: "Industrialización",
     component: Industrializacion
   },
 ];

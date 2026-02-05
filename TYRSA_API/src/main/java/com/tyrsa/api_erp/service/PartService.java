@@ -193,6 +193,8 @@ public class PartService {
             cambios.add(new CampoActualizado("Imagen", "-", newPart.getFileName()));
         }
 
+        cambios.add(new CampoActualizado("Habilitado", "-", newPart.isHabilitado() ? "Si" : "No"));
+
         LocalDateTime  fechaActual = LocalDateTime.now();
         newPart.setFechaActualizacion(fechaActual);
         newPart.setVersion("actual");
@@ -403,6 +405,10 @@ public class PartService {
             }
             updatedPart.setFileName(safeFilename);
             cambios.add(new CampoActualizado("Imagen", existente.getFileName(), updatedPart.getFileName()));
+        }
+
+        if (!Objects.equals(updatedPart.isHabilitado(), existente.isHabilitado())) {
+            cambios.add(new CampoActualizado("Habilitado", existente.isHabilitado() ? "Si" : "No", updatedPart.isHabilitado() ? "Si" : "No"));
         }
         
         if (!cambios.isEmpty()){

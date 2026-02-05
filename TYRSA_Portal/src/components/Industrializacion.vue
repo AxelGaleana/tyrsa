@@ -29,7 +29,7 @@
                                   readonly
                                   ></v-text-field>
                               </v-col>
-                              <v-col cols="4">
+                              <v-col cols="3">
                                 <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
                                   Proyecto
                                 </div>
@@ -41,7 +41,7 @@
                                   readonly
                                   ></v-text-field>
                               </v-col>
-                              <v-col cols="4">
+                              <v-col cols="3">
                                 <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
                                   Cliente
                                 </div>
@@ -52,6 +52,18 @@
                                   v-model="editedItem.nombreCliente"
                                   readonly
                                   ></v-text-field>
+                              </v-col>
+                              <v-col cols="2">
+                                <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                  Estatus
+                                </div>
+                                <v-chip
+                                  large
+                                  :color="editedItem.habilitado ? 'success' : 'grey'"
+                                  dark
+                                >
+                                  {{ editedItem.habilitado ? 'Habilitado' : 'Deshabilitado' }}
+                                </v-chip>
                               </v-col>
                               <v-col cols="6">
                                 <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
@@ -987,7 +999,7 @@
             <v-icon right color="white">add</v-icon>
             </v-btn>
         </v-layout>
-      <v-card-title class="title">
+      <v-card-title class="title py-1">
         <v-layout>
           <v-col cols="12">
             <v-text-field
@@ -1002,13 +1014,24 @@
           </v-col>
         </v-layout>
       </v-card-title>
-      <v-card-text>
+      <v-card-text class="py-1">
+        <v-row justify="end" class="mb-2">
+          <v-col cols="auto">
+            <v-switch
+              v-model="ocultarDeshabilitados"
+              label="Ocultar deshabilitados"
+              dense
+              color="primary"
+            ></v-switch>
+          </v-col>
+        </v-row>
         <v-data-table
           :headers="headers"
           :items="processedParts"
           :search="search"
           :options.sync="options"
           :loading="loading"
+          :item-class="getRowClass"
           loading-text="Consultando información..."
           no-data-text="No se encontró información."
         >
@@ -1066,6 +1089,7 @@ export default {
   data() {
     return {
       defaultImage: require('@/assets/placeholder-image.png'),
+      ocultarDeshabilitados: true,
       parts:[],
       clientes:[],
       dialog: false,
@@ -1104,7 +1128,7 @@ export default {
         { text: "Fecha Inicio", value: "fechaInicioProyecto", width: '110px' },
         { text: "Fecha Fin", value: "fechaFinProyecto", width: '110px' },
         { text: "Dias Disponibles", value: "dias_disponibles" },
-        { text: "Estatus", value: "estatus" },
+        { text: "Estatus del Proyecto", value: "estatus" },
         /*{ text: "Volumen vendido", value: "volumen_vendido" },*/
         { text: "Acciones", value: "actions", width: '92px' },
       ],
@@ -1136,6 +1160,10 @@ export default {
     };
   },
   methods: {
+  getRowClass(item) {
+    // Si habilitado es exactamente false, aplicamos la clase
+    return item.habilitado === false ? 'row-deshabilitada' : '';
+  },
     exportToExcelHumanTable() {
       this.excel_loading = true;
       const parte = this.editedItem || {}
@@ -1517,7 +1545,7 @@ export default {
         const hoy = new Date();
         hoy.setHours(0, 0, 0, 0);
 
-        return this.parts.map(part => {
+        let partsProcesados = this.parts.map(part => {
             if (!part.fechaFinProyecto) {
                 return {
                 ...part,
@@ -1538,6 +1566,12 @@ export default {
                 estatus: diffDays >= 182 ? 'ACTIVO' : diffDays > 0 && diffDays < 182 ? 'PROXIMO A VENCER' : 'VENCIDO'
             };
         });
+
+        if (this.ocultarDeshabilitados) {
+          partsProcesados = partsProcesados.filter(part => part.habilitado);
+        }
+
+        return partsProcesados;
     },
     pesoBlank() {
         return this.editedItem.largoCintaBlank && this.editedItem.anchoCintaBlank && this.editedItem.espesor && this.editedItem.coeficienteMaterial
@@ -1662,5 +1696,17 @@ export default {
 
 .estatus-NA {
   background-color: #a9a9a9; /* Rojo */
+}
+
+/* Usamos deep para asegurar que afecte a las celdas de la tabla */
+::v-deep .row-deshabilitada {
+  background-color: #f5f5f5 !important; /* Gris claro */
+  color: #a0a0a0 !important;           /* Texto gris */
+}
+
+/* Opcional: si quieres que la imagen también se vea gris */
+::v-deep .row-deshabilitada img {
+  filter: grayscale(100%);
+  opacity: 0.6;
 }
 </style>

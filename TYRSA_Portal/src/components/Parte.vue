@@ -46,7 +46,7 @@
                             v-model="editedItem.proyecto"
                             ></v-text-field>
                         </v-col>
-                        <v-col cols="4">
+                        <v-col cols="3">
                             <v-select
                                 v-model="editedItem.idCliente"
                                 :items="clientes"
@@ -60,6 +60,15 @@
                                 outlined
                                 return-object
                             ></v-select>
+                        </v-col>
+                        <v-col cols="1">
+                            <v-switch
+                                v-model="editedItem.habilitado"
+                                :label="editedItem.habilitado ? 'Habilitado' : 'Deshabilitado'"
+                                inset
+                                dense
+                                hide-details
+                            />
                         </v-col>
                         <v-col cols="6">
                             <v-text-field
@@ -939,6 +948,7 @@ export default {
         editedIndex: 'nueva',
         editedItem: {
             numeroParte: null,
+            habilitado: true,
             proyecto: null,
             descripcion: null,
             fechaInicioProyecto: null,
@@ -951,6 +961,7 @@ export default {
         defaultItem: {
             id: null,
             numeroParte: null,
+            habilitado: true,
             proyecto: null,
             descripcion: null,
             fechaInicioProyecto: null,

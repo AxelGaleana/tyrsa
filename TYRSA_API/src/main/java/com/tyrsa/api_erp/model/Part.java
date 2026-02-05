@@ -70,4 +70,5 @@ public class Part {
     private String version;
     private LocalDateTime fechaActualizacion;
     private boolean actualizacionPendiente;
+    private boolean habilitado;
 }

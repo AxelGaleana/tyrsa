@@ -167,7 +167,7 @@ export default {
         this.$store.dispatch("login", user)
           .then(() => {
             // Login exitoso, redirigir a la vista principal
-            this.$router.push({ name: "Industrializacion" });
+            this.$router.push({ name: "Industrialización" });
           })
           .catch(() => {
             // Opcional: manejar errores si decides usar reject en el store
