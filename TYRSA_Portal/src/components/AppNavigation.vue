@@ -75,19 +75,24 @@
       app
       dark
       floating
-      permanent
+      expand-on-hover
+      :mini-variant="mini"
+      :mini-variant-width="60"
+      width="256"
       src="@/assets/menu_lateral.png"
     >
-      <v-list nav>
-        <v-list-item>
-          <v-img
-            contain
-            aspect-ratio="2.7"
-            src="@/assets/logo_bioacceso.png"
-          ></v-img>
-        </v-list-item>
-      </v-list>
-      <v-divider light></v-divider>
+<v-list nav>
+  <v-list-item class="justify-center px-2"> <!-- Añadido para centrar -->
+    <v-img
+      contain
+      width="160" 
+      height="60"
+      src="@/assets/logo_bioacceso.png"
+      class="logo-fijo"
+    ></v-img>
+  </v-list-item>
+</v-list>
+      <!--<v-divider light></v-divider> -->
       <v-list nav>
         <v-list-item
           v-for="(link, i) in activeLinks"
@@ -133,11 +138,12 @@ export default {
       password: null,
       password2: null,
       drawer: true,
+      mini: true,
       links: [
         {
           to: "/users",
           icon: "person",
-          text: "Users"
+          text: "Usuarios"
         },
         {
           to: "/clientes",
@@ -180,7 +186,7 @@ export default {
           l.push(element);
           return;
         }
-        if (name === "Users" && (role === "ROLE_ADMIN" || role === "ROLE_GERENTE_INGENIERIA")) {
+        if (name === "Usuarios" && (role === "ROLE_ADMIN" || role === "ROLE_GERENTE_INGENIERIA")) {
           l.push(element);
           return;
         }
@@ -260,4 +266,17 @@ export default {
   background-color: #ccc;
   margin: 0 12px;
 }
+
+/* Asegura que el logo no cambie de tamaño ni se deforme */
+.logo-fijo {
+  flex: none; /* Evita que el contenedor flex la estire */
+  transition: none !important; /* Evita saltos visuales en la expansión */
+}
+
+/* Opcional: Si quieres que el logo desaparezca o cambie en modo mini */
+.v-navigation-drawer--mini-variant .logo-fijo {
+  width: 40px !important; /* Tamaño reducido si el drawer está cerrado */
+  margin: 0 auto;
+}
+
 </style>

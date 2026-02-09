@@ -455,13 +455,13 @@
                         <v-row>
                             <v-col cols="3">
                                   <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
-                                    Peso pieza (kg)
+                                    Peso pieza con Componente (kg)
                                   </div>
                                 <v-text-field
                                 autocomplete="off"
                                 maxLength="255"
                                 outlined
-                                title="Peso pieza (componente) (Si aplica) (kg)"
+                                title="Peso pieza con Componente (kg)"
                                 v-model="editedItem.pesoPiezaComponente"
                                 readonly
                                 ></v-text-field>

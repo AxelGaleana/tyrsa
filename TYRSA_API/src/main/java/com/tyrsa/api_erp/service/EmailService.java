@@ -36,7 +36,7 @@ public class EmailService {
         message.setTo(toEmails);
         message.setSubject("Actualizacion de parte requiere su aprobacion");
         message.setText(
-            "El item con número de parte: " + partNumber + " ha sido actualizado y requiere de su aprobación" +
+            "El item con número de parte: " + partNumber + " ha sido actualizado y requiere de su aprobación." +
             "\n\nPor favor, ingrese al sistema para ver los cambios." +
             "\n\n----------------------------------" +
             "\nSistema de Industrialización" +
@@ -50,10 +50,10 @@ public class EmailService {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("industrializacion@troqueladostyrsa.com");
         message.setTo(toEmails);
-        message.setSubject("Alta de parte requiere su aprobacion");
+        message.setSubject("Alta de parte");
         message.setText(
             "El item con numero de parte: " + part.getNumeroParte() + " y descripción '" + part.getDescripcion() + "'' ha sido dado de alta." +
-           "\n\nPor favor, ingrese al sistema para ver los cambios." +
+           "\n\nPor favor, ingrese al sistema para ver más detalles." +
             "\n\n----------------------------------" +
             "\nSistema de Industrialización" +
             "\nTyrsa Troquelados"
@@ -66,10 +66,10 @@ public class EmailService {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("industrializacion@troqueladostyrsa.com");
         message.setTo(toEmails);
-        message.setSubject("Actualizacion de parte requiere su aprobacion");
+        message.setSubject("Actualizacion de parte");
         message.setText(
             "El item con numero de parte: " + part.getNumeroParte() + " y descripción '" + part.getDescripcion() + "'' ha sido actualizado." +
-           "\n\nPor favor, ingrese al sistema para ver los cambios." +
+           "\n\nPor favor, ingrese al sistema para ver más detalles." +
             "\n\n----------------------------------" +
             "\nSistema de Industrialización" +
             "\nTyrsa Troquelados"
