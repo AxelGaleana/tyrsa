@@ -111,8 +111,7 @@
                         :src="getImageUrl(editedItem.fileName)"
                         @error="onImgError($event)"
                         max-width="180"
-                        aspect-ratio="1"
-                        cover
+                        contain
                         class="mb-3"
                         :style="editedItem.fileName ? 'border: 2px solid #E0E0E0; border-radius: 12px;' : 'border-radius: 12px;'"
                         ></v-img>

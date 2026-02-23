@@ -98,8 +98,7 @@
                             :src="getImageUrl(editedItem.fileName)"
                             @error="onImgError($event)"
                             max-width="180"
-                            aspect-ratio="1"
-                            cover
+                            contain
                             class="mb-3"
                             :style="editedItem.fileName ? 'border: 2px solid #E0E0E0; border-radius: 12px;' : 'border-radius: 12px;'"
                             ></v-img>
@@ -808,7 +807,7 @@
                                   <v-img
                                   :src="getThumbUrl(cambio.de)"
                                   @error="onImgError($event)"
-                                  cover
+                                  contain
                                   max-height="40"
                                   max-width="40"
                                   class="mb-3"
@@ -877,7 +876,7 @@
                                   <v-img
                                   :src="getThumbUrl(cambio.a)"
                                   @error="onImgError($event)"
-                                  cover
+                                  contain
                                   max-height="40"
                                   max-width="40"
                                   class="mb-3"
@@ -1039,7 +1038,7 @@
                 <v-img
                 :src="getThumbUrl(item.fileName)"
                 @error="onImgError($event)"
-                cover
+                contain
                 max-height="40"
                 max-width="40"
                 class="mb-3"
