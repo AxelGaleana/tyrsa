@@ -60,6 +60,11 @@ const routes = [
     name: "Industrialización",
     component: Industrializacion
   },
+  {
+    path: "/",
+    name: "Industrialización",
+    component: Industrializacion
+  },
 ];
 
 const router = new VueRouter({

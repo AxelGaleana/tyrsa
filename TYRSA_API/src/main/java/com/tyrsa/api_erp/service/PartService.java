@@ -181,6 +181,18 @@ public class PartService {
         if (newPart.getCantidadEconomicaPedido() != null)
             cambios.add(new CampoActualizado("Cantidad Economica Pedido", "-", newPart.getCantidadEconomicaPedido()));
 
+        if (newPart.getComponentes() != null && newPart.getComponentes().length > 0) {
+            cambios.add(new CampoActualizado("Componentes", "-", newPart.getComponentes().length));
+        }
+
+        if (newPart.getRutas() != null && newPart.getRutas().length > 0) {
+            cambios.add(new CampoActualizado("Rutas", "-", newPart.getRutas().length));
+        }
+
+        if (newPart.getRutasSuplente() != null && newPart.getRutasSuplente().length > 0) {
+            cambios.add(new CampoActualizado("Rutas Suplente", "-", newPart.getRutasSuplente().length));
+        }
+
         if (imageFile != null && !imageFile.isEmpty()) {
             String safeFilename = null;
 
@@ -388,6 +400,14 @@ public class PartService {
                 "Rutas",
                 existente.getRutas(),
                 updatedPart.getRutas()
+            ));
+        }
+
+        if (ComparadorListas.listasDiferentes(updatedPart.getRutasSuplente(), existente.getRutasSuplente())) {
+            cambios.add(new CampoActualizado(
+                "Rutas Suplente",
+                existente.getRutasSuplente(),
+                updatedPart.getRutasSuplente()
             ));
         }
 

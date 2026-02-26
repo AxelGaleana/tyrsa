@@ -66,6 +66,7 @@ public class Part {
     private String cantidadEconomicaPedido;
     private Componente componentes[];
     private RutaFabricacion rutas[];
+    private RutaFabricacion rutasSuplente[];
     private String fileName;
     private String version;
     private LocalDateTime fechaActualizacion;

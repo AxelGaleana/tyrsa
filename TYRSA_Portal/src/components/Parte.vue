@@ -619,7 +619,7 @@
             </v-card>
             <v-card class="mb-4" outlined style="border-width: 3px; background-color: #fff5f7;">
                 <v-card-title>
-                    Ruta de fabricación
+                    Ruta de Fabricación Titular
                 </v-card-title>
                 <v-card-text>
                         <v-dialog v-model="dialogRuta" max-width="400px">
@@ -886,6 +886,199 @@
                     </v-row>
                 </v-card-text>
             </v-card>
+
+            <v-card class="mb-4" outlined style="border-width: 3px; background-color: #fff5f7;">
+                <v-card-title>
+                    Ruta de fabricación Suplente
+                </v-card-title>
+                <v-card-text>
+                        <v-dialog v-model="dialogRutaSuplente" max-width="400px">
+                        <template v-slot:activator="{ on }">
+                            <v-layout align-end justify-end>
+                            <v-btn color="primary" dark class="mb-2" v-on="on">
+                                Ruta<v-icon right color="white">add</v-icon>
+                            </v-btn>
+                            </v-layout>
+                        </template>
+                        <v-form ref="formRutaSuplente" lazy-validation v-model="validRuta">
+                            <v-card>
+                            <v-card-title>
+                                <span class="heading">{{ rutaTitle + " ruta de fabricació suplente" }}</span>
+                            </v-card-title>
+                            <v-card-text>
+                                <v-container>
+                                <v-row>
+                                    <v-col cols="12">
+                                    <v-text-field
+                                        v-model="editedRuta.operacion"
+                                        label= "Operacion"
+                                        :rules="[rules.required]"
+                                        required
+                                        autocomplete="off"
+                                        maxLength="255"
+                                    ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12">
+                                    <v-text-field
+                                        v-model="editedRuta.numeroMaquina"
+                                        label="No. de máquina"
+                                        :rules="[v => !!v || 'Campo requerido']"
+                                        required
+                                        autocomplete="off"
+                                        maxLength="50"
+                                        type="number"
+                                    ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12">
+                                        <v-text-field
+                                            v-model="editedRuta.tonelaje"
+                                            label="Tonelaje (Tn)"
+                                            :rules="[rules.required]"
+                                            required
+                                            autocomplete="off"
+                                            maxLength = "50"
+                                            type="number"
+                                        ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12">
+                                        <v-text-field
+                                            v-model="editedRuta.descripcion"
+                                            label="Descripción"
+                                            :rules="[rules.required]"
+                                            required
+                                            autocomplete="off"
+                                            maxLength = "50"
+                                        ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12">
+                                        <v-text-field
+                                            v-model="editedRuta.numeroOperadores"
+                                            label="Número de Operadores"
+                                            :rules="[rules.required]"
+                                            required
+                                            autocomplete="off"
+                                            maxLength = "50"
+                                        ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12">
+                                        <v-text-field
+                                            v-model="editedRuta.numeroAyudantes"
+                                            label="Número de Ayudantes"
+                                            :rules="[rules.required]"
+                                            required
+                                            autocomplete="off"
+                                            maxLength = "50"
+                                        ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12">
+                                        <v-text-field
+                                            v-model="editedRuta.tiempoCiclo"
+                                            label="Tiempo de ciclo (seg)"
+                                            :rules="[rules.required]"
+                                            required
+                                            autocomplete="off"
+                                            maxLength = "50"
+                                            type="number"
+                                        ></v-text-field>
+                                    </v-col>
+                                </v-row>
+                                </v-container>
+                            </v-card-text>
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn color="blue darken-1" text @click="closeRutaSuplente"> Cancelar </v-btn>
+                                <v-btn color="blue darken-1" :disabled="!validRuta" text @click="saveRutaSuplente">
+                                Agregar
+                                </v-btn>
+                            </v-card-actions>
+                            </v-card>
+                        </v-form>
+                        </v-dialog>
+                    <v-row>
+                        <v-col cols="12">
+                            <v-data-table
+                            :headers="headers_ruta_fabricacion"
+                            :items="editedItem.rutasSuplente"
+                            :options.sync="options"
+                            loading-text="Consultando información..."
+                            no-data-text="No se encontró información."
+                            :style="{ border: '1px solid #ccc', borderRadius: '4px',  backgroundColor: '#fff5f7' }"
+                            >
+                            <template v-slot:item.actions="{ item }">
+                                <v-icon small class="mr-2" @click="editRutaSuplente(item)">
+                                mdi-pencil
+                                </v-icon>
+                                <v-icon small @click="deleteRutaSuplente(item)">
+                                mdi-delete
+                                </v-icon>
+                            </template>
+                            </v-data-table>
+                        </v-col>
+                    </v-row>
+                </v-card-text>
+            </v-card>
+            <v-card class="mb-4" outlined style="border-width: 3px; background-color: #f7f5fb;">
+                <v-card-text>
+                    <v-row>
+                        <v-col cols="3">
+                            <v-text-field
+                            label="Personal requerido suplente"
+                            autocomplete="off"
+                            maxLength="255"
+                            outlined
+                            v-model="personalRequeridoSuplente"
+                            disabled
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="2">
+                            <v-text-field
+                            label="Tiempo ciclo total (seg)"
+                            autocomplete="off"
+                            maxLength="255"
+                            outlined
+                            v-model="tiempoCicloTotalSuplente"
+                            type="number"
+                            disabled
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="2">
+                            <v-text-field
+                            label="Tiempo ciclo Máximo (seg)"
+                            autocomplete="off"
+                            maxLength="255"
+                            outlined
+                            v-model="tiempoCicloMaximoSuplente"
+                            type="number"
+                            disabled
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="3">
+                            <v-text-field
+                            label="Tiempo de llenado de célula (seg)"
+                            autocomplete="off"
+                            maxLength="255"
+                            outlined
+                            title="Tiempo de llenado de célula (seg)"
+                            v-model="tiempoLlenadoCelulaSuplente"
+                            disabled
+                            ></v-text-field>
+                        </v-col>
+                    </v-row>
+                    <v-row>
+                        <v-col cols="3">
+                            <v-text-field
+                            label="Piezas por hora"
+                            autocomplete="off"
+                            maxLength="255"
+                            outlined
+                            v-model="piezasPorHoraSuplente"
+                            type="number"
+                            disabled
+                            ></v-text-field>
+                        </v-col>
+                    </v-row>
+                </v-card-text>
+            </v-card>
         </v-container>
         </v-card-text>
         <v-card-actions>
@@ -912,6 +1105,7 @@ export default {
         imageFile: null,
         dialogComponente: false,
         dialogRuta: false,
+        dialogRutaSuplente: false,
         parts: [],
         clientes: [],
         materiales: [],
@@ -919,6 +1113,7 @@ export default {
         valid: true,
         validComponente: true,
         validRuta: true,
+        validRutaSuplente: true,
         snackbar: false,
         snackbar_error: false,
         text: "My timeout is set to 3000.",
@@ -1030,6 +1225,9 @@ export default {
     validateRuta() {
       this.validRuta = this.$refs.formRuta.validate();
     },
+    validateRutaSuplente() {
+      this.validRutaSuplente = this.$refs.formRutaSuplente.validate();
+    },
     handleImageUpload(file) {
         if (file) {
             this.imageFile = file;
@@ -1047,6 +1245,11 @@ export default {
         this.dialogRuta = true;
         //this.editedComponentIndex = index;
     },
+    editRutaSuplente(item) {
+        this.editedRuta = { ...item }
+        this.dialogRutaSuplente = true;
+        //this.editedComponentIndex = index;
+    },
     closeComponente() {
       this.dialogComponente = false;
       this.$nextTick(() => {
@@ -1062,6 +1265,14 @@ export default {
         //this.editedComponentIndex = -1;
       });
       this.$refs.formRuta.resetValidation();
+    },
+    closeRutaSuplente() {
+      this.dialogRutaSuplente = false;
+      this.$nextTick(() => {
+        this.editedRuta = { ...this.defaultItem }
+        //this.editedComponentIndex = -1;
+      });
+      this.$refs.formRutaSuplente.resetValidation();
     },
     saveComponente() {
         this.validateComponente()
@@ -1115,6 +1326,32 @@ export default {
             this.closeRuta();
         }
     },
+    saveRutaSuplente() {
+        this.validateRutaSuplente()
+        if (this.validRutaSuplente){
+            if (!this.editedItem.rutasSuplente) {
+                this.editedItem.rutasSuplente = [];
+            }
+
+            // Si es nuevo
+            if (!this.editedRuta.id) {
+                //this.editedRuta.id = crypto.randomUUID();
+                this.editedRuta.id = this.generateUUID(); 
+                this.editedItem.rutasSuplente.push(this.editedRuta);
+                this.text = "La ruta de fabricación suplente ha sido agregado a la lista.";
+                this.snackbar = true;
+            } else {
+                // Si es edición
+                const index = this.editedItem.rutasSuplente.findIndex(c => c.id === this.editedRuta.id);
+                if (index !== -1) {
+                    this.editedItem.rutasSuplente.splice(index, 1, this.editedRuta);
+                    this.text = "La ruta de fabricación suplente ha sido actualizada.";
+                    this.snackbar = true;
+                }
+            }
+            this.closeRutaSuplente();
+        }
+    },
     deleteComponent(item) {
         const index = this.editedItem.componentes.findIndex(c => c.id === item.id);
         if (index !== -1) {
@@ -1125,6 +1362,12 @@ export default {
         const index = this.editedItem.rutas.findIndex(c => c.id === item.id);
         if (index !== -1) {
             this.editedItem.rutas.splice(index, 1);
+        }
+    },
+    deleteRutaSuplente(item) {
+        const index = this.editedItem.rutasSuplente.findIndex(c => c.id === item.id);
+        if (index !== -1) {
+            this.editedItem.rutasSuplente.splice(index, 1);
         }
     },
     getAllParts(){
@@ -1190,6 +1433,7 @@ export default {
             this.editedItem.nombreClasificacionMaterial = nombreMaterial;
             this.editedItem.coeficienteMaterial = this.coeficienteMaterial;
         }
+        console.log("this.editedItem a guardar: ", this.editedItem);
         if (this.editedIndex !== 'nueva') {
             console.log('Imagen a enviar:', this.imageFile);
           PartService.updatePart(this.editedItem, this.imageFile)
@@ -1398,7 +1642,53 @@ export default {
         return (this.tiempoLlenadoCelula && this.editedItem.tiempoTotalCambioModelo && this.editedItem.tiempoLiberacion && this.editedItem.tiempoAjustePorFechador)
             ? Number(this.tiempoLlenadoCelula) + Number(this.editedItem.tiempoTotalCambioModelo) + Number(this.editedItem.tiempoLiberacion) + Number(this.editedItem.tiempoAjustePorFechador)
             : 0;
-    }
+    },
+
+    personalRequeridoSuplente() {
+        //return this.editedItem.numeroOperadores && this.editedItem.numeroAyudantes ? parseInt(this.editedItem.numeroOperadores) + parseInt(this.editedItem.numeroAyudantes) : "";
+        if (!this.editedItem || !Array.isArray(this.editedItem.rutasSuplente)) return 0;
+
+        return this.editedItem.rutasSuplente.reduce((acumulado, ruta) => {
+        const operadores = parseFloat(ruta.numeroOperadores);
+        const ayudantes = parseFloat(ruta.numeroAyudantes);
+
+        return acumulado +
+            (isNaN(operadores) ? 0 : operadores) +
+            (isNaN(ayudantes) ? 0 : ayudantes);
+        }, 0);
+    },
+    tiempoCicloTotalSuplente() {
+        if (!this.editedItem || !Array.isArray(this.editedItem.rutasSuplente)) return 0;
+
+        return this.editedItem.rutasSuplente.reduce((acumulado, ruta) => {
+            const tiempo = parseFloat(ruta.tiempoCiclo);
+            return acumulado + (isNaN(tiempo) ? 0 : tiempo);
+        }, 0);
+    },
+    tiempoCicloMaximoSuplente() {
+        if (!this.editedItem || !Array.isArray(this.editedItem.rutasSuplente)) return 0;
+
+        return Math.max(
+        ...this.editedItem.rutasSuplente.map(ruta => {
+            const tiempo = parseFloat(ruta.tiempoCiclo);
+            return isNaN(tiempo) ? 0 : tiempo;
+        })
+        );
+    },
+    tiempoLlenadoCelulaSuplente() {
+        return (this.tiempoCicloTotalSuplente && this.editedItem.wipPorMaquina)
+            ? parseFloat((this.tiempoCicloTotalSuplente * this.editedItem.wipPorMaquina).toFixed(4))
+            : 0;
+    },
+    tiempoLlenadoCelulaHastaLiberaciónSuplente() {
+        return (this.tiempoLlenadoCelulaSuplente && this.editedItem.tiempoTotalCambioModelo && this.editedItem.tiempoLiberacion && this.editedItem.tiempoAjustePorFechador)
+            ? Number(this.tiempoLlenadoCelulaSuplente) + Number(this.editedItem.tiempoTotalCambioModelo) + Number(this.editedItem.tiempoLiberacion) + Number(this.editedItem.tiempoAjustePorFechador)
+            : 0;
+    },
+    piezasPorHoraSuplente() {
+        return this.tiempoCicloMaximoSuplente ? 3600/this.tiempoCicloMaximoSuplente : ""
+
+    },
   },
   created() {
     this.axios.defaults.headers.common[

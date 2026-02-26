@@ -541,7 +541,7 @@
                   </v-card>
                   <v-card class="mb-4" outlined style="border-width: 3px; background-color: #fff5f7;">
                       <v-card-title>
-                          Ruta de fabricación
+                          Ruta de fabricación titular
                       </v-card-title>
                       <v-card-text>
                           <v-row>
@@ -728,6 +728,99 @@
                           </v-row>
                       </v-card-text>
                   </v-card>
+
+                  <v-card class="mb-4" outlined style="border-width: 3px; background-color: #f2ecee;">
+                      <v-card-title>
+                          Ruta de fabricación suplente
+                      </v-card-title>
+                      <v-card-text>
+                          <v-row>
+                              <v-col cols="12">
+                                  <v-data-table
+                                  :headers="headers_ruta_fabricacion"
+                                  :items="editedItem.rutasSuplente"
+                                  :options.sync="options"
+                                  loading-text="Consultando información..."
+                                  no-data-text="No se encontró información."
+                                  :style="{ border: '1px solid #ccc', borderRadius: '4px',  backgroundColor: '#f2ecee' }"
+                                  >
+                                  </v-data-table>
+                              </v-col>
+                          </v-row>
+                      </v-card-text>
+                  </v-card>
+                  <v-card class="mb-4" outlined style="border-width: 3px; background-color: #eceaf0;">
+                      <v-card-text>
+                          <v-row>
+                              <v-col cols="3">
+                                  <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                    Personal requerido suplente
+                                  </div>
+                                  <v-text-field
+                                  autocomplete="off"
+                                  maxLength="255"
+                                  outlined
+                                  v-model="personalRequeridoSuplente"
+                                  readonly
+                                  ></v-text-field>
+                              </v-col>
+                              <v-col cols="3">
+                                  <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                    Tiempo ciclo total (seg) suplente
+                                  </div>
+                                  <v-text-field
+                                  autocomplete="off"
+                                  maxLength="255"
+                                  outlined
+                                  v-model="tiempoCicloTotalSuplente"
+                                  type="number"
+                                  readonly
+                                  ></v-text-field>
+                              </v-col>
+                              <v-col cols="3">
+                                  <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                    Tiempo ciclo Máximo (seg) suplente
+                                  </div>
+                                  <v-text-field
+                                  autocomplete="off"
+                                  maxLength="255"
+                                  outlined
+                                  v-model="tiempoCicloMaximoSuplente"
+                                  type="number"
+                                  readonly
+                                  ></v-text-field>
+                              </v-col>
+                          </v-row>
+                          <v-row>
+                              <v-col cols="3">
+                                  <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                    Tiempo de llenado de célula (seg) suplente
+                                  </div>
+                                  <v-text-field
+                                  autocomplete="off"
+                                  maxLength="255"
+                                  outlined
+                                  title="Tiempo de llenado de célula (seg)"
+                                  v-model="tiempoLlenadoCelulaSuplente"
+                                  readonly
+                                  ></v-text-field>
+                              </v-col>
+                              <v-col cols="2">
+                                  <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                    Piezas por hora suplente
+                                  </div>
+                                  <v-text-field
+                                  autocomplete="off"
+                                  maxLength="255"
+                                  outlined
+                                  v-model="piezasPorHoraSuplente"
+                                  type="number"
+                                  readonly
+                                  ></v-text-field>
+                              </v-col>
+                          </v-row>
+                      </v-card-text>
+                  </v-card>
               </v-container>
             </div>
           </v-card-text>
@@ -839,7 +932,7 @@
                                 </v-simple-table>
                               </template>
 
-                              <template v-else-if="cambio.campo === 'Rutas'">
+                              <template v-else-if="cambio.campo === 'Rutas' || cambio.campo === 'Rutas Suplente'">
                                 <v-simple-table dense class="mx-auto" :style="{ maxWidth: '700px;', border: '1px solid #ccc', borderRadius: '4px',  backgroundColor: '#f0f0f0' }">
                                   <thead>
                                     <tr>
@@ -908,7 +1001,7 @@
                                 </v-simple-table>
                               </template>
 
-                              <template v-else-if="cambio.campo === 'Rutas'">
+                              <template v-else-if="cambio.campo === 'Rutas' || cambio.campo === 'Rutas Suplente'">
                                 <v-simple-table dense class="mx-auto" :style="{ maxWidth: '700px;', border: '1px solid #ccc', borderRadius: '4px',  backgroundColor: '#d4edda' }">
                                   <thead>
                                     <tr>
@@ -1179,9 +1272,17 @@ export default {
       parte.factorConsumo = this.pesoBlank
       parte.factorConsumoMax = this.pesoBlankMax
 
+      parte.personalRequeridoSuplente = this.personalRequeridoSuplente
+      parte.tiempoCicloTotalSuplente = this.tiempoCicloTotalSuplente
+      parte.tiempoCicloMaximoSuplente = this.tiempoCicloMaximoSuplente
+      parte.tiempoLlenadoCelulaSuplente = this.tiempoLlenadoCelulaSuplente
+      parte.piezasPorHoraSuplente = this.piezasPorHoraSuplente
+
+
       // Arrays seguros
       const componentes = Array.isArray(parte.componentes) ? parte.componentes : []
       const rutas = Array.isArray(parte.rutas) ? parte.rutas : []
+      const rutasSuplente = Array.isArray(parte.rutasSuplente) ? parte.rutasSuplente : []
 
       // Campos de PARTE en orden y con headers humanos
       const parteFields = [
@@ -1231,14 +1332,20 @@ export default {
         { key: 'tiempoAjustePorFechador', label: 'Tiempo de ajuste por fechador (seg)' },
         { key: 'tiempoLlenadoCelulaHastaLiberación', label: 'Tiempo de llenado de célula hasta liberación (seg)' },
         { key: 'piezasDeAjuste', label: 'Piezas de ajuste' },
-        { key: 'cantidadEconomicaPedido', label: 'Cantidad económica de pedido' }
+        { key: 'cantidadEconomicaPedido', label: 'Cantidad económica de pedido' },
+        { key: 'personalRequeridoSuplente', label: 'Personal requerido suplente' },
+        { key: 'tiempoCicloTotalSuplente', label: 'Tiempo ciclo total (seg) suplente' },
+        { key: 'tiempoCicloMaximoSuplente', label: 'Tiempo ciclo Máximo (seg) suplente' },
+        { key: 'tiempoLlenadoCelulaSuplente', label: 'Tiempo de llenado de célula (seg) suplente' },
+        { key: 'piezasPorHoraSuplente', label: 'Piezas por hora' },
       ]
 
       // Headers
       const headerRow1 = [
         'PARTE', ...Array(parteFields.length - 1).fill(''),
-        'COMPONENTES', ...Array(5).fill(''),
-        'RUTA DE FABRICACIÓN', ...Array(7).fill('')
+        'COMPONENTES', ...Array(4).fill(''),
+        'RUTA DE FABRICACIÓN', ...Array(6).fill(''),
+        'RUTA DE FABRICACIÓN SUPLENTE', ...Array(6).fill('')
       ]
 
       const headerRow2 = [
@@ -1254,16 +1361,24 @@ export default {
         'Descripción',
         'Tiempo ciclo',
         'Número de operadores',
+        'Número de ayudantes',
+        'Operación',
+        'Número de máquina',
+        'Tonelaje',
+        'Descripción',
+        'Tiempo ciclo',
+        'Número de operadores',
         'Número de ayudantes'
       ]
 
       // Filas
-      const maxRows = Math.max(componentes.length, rutas.length, 1)
+      const maxRows = Math.max(componentes.length, rutas.length, rutasSuplente.length, 1)
       const rows = []
 
       for (let i = 0; i < maxRows; i++) {
         const comp = componentes[i]
         const ruta = rutas[i]
+        const rutaSuplente = rutasSuplente[i]
 
         rows.push([
           ...parteFields.map(f => i === 0 ? (parte[f.key] ?? '') : ''),
@@ -1278,7 +1393,14 @@ export default {
           ruta?.descripcion || '',
           ruta?.tiempoCiclo || '',
           ruta?.numeroOperadores || '',
-          ruta?.numeroAyudantes || ''
+          ruta?.numeroAyudantes || '',
+          rutaSuplente?.operacion || '',
+          rutaSuplente?.numeroMaquina || '',
+          rutaSuplente?.tonelaje || '',
+          rutaSuplente?.descripcion || '',
+          rutaSuplente?.tiempoCiclo || '',
+          rutaSuplente?.numeroOperadores || '',
+          rutaSuplente?.numeroAyudantes || ''
         ])
       }
 
@@ -1646,7 +1768,53 @@ export default {
         return (this.tiempoLlenadoCelula && this.editedItem.tiempoTotalCambioModelo && this.editedItem.tiempoLiberacion && this.editedItem.tiempoAjustePorFechador)
             ? Number(this.tiempoLlenadoCelula) + Number(this.editedItem.tiempoTotalCambioModelo) + Number(this.editedItem.tiempoLiberacion) + Number(this.editedItem.tiempoAjustePorFechador)
             : 0;
-    }
+    },
+
+    personalRequeridoSuplente() {
+        //return this.editedItem.numeroOperadores && this.editedItem.numeroAyudantes ? parseInt(this.editedItem.numeroOperadores) + parseInt(this.editedItem.numeroAyudantes) : "";
+        if (!this.editedItem || !Array.isArray(this.editedItem.rutasSuplente)) return 0;
+
+        return this.editedItem.rutasSuplente.reduce((acumulado, ruta) => {
+        const operadores = parseFloat(ruta.numeroOperadores);
+        const ayudantes = parseFloat(ruta.numeroAyudantes);
+
+        return acumulado +
+            (isNaN(operadores) ? 0 : operadores) +
+            (isNaN(ayudantes) ? 0 : ayudantes);
+        }, 0);
+    },
+    tiempoCicloTotalSuplente() {
+        if (!this.editedItem || !Array.isArray(this.editedItem.rutasSuplente)) return 0;
+
+        return this.editedItem.rutasSuplente.reduce((acumulado, ruta) => {
+            const tiempo = parseFloat(ruta.tiempoCiclo);
+            return acumulado + (isNaN(tiempo) ? 0 : tiempo);
+        }, 0);
+    },
+    tiempoCicloMaximoSuplente() {
+        if (!this.editedItem || !Array.isArray(this.editedItem.rutasSuplente)) return 0;
+
+        return Math.max(
+        ...this.editedItem.rutasSuplente.map(ruta => {
+            const tiempo = parseFloat(ruta.tiempoCiclo);
+            return isNaN(tiempo) ? 0 : tiempo;
+        })
+        );
+    },
+    tiempoLlenadoCelulaSuplente() {
+        return (this.tiempoCicloTotalSuplente && this.editedItem.wipPorMaquina)
+            ? parseFloat((this.tiempoCicloTotalSuplente * this.editedItem.wipPorMaquina).toFixed(4))
+            : 0;
+    },
+    tiempoLlenadoCelulaHastaLiberaciónSuplente() {
+        return (this.tiempoLlenadoCelulaSuplente && this.editedItem.tiempoTotalCambioModelo && this.editedItem.tiempoLiberacion && this.editedItem.tiempoAjustePorFechador)
+            ? Number(this.tiempoLlenadoCelulaSuplente) + Number(this.editedItem.tiempoTotalCambioModelo) + Number(this.editedItem.tiempoLiberacion) + Number(this.editedItem.tiempoAjustePorFechador)
+            : 0;
+    },
+    piezasPorHoraSuplente() {
+        return this.tiempoCicloMaximoSuplente ? 3600/this.tiempoCicloMaximoSuplente : ""
+
+    },
   },
   watch: {
     dialog(val) {
