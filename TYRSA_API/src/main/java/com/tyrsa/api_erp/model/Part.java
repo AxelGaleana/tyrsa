@@ -57,13 +57,17 @@ public class Part {
     private String tiempoCicloTotal;
     private String tiempoCicloMaximo;
     private String wipPorMaquina;
+    private String wipPorMaquinaSuplente;
     //private String tiempoLlenadoCelula;
     private String piezasPorHora;
     private String tiempoTotalCambioModelo;
+    private String tiempoTotalCambioModeloSuplente;
     private String tiempoLiberacion;
     private String tiempoAjustePorFechador;
     private String piezasDeAjuste;
+    private String piezasDeAjusteSuplente;
     private String cantidadEconomicaPedido;
+    private String cantidadEconomicaPedidoSuplente;
     private Componente componentes[];
     private RutaFabricacion rutas[];
     private RutaFabricacion rutasSuplente[];

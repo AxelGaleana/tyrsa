@@ -860,6 +860,7 @@
                             v-model="tiempoLlenadoCelulaHastaLiberación"
                             type="number"
                             title="Tiempo de llenado de célula hasta liberación (seg)"
+                            disabled
                             ></v-text-field>
                         </v-col>
                         <v-col cols="3">
@@ -900,7 +901,7 @@
                             </v-btn>
                             </v-layout>
                         </template>
-                        <v-form ref="formRutaSuplente" lazy-validation v-model="validRuta">
+                        <v-form ref="formRutaSuplente" lazy-validation v-model="validRutaSuplente">
                             <v-card>
                             <v-card-title>
                                 <span class="heading">{{ rutaTitle + " ruta de fabricació suplente" }}</span>
@@ -987,7 +988,7 @@
                             <v-card-actions>
                                 <v-spacer></v-spacer>
                                 <v-btn color="blue darken-1" text @click="closeRutaSuplente"> Cancelar </v-btn>
-                                <v-btn color="blue darken-1" :disabled="!validRuta" text @click="saveRutaSuplente">
+                                <v-btn color="blue darken-1" :disabled="!validRutaSuplente" text @click="saveRutaSuplente">
                                 Agregar
                                 </v-btn>
                             </v-card-actions>
@@ -1032,7 +1033,8 @@
                         </v-col>
                         <v-col cols="2">
                             <v-text-field
-                            label="Tiempo ciclo total (seg)"
+                            label="Tiempo ciclo total (seg) suplente"
+                            title="Tiempo ciclo total (seg) suplente"
                             autocomplete="off"
                             maxLength="255"
                             outlined
@@ -1043,7 +1045,8 @@
                         </v-col>
                         <v-col cols="2">
                             <v-text-field
-                            label="Tiempo ciclo Máximo (seg)"
+                            label="Tiempo ciclo Máximo (seg) suplente"
+                            title="Tiempo ciclo Máximo (seg) suplente"
                             autocomplete="off"
                             maxLength="255"
                             outlined
@@ -1052,13 +1055,23 @@
                             disabled
                             ></v-text-field>
                         </v-col>
-                        <v-col cols="3">
+                        <v-col cols="2">
                             <v-text-field
-                            label="Tiempo de llenado de célula (seg)"
+                            label="WIP por Máquina suplente"
                             autocomplete="off"
                             maxLength="255"
                             outlined
-                            title="Tiempo de llenado de célula (seg)"
+                            v-model="editedItem.wipPorMaquinaSuplente"
+                            type="number"
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="3">
+                            <v-text-field
+                            label="Tiempo de llenado de célula (seg) suplente"
+                            autocomplete="off"
+                            maxLength="255"
+                            outlined
+                            title="Tiempo de llenado de célula (seg) suplente"
                             v-model="tiempoLlenadoCelulaSuplente"
                             disabled
                             ></v-text-field>
@@ -1067,13 +1080,59 @@
                     <v-row>
                         <v-col cols="3">
                             <v-text-field
-                            label="Piezas por hora"
+                            label="Piezas por hora suplente"
                             autocomplete="off"
                             maxLength="255"
                             outlined
                             v-model="piezasPorHoraSuplente"
                             type="number"
                             disabled
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="3">
+                            <v-text-field
+                            label="Tiempo total de cambio de modelo (seg) suplente"
+                            autocomplete="off"
+                            maxLength="255"
+                            outlined
+                            title="Tiempo total de cambio de modelo (seg) suplente"
+                            v-model="editedItem.tiempoTotalCambioModeloSuplente"
+                            type="number"
+                            ></v-text-field>
+                        </v-col>
+                    </v-row>
+                    <v-row>
+                        <v-col cols="3">
+                            <v-text-field
+                            label="Tiempo de llenado de célula hasta liberación (seg) suplente"
+                            autocomplete="off"
+                            maxLength="255"
+                            outlined
+                            v-model="tiempoLlenadoCelulaHastaLiberaciónSuplente"
+                            type="number"
+                            title="Tiempo de llenado de célula hasta liberación (seg) suplente"
+                            disabled
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="3">
+                            <v-text-field
+                            label="Piezas de ajuste suplente"
+                            autocomplete="off"
+                            maxLength="255"
+                            outlined
+                            v-model="editedItem.piezasDeAjusteSuplente"
+                            type="number"
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="3">
+                            <v-text-field
+                            label="Cantidad económica de pedido suplente"
+                            autocomplete="off"
+                            maxLength="255"
+                            outlined
+                            title="Cantidad económica de pedido"
+                            v-model="editedItem.cantidadEconomicaPedidoSuplente"
+                            type="number"
                             ></v-text-field>
                         </v-col>
                     </v-row>
@@ -1148,7 +1207,8 @@ export default {
             fechaInicioProyecto: null,
             fechaFinProyecto: null,
             componentes: [],
-            rutas: []
+            rutas: [],
+            rutasSuplente: []
         },
         editedComponent: {},
         editedRuta: {},
@@ -1340,6 +1400,7 @@ export default {
                 this.editedItem.rutasSuplente.push(this.editedRuta);
                 this.text = "La ruta de fabricación suplente ha sido agregado a la lista.";
                 this.snackbar = true;
+                console.log("Ruta nueva");
             } else {
                 // Si es edición
                 const index = this.editedItem.rutasSuplente.findIndex(c => c.id === this.editedRuta.id);
@@ -1348,6 +1409,7 @@ export default {
                     this.text = "La ruta de fabricación suplente ha sido actualizada.";
                     this.snackbar = true;
                 }
+                console.log("Ruta editada");
             }
             this.closeRutaSuplente();
         }
@@ -1397,6 +1459,7 @@ export default {
                 console.log("response.data: ", response.data);
                 if (!response.data.componentes) response.data.componentes = [];
                 if (!response.data.rutas) response.data.rutas = [];
+                if (!response.data.rutasSuplente) response.data.rutasSuplente = [];
                 this.editedItem = response.data;
                 console.log("this.editedItem: ", this.editedItem);
             })
@@ -1601,8 +1664,9 @@ export default {
         );
     },
     piezasPorHora() {
-        return this.tiempoCicloMaximo ? 3600/this.tiempoCicloMaximo : ""
-
+        return this.tiempoCicloMaximo 
+            ? Number((3600 / this.tiempoCicloMaximo).toFixed(4)) 
+            : "";
     },
     tiempoLlenadoCelula() {
         return (this.tiempoCicloTotal && this.editedItem.wipPorMaquina)
@@ -1645,6 +1709,7 @@ export default {
     },
 
     personalRequeridoSuplente() {
+        console.log("Lista suplente modificada");
         //return this.editedItem.numeroOperadores && this.editedItem.numeroAyudantes ? parseInt(this.editedItem.numeroOperadores) + parseInt(this.editedItem.numeroAyudantes) : "";
         if (!this.editedItem || !Array.isArray(this.editedItem.rutasSuplente)) return 0;
 
@@ -1676,19 +1741,20 @@ export default {
         );
     },
     tiempoLlenadoCelulaSuplente() {
-        return (this.tiempoCicloTotalSuplente && this.editedItem.wipPorMaquina)
-            ? parseFloat((this.tiempoCicloTotalSuplente * this.editedItem.wipPorMaquina).toFixed(4))
+        return (this.tiempoCicloTotalSuplente && this.editedItem.wipPorMaquinaSuplente)
+            ? parseFloat((this.tiempoCicloTotalSuplente * this.editedItem.wipPorMaquinaSuplente).toFixed(4))
             : 0;
     },
     tiempoLlenadoCelulaHastaLiberaciónSuplente() {
-        return (this.tiempoLlenadoCelulaSuplente && this.editedItem.tiempoTotalCambioModelo && this.editedItem.tiempoLiberacion && this.editedItem.tiempoAjustePorFechador)
-            ? Number(this.tiempoLlenadoCelulaSuplente) + Number(this.editedItem.tiempoTotalCambioModelo) + Number(this.editedItem.tiempoLiberacion) + Number(this.editedItem.tiempoAjustePorFechador)
+        return (this.tiempoLlenadoCelulaSuplente && this.editedItem.tiempoTotalCambioModeloSuplente && this.editedItem.tiempoLiberacion && this.editedItem.tiempoAjustePorFechador)
+            ? Number(this.tiempoLlenadoCelulaSuplente) + Number(this.editedItem.tiempoTotalCambioModeloSuplente) + Number(this.editedItem.tiempoLiberacion) + Number(this.editedItem.tiempoAjustePorFechador)
             : 0;
     },
     piezasPorHoraSuplente() {
-        return this.tiempoCicloMaximoSuplente ? 3600/this.tiempoCicloMaximoSuplente : ""
-
-    },
+        return this.tiempoCicloMaximoSuplente 
+            ? Number((3600 / this.tiempoCicloMaximoSuplente).toFixed(4)) 
+            : "";
+    }
   },
   created() {
     this.axios.defaults.headers.common[

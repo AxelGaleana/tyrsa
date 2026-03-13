@@ -160,6 +160,9 @@ public class PartService {
         if (newPart.getWipPorMaquina() != null)
             cambios.add(new CampoActualizado("WIP por Máquina", "-", newPart.getWipPorMaquina()));
 
+        if (newPart.getWipPorMaquinaSuplente() != null)
+            cambios.add(new CampoActualizado("WIP por Máquina Suplente", "-", newPart.getWipPorMaquinaSuplente()));
+
         /*if (newPart.getTiempoLlenadoCelula() != null)
             cambios.add(new CampoActualizado("Tiempo Llenado Celula", "-", newPart.getTiempoLlenadoCelula()));*/
 
@@ -168,6 +171,9 @@ public class PartService {
 
         if (newPart.getTiempoTotalCambioModelo() != null)
             cambios.add(new CampoActualizado("Tiempo Total Cambio Modelo", "-", newPart.getTiempoTotalCambioModelo()));
+
+        if (newPart.getTiempoTotalCambioModeloSuplente() != null)
+            cambios.add(new CampoActualizado("Tiempo Total Cambio Modelo Su´plente", "-", newPart.getTiempoTotalCambioModeloSuplente()));
 
         if (newPart.getTiempoLiberacion() != null)
             cambios.add(new CampoActualizado("Tiempo Liberacion", "-", newPart.getTiempoLiberacion()));
@@ -178,8 +184,14 @@ public class PartService {
         if (newPart.getPiezasDeAjuste() != null)
             cambios.add(new CampoActualizado("Piezas De Ajuste", "-", newPart.getPiezasDeAjuste()));
 
+        if (newPart.getPiezasDeAjusteSuplente() != null)
+            cambios.add(new CampoActualizado("Piezas De Ajuste Suplente", "-", newPart.getPiezasDeAjusteSuplente()));
+
         if (newPart.getCantidadEconomicaPedido() != null)
             cambios.add(new CampoActualizado("Cantidad Economica Pedido", "-", newPart.getCantidadEconomicaPedido()));
+
+        if (newPart.getCantidadEconomicaPedidoSuplente() != null)
+            cambios.add(new CampoActualizado("Cantidad Economica Pedido Suplente", "-", newPart.getCantidadEconomicaPedidoSuplente()));
 
         if (newPart.getComponentes() != null && newPart.getComponentes().length > 0) {
             cambios.add(new CampoActualizado("Componentes", "-", newPart.getComponentes().length));
@@ -366,6 +378,9 @@ public class PartService {
         if (!Objects.equals(updatedPart.getWipPorMaquina(), existente.getWipPorMaquina())) {
             cambios.add(new CampoActualizado("WIP por Máquina", existente.getWipPorMaquina(), updatedPart.getWipPorMaquina()));
         }
+        if (!Objects.equals(updatedPart.getWipPorMaquinaSuplente(), existente.getWipPorMaquinaSuplente())) {
+            cambios.add(new CampoActualizado("WIP por Máquina Suplente", existente.getWipPorMaquinaSuplente(), updatedPart.getWipPorMaquinaSuplente()));
+        }
         /*if (!Objects.equals(updatedPart.getTiempoLlenadoCelula(), existente.getTiempoLlenadoCelula())) {
             cambios.add(new CampoActualizado("Tiempo Llenado Celula", existente.getTiempoLlenadoCelula(), updatedPart.getTiempoLlenadoCelula()));
         }*/
@@ -374,6 +389,9 @@ public class PartService {
         }
         if (!Objects.equals(updatedPart.getTiempoTotalCambioModelo(), existente.getTiempoTotalCambioModelo())) {
             cambios.add(new CampoActualizado("Tiempo Total Cambio Modelo", existente.getTiempoTotalCambioModelo(), updatedPart.getTiempoTotalCambioModelo()));
+        }
+        if (!Objects.equals(updatedPart.getTiempoTotalCambioModeloSuplente(), existente.getTiempoTotalCambioModeloSuplente())) {
+            cambios.add(new CampoActualizado("Tiempo Total Cambio Modelo Suplente", existente.getTiempoTotalCambioModeloSuplente(), updatedPart.getTiempoTotalCambioModeloSuplente()));
         }
         if (!Objects.equals(updatedPart.getTiempoLiberacion(), existente.getTiempoLiberacion())) {
             cambios.add(new CampoActualizado("Tiempo Liberacion", existente.getTiempoLiberacion(), updatedPart.getTiempoLiberacion()));
@@ -384,8 +402,14 @@ public class PartService {
         if (!Objects.equals(updatedPart.getPiezasDeAjuste(), existente.getPiezasDeAjuste())) {
             cambios.add(new CampoActualizado("Piezas De Ajuste", existente.getPiezasDeAjuste(), updatedPart.getPiezasDeAjuste()));
         }
+        if (!Objects.equals(updatedPart.getPiezasDeAjusteSuplente(), existente.getPiezasDeAjusteSuplente())) {
+            cambios.add(new CampoActualizado("Piezas De Ajuste Suplente", existente.getPiezasDeAjusteSuplente(), updatedPart.getPiezasDeAjusteSuplente()));
+        }
         if (!Objects.equals(updatedPart.getCantidadEconomicaPedido(), existente.getCantidadEconomicaPedido())) {
             cambios.add(new CampoActualizado("Cantidad Economica Pedido", existente.getCantidadEconomicaPedido(), updatedPart.getCantidadEconomicaPedido()));
+        }
+        if (!Objects.equals(updatedPart.getCantidadEconomicaPedidoSuplente(), existente.getCantidadEconomicaPedidoSuplente())) {
+            cambios.add(new CampoActualizado("Cantidad Economica Pedido Suplente", existente.getCantidadEconomicaPedidoSuplente(), updatedPart.getCantidadEconomicaPedidoSuplente()));
         }
         if (ComparadorListas.listasDiferentes(existente.getComponentes(), updatedPart.getComponentes())) {
             cambios.add(new CampoActualizado(

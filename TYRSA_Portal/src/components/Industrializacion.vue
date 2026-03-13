@@ -790,9 +790,23 @@
                                   readonly
                                   ></v-text-field>
                               </v-col>
+                              <v-col cols="3">
+                                  <div class="field-label" title="WIP por Máquina suplente" style="font-weight: bold; margin-bottom: 4px;">
+                                    WIP por Máquina suplente
+                                  </div>
+                                  <v-text-field
+                                  autocomplete="off"
+                                  maxLength="255"
+                                  outlined
+                                  title="WIP por Máquina suplente"
+                                  v-model="editedItem.wipPorMaquinaSuplente"
+                                  type="number"
+                                  readonly
+                                  ></v-text-field>
+                              </v-col>
                           </v-row>
                           <v-row>
-                              <v-col cols="3">
+                              <v-col cols="4">
                                   <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
                                     Tiempo de llenado de célula (seg) suplente
                                   </div>
@@ -805,7 +819,7 @@
                                   readonly
                                   ></v-text-field>
                               </v-col>
-                              <v-col cols="2">
+                              <v-col cols="4">
                                   <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
                                     Piezas por hora suplente
                                   </div>
@@ -814,6 +828,62 @@
                                   maxLength="255"
                                   outlined
                                   v-model="piezasPorHoraSuplente"
+                                  type="number"
+                                  readonly
+                                  ></v-text-field>
+                              </v-col>
+                              <v-col cols="4">
+                                  <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                    Tiempo total de cambio de modelo (seg) suplente
+                                  </div>
+                                  <v-text-field
+                                  autocomplete="off"
+                                  maxLength="255"
+                                  outlined
+                                  title="Tiempo total de cambio de modelo (seg) suplente"
+                                  v-model="editedItem.tiempoTotalCambioModeloSuplente"
+                                  type="number"
+                                  readonly
+                                  ></v-text-field>
+                              </v-col>
+                          </v-row>
+                          <v-row>
+                              <v-col cols="5">
+                                  <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                    Tiempo de llenado de célula hasta liberación (seg) suplente
+                                  </div>
+                                  <v-text-field
+                                  autocomplete="off"
+                                  maxLength="255"
+                                  outlined
+                                  v-model="tiempoLlenadoCelulaHastaLiberaciónSuplente"
+                                  type="number"
+                                  readonly
+                                  ></v-text-field>
+                              </v-col>
+                              <v-col cols="3">
+                                  <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                    Piezas de ajuste suplente
+                                  </div>
+                                  <v-text-field
+                                  autocomplete="off"
+                                  maxLength="255"
+                                  outlined
+                                  v-model="editedItem.piezasDeAjusteSuplente"
+                                  type="number"
+                                  readonly
+                                  ></v-text-field>
+                              </v-col>
+                              <v-col cols="4">
+                                  <div class="field-label" style="font-weight: bold; margin-bottom: 4px;">
+                                    Cantidad económica de pedido suplente
+                                  </div>
+                                  <v-text-field
+                                  autocomplete="off"
+                                  maxLength="255"
+                                  outlined
+                                  title="Cantidad económica de pedido"
+                                  v-model="editedItem.cantidadEconomicaPedidoSuplente"
                                   type="number"
                                   readonly
                                   ></v-text-field>
@@ -1277,6 +1347,7 @@ export default {
       parte.tiempoCicloMaximoSuplente = this.tiempoCicloMaximoSuplente
       parte.tiempoLlenadoCelulaSuplente = this.tiempoLlenadoCelulaSuplente
       parte.piezasPorHoraSuplente = this.piezasPorHoraSuplente
+      parte.tiempoLlenadoCelulaHastaLiberaciónSuplente = this.tiempoLlenadoCelulaHastaLiberaciónSuplente
 
 
       // Arrays seguros
@@ -1336,8 +1407,13 @@ export default {
         { key: 'personalRequeridoSuplente', label: 'Personal requerido suplente' },
         { key: 'tiempoCicloTotalSuplente', label: 'Tiempo ciclo total (seg) suplente' },
         { key: 'tiempoCicloMaximoSuplente', label: 'Tiempo ciclo Máximo (seg) suplente' },
+        { key: 'wipPorMaquinaSuplente', label: 'WIP por Máquina Suplente' },
         { key: 'tiempoLlenadoCelulaSuplente', label: 'Tiempo de llenado de célula (seg) suplente' },
-        { key: 'piezasPorHoraSuplente', label: 'Piezas por hora' },
+        { key: 'piezasPorHoraSuplente', label: 'Piezas por hora suplente' },
+        { key: 'tiempoTotalCambioModeloSuplente', label: 'Tiempo total de cambio de modelo (seg) suplente' },
+        { key: 'tiempoLlenadoCelulaHastaLiberaciónSuplente', label: 'Tiempo de llenado de célula hasta liberación (seg) suplente' },
+        { key: 'piezasDeAjusteSuplente', label: 'Piezas de ajuste suplente' },
+        { key: 'cantidadEconomicaPedidoSuplente', label: 'Cantidad económica de pedido suplente' }
       ]
 
       // Headers
@@ -1555,6 +1631,7 @@ export default {
         ...item,
         componentes: item.componentes ? [...item.componentes] : [],
         rutas: item.rutas ? [...item.rutas] : [],
+        rutasSuplente: item.rutasSuplente ? [...item.rutasSuplente] : [],
         dias_disponibles: dias_disponibles,
         estatus:
           dias_disponibles >= 183
@@ -1756,8 +1833,9 @@ export default {
         );
     },
     piezasPorHora() {
-        return this.tiempoCicloMaximo ? 3600/this.tiempoCicloMaximo : ""
-
+        return this.tiempoCicloMaximo 
+            ? Number((3600 / this.tiempoCicloMaximo).toFixed(4)) 
+            : "";
     },
     tiempoLlenadoCelula() {
         return (this.tiempoCicloTotal && this.editedItem.wipPorMaquina)
@@ -1802,19 +1880,20 @@ export default {
         );
     },
     tiempoLlenadoCelulaSuplente() {
-        return (this.tiempoCicloTotalSuplente && this.editedItem.wipPorMaquina)
-            ? parseFloat((this.tiempoCicloTotalSuplente * this.editedItem.wipPorMaquina).toFixed(4))
+        return (this.tiempoCicloTotalSuplente && this.editedItem.wipPorMaquinaSuplente)
+            ? parseFloat((this.tiempoCicloTotalSuplente * this.editedItem.wipPorMaquinaSuplente).toFixed(4))
             : 0;
     },
     tiempoLlenadoCelulaHastaLiberaciónSuplente() {
-        return (this.tiempoLlenadoCelulaSuplente && this.editedItem.tiempoTotalCambioModelo && this.editedItem.tiempoLiberacion && this.editedItem.tiempoAjustePorFechador)
-            ? Number(this.tiempoLlenadoCelulaSuplente) + Number(this.editedItem.tiempoTotalCambioModelo) + Number(this.editedItem.tiempoLiberacion) + Number(this.editedItem.tiempoAjustePorFechador)
+        return (this.tiempoLlenadoCelulaSuplente && this.editedItem.tiempoTotalCambioModeloSuplente && this.editedItem.tiempoLiberacion && this.editedItem.tiempoAjustePorFechador)
+            ? Number(this.tiempoLlenadoCelulaSuplente) + Number(this.editedItem.tiempoTotalCambioModeloSuplente) + Number(this.editedItem.tiempoLiberacion) + Number(this.editedItem.tiempoAjustePorFechador)
             : 0;
     },
     piezasPorHoraSuplente() {
-        return this.tiempoCicloMaximoSuplente ? 3600/this.tiempoCicloMaximoSuplente : ""
-
-    },
+        return this.tiempoCicloMaximoSuplente 
+            ? Number((3600 / this.tiempoCicloMaximoSuplente).toFixed(4)) 
+            : "";
+    }
   },
   watch: {
     dialog(val) {
