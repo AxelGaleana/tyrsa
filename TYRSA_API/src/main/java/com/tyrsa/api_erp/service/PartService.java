@@ -194,15 +194,15 @@ public class PartService {
             cambios.add(new CampoActualizado("Cantidad Economica Pedido Suplente", "-", newPart.getCantidadEconomicaPedidoSuplente()));
 
         if (newPart.getComponentes() != null && newPart.getComponentes().length > 0) {
-            cambios.add(new CampoActualizado("Componentes", "-", newPart.getComponentes().length));
+            cambios.add(new CampoActualizado("Componentes", "-", newPart.getComponentes()));
         }
 
         if (newPart.getRutas() != null && newPart.getRutas().length > 0) {
-            cambios.add(new CampoActualizado("Rutas", "-", newPart.getRutas().length));
+            cambios.add(new CampoActualizado("Rutas", "-", newPart.getRutas()));
         }
 
         if (newPart.getRutasSuplente() != null && newPart.getRutasSuplente().length > 0) {
-            cambios.add(new CampoActualizado("Rutas Suplente", "-", newPart.getRutasSuplente().length));
+            cambios.add(new CampoActualizado("Rutas Suplente", "-", newPart.getRutasSuplente()));
         }
 
         if (imageFile != null && !imageFile.isEmpty()) {
