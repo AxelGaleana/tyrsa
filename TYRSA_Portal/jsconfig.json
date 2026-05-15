@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ES5",
+    "module": "ESNext",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "lib": ["ESNext", "DOM", "DOM.Iterable"]
+  },
+  "vueCompilerOptions": {
+    "target": 2
+  },
+  "exclude": ["node_modules", "dist"]
+}
